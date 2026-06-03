@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { scoreText } from "../src/rules/scoring";
 import { f1RulePack } from "../src/rules/f1";
+import { footballRulePack } from "../src/rules/football";
 
 describe("scoreText", () => {
   it("flags a clear F1 winner headline", () => {
@@ -41,5 +42,25 @@ describe("scoreText", () => {
     );
 
     expect(result.shouldHide).toBe(true);
+  });
+
+  it("does not hide general news just because it says crash", () => {
+    const result = scoreText(
+      "Police chief says arrest footage was difficult to watch after crash investigation",
+      [f1RulePack],
+      "lockdown"
+    );
+
+    expect(result.shouldHide).toBe(false);
+  });
+
+  it("does not hide arbitrary videos just because they contain result-like numbers", () => {
+    const result = scoreText(
+      "Amazing restoration project part 2 - 1 hour special",
+      [footballRulePack],
+      "lockdown"
+    );
+
+    expect(result.shouldHide).toBe(false);
   });
 });

@@ -46,12 +46,17 @@ export function scoreText(
     const safeMatches = pack.safeTerms.filter(term => containsTerm(text, term));
     const regexMatches = pack.regexes.filter(pattern => new RegExp(pattern, "i").test(text));
 
+    // Avoid blocking general news just because it contains words such as "crash",
+    // "beats", "loss", or a result-looking number. A sport pack should only fire
+    // when the item also mentions a protected entity from that pack.
+    if (entityMatches.length === 0) {
+      continue;
+    }
+
     let packScore = 0;
 
-    if (entityMatches.length > 0) {
-      packScore += sensitivity === "lockdown" ? 4 : 3;
-      reasons.push(`${pack.label}: entity match (${entityMatches.slice(0, 3).join(", ")})`);
-    }
+    packScore += sensitivity === "lockdown" ? 4 : 3;
+    reasons.push(`${pack.label}: entity match (${entityMatches.slice(0, 3).join(", ")})`);
 
     if (spoilerMatches.length > 0) {
       packScore += spoilerMatches.length >= 2 ? 6 : 5;
