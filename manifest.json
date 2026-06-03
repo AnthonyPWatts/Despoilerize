@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "DeSpoilerze",
+  "name": "DeSpoilerize",
   "version": "0.1.0",
   "description": "Catch-up mode for hiding accidental sports result spoilers while browsing.",
   "permissions": ["storage", "tabs"],
@@ -10,7 +10,7 @@
     "type": "module"
   },
   "action": {
-    "default_title": "DeSpoilerze",
+    "default_title": "DeSpoilerize",
     "default_popup": "src/popup/index.html"
   },
   "options_page": "src/options/index.html",
