@@ -1,11 +1,8 @@
-# DeSpoilerze v0.1 — no React
+# DeSpoilerize
 
-**DeSpoilerze** is a local-first browser extension that hides likely sports-result spoilers while you are in Catch-up Mode.
+**DeSpoilerize** is a local-first browser extension that hides likely sports-result spoilers while you are in Catch-up Mode.
 
-
-This variant intentionally avoids React. The popup and options pages use plain HTML, CSS, and TypeScript.
-
-The first version focuses on the highest-risk use case:
+The first version focuses on my own personal highest-risk use case:
 
 > Wake up, plan to watch F1 highlights later, scroll headlines, and accidentally see the result.
 
