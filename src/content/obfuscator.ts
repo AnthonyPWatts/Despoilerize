@@ -9,6 +9,7 @@ const HIDDEN_ATTR = "data-despoilerze-hidden";
 const SHELL_ATTR = "data-despoilerze-shell";
 const TARGET_ID_ATTR = "data-despoilerze-target-id";
 const DETACHED_OVERLAY_ATTR = "data-despoilerze-detached-overlay";
+const REVEALED_ATTR = "data-despoilerze-revealed";
 let nextTargetId = 1;
 
 export function injectStyles(): void {
@@ -177,17 +178,26 @@ function createOverlay(container: HTMLElement, risk: RiskResult): HTMLElement {
       <div class="despoilerze-title">Possible sports result hidden</div>
       <div class="despoilerze-reason">${escapeHtml(risk.reasons[0] ?? "Catch-up Mode is active")}</div>
       <button class="despoilerze-button" data-action="reveal-once">Reveal once</button>
-      <button class="despoilerze-button" data-action="hide-again">Keep hidden</button>
+      <button class="despoilerze-button" data-action="reveal-all">Reveal all on page</button>
     </div>
   `;
 
   overlay.addEventListener("click", event => {
     event.stopPropagation();
-    const target = event.target as HTMLElement;
-    const action = target.getAttribute("data-action");
+
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+
+    const button = target.closest<HTMLButtonElement>("button[data-action]");
+    const action = button?.getAttribute("data-action");
 
     if (action === "reveal-once") {
       reveal(container);
+      return;
+    }
+
+    if (action === "reveal-all") {
+      revealAll();
     }
   });
 
@@ -228,6 +238,12 @@ export function reveal(container: HTMLElement): void {
   const shell = container.closest(`[${SHELL_ATTR}="true"]`);
   const targetId = container.getAttribute(TARGET_ID_ATTR);
 
+  /*
+   * Mark this item as deliberately revealed for the lifetime of the page.
+   * Without this, the MutationObserver can immediately re-scan and re-hide
+   * the same result after the overlay/shell DOM changes.
+   */
+  container.setAttribute(REVEALED_ATTR, "true");
   container.classList.remove(WRAPPER_CLASS, BLUR_CLASS);
   container.removeAttribute(HIDDEN_ATTR);
 

@@ -104,7 +104,7 @@ export function scanDocument(settings: Settings, rulePacks: RulePack[], root: Pa
     }
     if (!isVisible(candidate)) continue;
 
-    if (candidate.closest("[data-despoilerze-hidden='true'], [data-despoilerze-shell='true']")) {
+    if (candidate.closest("[data-despoilerze-hidden='true'], [data-despoilerze-shell='true'], [data-despoilerze-revealed='true']")) {
       markProcessed(candidate);
       continue;
     }
@@ -125,7 +125,7 @@ export function scanDocument(settings: Settings, rulePacks: RulePack[], root: Pa
     if (risk.shouldHide) {
       const container = findBestContainer(candidate);
 
-      if (!container.closest("[data-despoilerze-hidden='true'], [data-despoilerze-shell='true']") && !isSiteChrome(container)) {
+      if (!container.closest("[data-despoilerze-hidden='true'], [data-despoilerze-shell='true'], [data-despoilerze-revealed='true']") && !isSiteChrome(container)) {
         obfuscate(container, risk);
       }
     }
