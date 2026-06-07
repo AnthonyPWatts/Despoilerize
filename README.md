@@ -34,7 +34,7 @@ This version is local-first.
 
 ## Install
 
-DeSpoilerize is available on the Chrome Web Store:
+DeSpoilerize v0.1 is available on the Chrome Web Store:
 
 https://chromewebstore.google.com/detail/despoilerize/ekckhdeeoilbnocmcpnhbcocbapjpmof
 
