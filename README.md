@@ -32,6 +32,12 @@ This version is local-first.
 - No analytics
 - Page content is scanned locally in the browser
 
+## Install
+
+DeSpoilerize is available on the Chrome Web Store:
+
+https://chromewebstore.google.com/detail/despoilerize/ekckhdeeoilbnocmcpnhbcocbapjpmof
+
 ## Install for local development
 
 ```bash
