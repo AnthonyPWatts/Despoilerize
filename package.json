@@ -8,6 +8,7 @@
     "clean": "rimraf dist",
     "build": "npm run clean && vite build && vite build --config vite.content.config.ts && node scripts/copy-static.mjs",
     "dev": "vite build --watch",
+    "package:chrome": "npm run build && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-chrome.ps1",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },

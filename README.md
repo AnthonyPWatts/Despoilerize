@@ -60,11 +60,19 @@ Then reload the extension from the browser's extensions page after each rebuild.
 npm test
 ```
 
+## Chrome Web Store package
+
+```bash
+npm run package:chrome
+```
+
+This builds the extension and creates `despoilerize-v0.2.0-chrome-web-store.zip` with `manifest.json` at the archive root.
+
 ## Current limitations
 
-- Uses broad `<all_urls>` host permission for v0.1 simplicity.
+- Host permissions are currently scoped to Google Search, Google News, BBC, and YouTube.
 - The scanner is intentionally aggressive in Lockdown mode.
-- Site-specific adapters are basic; YouTube/BBC/Google/Reddit will need refinement after real browsing tests.
+- Site-specific adapters are basic; YouTube/BBC/Google will need refinement after real browsing tests.
 - It does not yet use official race calendars or event windows.
 - It does not yet provide a "safe route to highlights" workflow.
 
