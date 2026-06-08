@@ -11,6 +11,18 @@
       <h1>DeSpoilerize Settings</h1>
 
       <section>
+        <h2>Sports to protect</h2>
+        <p>Select the sports, teams, leagues, and events you want DeSpoilerize to protect while Catch-up Mode is enabled.</p>
+
+        <div class="save-panel" role="note" aria-label="Settings save reminder">
+          <p class="save-reminder">Changes will not persist unless you save them.</p>
+          <button id="save-top" type="button">Save settings</button>
+        </div>
+
+        <div id="sports-groups" class="sports-groups"></div>
+      </section>
+
+      <section>
         <h2>Custom protected terms</h2>
         <p>Add one team, driver, event, or phrase per line.</p>
         <textarea id="custom-terms"></textarea>
@@ -25,7 +37,10 @@
         <textarea id="trusted-sites"></textarea>
       </section>
 
-      <button id="save" type="button">Save settings</button>
+      <div class="save-panel save-panel-bottom" role="note" aria-label="Settings save reminder">
+        <p class="save-reminder">Changes will not persist unless you save them.</p>
+        <button id="save-bottom" type="button">Save settings</button>
+      </div>
       <p id="saved-message" class="saved-message" aria-live="polite"></p>
     </main>
   </body>

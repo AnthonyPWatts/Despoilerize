@@ -16,10 +16,18 @@ export type Settings = {
 export type RulePack = {
   id: string;
   label: string;
+  group: string;
+  description?: string;
   entities: string[];
   spoilerTerms: string[];
   safeTerms: string[];
   regexes: string[];
+};
+
+export type RulePackGroup = {
+  id: string;
+  label: string;
+  packs: RulePack[];
 };
 
 export type RiskResult = {

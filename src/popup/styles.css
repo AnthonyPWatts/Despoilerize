@@ -65,3 +65,12 @@ label {
   font-size: 11px;
   opacity: 0.8;
 }
+
+
+.pack-summary {
+  min-height: 1.2em;
+  margin: 4px 0 8px;
+  font-size: 12px;
+  line-height: 1.35;
+  opacity: 0.9;
+}

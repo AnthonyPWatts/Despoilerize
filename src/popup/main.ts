@@ -1,4 +1,5 @@
 import type { Settings, Sensitivity } from "../shared/types";
+import { getAllRulePacks } from "../rules";
 import { getSettings, saveSettings } from "../shared/storage";
 
 let settings: Settings;
@@ -6,8 +7,7 @@ let settings: Settings;
 const statusElement = mustGet<HTMLElement>("status");
 const toggleButton = mustGet<HTMLButtonElement>("toggle");
 const sensitivitySelect = mustGet<HTMLSelectElement>("sensitivity");
-const f1Checkbox = mustGet<HTMLInputElement>("pack-f1");
-const footballCheckbox = mustGet<HTMLInputElement>("pack-football");
+const packSummaryElement = mustGet<HTMLElement>("enabled-packs-summary");
 const manualButton = mustGet<HTMLButtonElement>("manual");
 const revealAllButton = mustGet<HTMLButtonElement>("reveal-all");
 const optionsButton = mustGet<HTMLButtonElement>("open-options");
@@ -51,14 +51,6 @@ async function initialise(): Promise<void> {
     });
   });
 
-  f1Checkbox.addEventListener("change", () => {
-    void update(draft => setPackEnabled(draft, "f1", f1Checkbox.checked));
-  });
-
-  footballCheckbox.addEventListener("change", () => {
-    void update(draft => setPackEnabled(draft, "football", footballCheckbox.checked));
-  });
-
   revealAllButton.addEventListener("click", () => {
     void revealAllOnPage();
   });
@@ -78,12 +70,26 @@ function render(): void {
   toggleButton.textContent = enabled ? "Turn off" : "Turn on";
 
   sensitivitySelect.value = settings.catchUpMode.sensitivity;
-  f1Checkbox.checked = settings.enabledPacks.includes("f1");
-  footballCheckbox.checked = settings.enabledPacks.includes("football");
+  packSummaryElement.textContent = describeEnabledPacks(settings.enabledPacks);
 
   expiryElement.textContent = settings.catchUpMode.expiresAtUtc
     ? `Expires: ${new Date(settings.catchUpMode.expiresAtUtc).toLocaleString()}`
     : "";
+}
+
+function describeEnabledPacks(enabledPackIds: string[]): string {
+  const packs = getAllRulePacks().filter(pack => enabledPackIds.includes(pack.id));
+
+  if (packs.length === 0) {
+    return "No sport packs selected. Add packs in Settings or use custom terms.";
+  }
+
+  if (packs.length <= 4) {
+    return packs.map(pack => pack.label).join(", ");
+  }
+
+  const firstFew = packs.slice(0, 4).map(pack => pack.label).join(", ");
+  return `${firstFew}, +${packs.length - 4} more`;
 }
 
 async function update(mutator: (draft: Settings) => void): Promise<void> {
@@ -99,12 +105,6 @@ function addHours(hours: number): string {
   const date = new Date();
   date.setHours(date.getHours() + hours);
   return date.toISOString();
-}
-
-function setPackEnabled(settings: Settings, packId: string, enabled: boolean): void {
-  settings.enabledPacks = enabled
-    ? Array.from(new Set([...settings.enabledPacks, packId]))
-    : settings.enabledPacks.filter(id => id !== packId);
 }
 
 async function notifyTabs(): Promise<void> {

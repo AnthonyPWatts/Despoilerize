@@ -32,12 +32,6 @@ This version is local-first.
 - No analytics
 - Page content is scanned locally in the browser
 
-## Install
-
-DeSpoilerize v0.1 is available on the Chrome Web Store:
-
-https://chromewebstore.google.com/detail/despoilerize/ekckhdeeoilbnocmcpnhbcocbapjpmof
-
 ## Install for local development
 
 ```bash
@@ -83,3 +77,15 @@ npm test
 5. Search or browse for F1-related content.
 6. Confirm likely spoiler cards are blurred.
 7. Use Reveal once or Reveal all on page.
+
+
+## v0.2 sport packs
+
+The options page now supports grouped sport packs, including:
+
+- Motorsport: Formula 1, MotoGP
+- Football: general football, Premier League, Championship, Champions League, England football, Coventry City
+- Rugby: rugby union, Six Nations, rugby league
+- Cricket: cricket, England cricket, The Ashes
+- Tennis: tennis, Wimbledon, Grand Slams
+- US sports: NFL, NBA

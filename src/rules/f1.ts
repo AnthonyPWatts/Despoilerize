@@ -1,8 +1,11 @@
 import type { RulePack } from "../shared/types";
+import { motorsportRegexes, motorsportSafeTerms, motorsportSpoilerTerms } from "./vocab/motorsport";
 
 export const f1RulePack: RulePack = {
   id: "f1",
   label: "Formula 1",
+  group: "Motorsport",
+  description: "Formula 1 races, qualifying, sprints, drivers, and teams.",
   entities: [
     "f1",
     "formula 1",
@@ -46,45 +49,7 @@ export const f1RulePack: RulePack = {
     "racing bulls",
     "alpine"
   ],
-  spoilerTerms: [
-    "wins",
-    "won",
-    "winner",
-    "victory",
-    "takes victory",
-    "podium",
-    "pole",
-    "takes pole",
-    "p1",
-    "p2",
-    "p3",
-    "dnf",
-    "crash",
-    "crashes",
-    "crashed",
-    "safety car",
-    "red flag",
-    "penalty",
-    "fastest lap",
-    "championship lead",
-    "constructors",
-    "drivers' standings",
-    "driver standings",
-    "race result",
-    "results",
-    "classified"
-  ],
-  safeTerms: [
-    "preview",
-    "schedule",
-    "what time",
-    "start time",
-    "watch",
-    "channel",
-    "practice"
-  ],
-  regexes: [
-    "\\bP[1-9]\\b",
-    "\\bDNF\\b"
-  ]
+  spoilerTerms: motorsportSpoilerTerms,
+  safeTerms: motorsportSafeTerms,
+  regexes: motorsportRegexes
 };

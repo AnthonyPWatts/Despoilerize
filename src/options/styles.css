@@ -6,7 +6,7 @@ body {
 }
 
 main {
-  max-width: 760px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 28px;
 }
@@ -24,6 +24,80 @@ button {
   border-radius: 6px;
   border: 1px solid #999;
   cursor: pointer;
+  background: #fff;
+}
+
+
+.save-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 16px 0;
+  padding: 10px 12px;
+  border: 1px solid #d4c47a;
+  border-radius: 8px;
+  background: #fff8d8;
+}
+
+.save-panel-bottom {
+  margin-top: 22px;
+}
+
+.save-reminder {
+  margin: 0;
+  font-weight: 700;
+}
+
+.sports-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.sports-group {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+  padding: 14px;
+}
+
+.sports-group h3 {
+  margin: 0 0 8px;
+}
+
+.group-actions {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.group-actions button {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.sports-pack-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sports-pack {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0 8px;
+  align-items: start;
+}
+
+.sports-pack input {
+  margin-top: 3px;
+}
+
+.sports-pack small {
+  grid-column: 2;
+  color: #555;
+  line-height: 1.3;
 }
 
 .saved-message {
