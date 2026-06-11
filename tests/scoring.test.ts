@@ -135,6 +135,22 @@ describe("scoreText", () => {
     expect(result.shouldHide).toBe(true);
   });
 
+  it("flags World Cup 2026 tournament state changes", () => {
+    const headlines = [
+      "England through after dramatic stoppage-time winner",
+      "Scotland eliminated from World Cup after draw",
+      "Brazil top Group C with win over Morocco",
+      "Argentina reach quarter-finals after extra time",
+      "Penalty heartbreak for Ghana as Panama advance"
+    ];
+
+    for (const headline of headlines) {
+      const result = scoreText(headline, [worldCup2026RulePack], "balanced");
+
+      expect(result.shouldHide, headline).toBe(true);
+    }
+  });
+
   it("does not hide a football preview in balanced mode", () => {
     const result = scoreText(
       "Coventry City preview: team news before Sunderland fixture",
