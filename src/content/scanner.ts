@@ -93,6 +93,8 @@ export function scanDocument(settings: Settings, rulePacks: RulePack[], root: Pa
   if (!isCatchUpModeActive(settings)) return;
   if (isTrustedSite(settings)) return;
 
+  scanGoogleSportsModules(settings, rulePacks, root);
+
   const candidates = findCandidates(root);
 
   for (const candidate of candidates) {
@@ -146,6 +148,161 @@ function findCandidates(root: ParentNode): Element[] {
   }
 
   return Array.from(candidates);
+}
+
+function scanGoogleSportsModules(settings: Settings, rulePacks: RulePack[], root: ParentNode): void {
+  if (!isGoogleSearchPage()) return;
+
+  for (const module of findGoogleSportsModules(root)) {
+    if (isProcessed(module) || isAlreadyHidden(module)) continue;
+    if (module.closest("[data-despoilerze-hidden='true'], [data-despoilerze-shell='true'], [data-despoilerze-revealed='true']")) continue;
+    if (!isVisible(module)) continue;
+
+    const text = extractText(module);
+    if (!hasGoogleSportsModuleMarker(text)) {
+      markProcessed(module);
+      continue;
+    }
+
+    const risk = scoreText(
+      text,
+      rulePacks,
+      settings.catchUpMode.sensitivity,
+      settings.customTerms
+    );
+
+    if (risk.shouldHide && !isSiteChrome(module)) {
+      obfuscate(module, risk);
+    }
+
+    markProcessed(module);
+  }
+}
+
+function findGoogleSportsModules(root: ParentNode): HTMLElement[] {
+  const modules = new Set<HTMLElement>();
+
+  for (const selector of googleSportsModuleSelectors) {
+    root.querySelectorAll?.(selector).forEach(element => {
+      if (element instanceof HTMLElement && isUsableGoogleSportsModule(element)) {
+        modules.add(element);
+      }
+    });
+  }
+
+  for (const element of findGoogleSportsModuleMarkerElements(root)) {
+    const module = findGoogleSportsModuleContainer(element);
+    if (module) {
+      modules.add(module);
+    }
+  }
+
+  return Array.from(modules);
+}
+
+const googleSportsModuleSelectors = [
+  "[data-attrid*='sports' i]",
+  "[class*='imso' i]",
+  "[class*='sports-app' i]",
+  "[data-hveid][aria-label*='sports' i]"
+];
+
+const googleSportsModuleMarkerSelectors = [
+  "[role='tab']",
+  "[role='button']",
+  "[aria-label]",
+  "span",
+  "div"
+];
+
+const googleSportsModuleMarkers = [
+  "results",
+  "race details",
+  "match details",
+  "scorecard",
+  "standings",
+  "fixtures",
+  "schedule",
+  "table",
+  "lineups",
+  "match stats",
+  "drivers",
+  "constructors"
+];
+
+function findGoogleSportsModuleMarkerElements(root: ParentNode): HTMLElement[] {
+  const markerElements = new Set<HTMLElement>();
+
+  for (const selector of googleSportsModuleMarkerSelectors) {
+    root.querySelectorAll?.(selector).forEach(element => {
+      if (!(element instanceof HTMLElement)) return;
+
+      const text = extractText(element);
+      if (text.length > 120) return;
+      if (hasGoogleSportsModuleMarker(text)) {
+        markerElements.add(element);
+      }
+    });
+  }
+
+  return Array.from(markerElements);
+}
+
+function findGoogleSportsModuleContainer(element: HTMLElement): HTMLElement | null {
+  const explicitModule = element.closest(googleSportsModuleSelectors.join(", "));
+  if (explicitModule instanceof HTMLElement && isUsableGoogleSportsModule(explicitModule)) {
+    return explicitModule;
+  }
+
+  let best: HTMLElement | null = null;
+  let current: HTMLElement | null = element;
+
+  for (let depth = 0; current && depth < 8; depth += 1) {
+    if (isUsableGoogleSportsModule(current)) {
+      best = current;
+    }
+
+    const parent: HTMLElement | null = current.parentElement;
+    if (!parent || isGoogleSearchPageLevelContainer(parent)) {
+      break;
+    }
+
+    current = parent;
+  }
+
+  return best;
+}
+
+function hasGoogleSportsModuleMarker(text: string): boolean {
+  const normalised = text.toLowerCase().replace(/\s+/g, " ").trim();
+  return googleSportsModuleMarkers.some(marker => normalised.includes(marker));
+}
+
+function isUsableGoogleSportsModule(container: HTMLElement): boolean {
+  if (isSiteChrome(container)) return false;
+  if (isGoogleSearchPageLevelContainer(container)) return false;
+
+  const text = extractText(container);
+  if (text.length < 20 || text.length > 3000) return false;
+  if (!hasGoogleSportsModuleMarker(text)) return false;
+
+  const rect = container.getBoundingClientRect();
+  if (rect.width === 0 && rect.height === 0) return true;
+  if (rect.width < 160 || rect.height < 40) return false;
+
+  const viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+  if (viewportHeight > 0 && rect.height > viewportHeight * 0.85) return false;
+
+  return true;
+}
+
+function isGoogleSearchPageLevelContainer(element: HTMLElement): boolean {
+  if (element === document.body || element === document.documentElement) return true;
+
+  const id = element.id.toLowerCase();
+  if (["main", "search", "rso", "center_col"].includes(id)) return true;
+
+  return element.getAttribute("role") === "main";
 }
 
 function findBestContainer(element: HTMLElement): HTMLElement {

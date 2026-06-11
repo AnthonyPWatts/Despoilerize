@@ -9,7 +9,13 @@ const customTermsTextArea = mustGet<HTMLTextAreaElement>("custom-terms");
 const trustedSitesTextArea = mustGet<HTMLTextAreaElement>("trusted-sites");
 const saveTopButton = mustGet<HTMLButtonElement>("save-top");
 const saveBottomButton = mustGet<HTMLButtonElement>("save-bottom");
-const savedMessage = mustGet<HTMLElement>("saved-message");
+const saveTopStatus = mustGet<HTMLElement>("save-top-status");
+const saveBottomStatus = mustGet<HTMLElement>("save-bottom-status");
+const saveButtons = [saveTopButton, saveBottomButton];
+const saveStatuses = [saveTopStatus, saveBottomStatus];
+const saveButtonText = "Save settings";
+const savedButtonText = "Saved";
+let savedMessageTimeout: number | undefined;
 
 void initialise();
 
@@ -20,7 +26,7 @@ async function initialise(): Promise<void> {
   customTermsTextArea.value = settings.customTerms.join("\n");
   trustedSitesTextArea.value = settings.trustedSites.join("\n");
 
-  for (const saveButton of [saveTopButton, saveBottomButton]) {
+  for (const saveButton of saveButtons) {
     saveButton.addEventListener("click", () => {
       void save();
     });
@@ -110,10 +116,33 @@ async function save(): Promise<void> {
 
   await notifyTabs();
 
-  savedMessage.textContent = "Saved.";
-  window.setTimeout(() => {
-    savedMessage.textContent = "";
-  }, 1800);
+  showSavedMessage();
+}
+
+function showSavedMessage(): void {
+  if (savedMessageTimeout !== undefined) {
+    window.clearTimeout(savedMessageTimeout);
+  }
+
+  for (const saveButton of saveButtons) {
+    saveButton.textContent = savedButtonText;
+  }
+
+  for (const saveStatus of saveStatuses) {
+    saveStatus.textContent = "Saved.";
+  }
+
+  savedMessageTimeout = window.setTimeout(() => {
+    for (const saveButton of saveButtons) {
+      saveButton.textContent = saveButtonText;
+    }
+
+    for (const saveStatus of saveStatuses) {
+      saveStatus.textContent = "";
+    }
+
+    savedMessageTimeout = undefined;
+  }, 2000);
 }
 
 async function notifyTabs(): Promise<void> {

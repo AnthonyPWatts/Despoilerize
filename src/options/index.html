@@ -16,7 +16,10 @@
 
         <div class="save-panel" role="note" aria-label="Settings save reminder">
           <p class="save-reminder">Changes will not persist unless you save them.</p>
-          <button id="save-top" type="button">Save settings</button>
+          <div class="save-actions">
+            <span id="save-top-status" class="saved-message" aria-live="polite"></span>
+            <button id="save-top" type="button">Save settings</button>
+          </div>
         </div>
 
         <div id="sports-groups" class="sports-groups"></div>
@@ -39,9 +42,11 @@
 
       <div class="save-panel save-panel-bottom" role="note" aria-label="Settings save reminder">
         <p class="save-reminder">Changes will not persist unless you save them.</p>
-        <button id="save-bottom" type="button">Save settings</button>
+        <div class="save-actions">
+          <span id="save-bottom-status" class="saved-message" aria-live="polite"></span>
+          <button id="save-bottom" type="button">Save settings</button>
+        </div>
       </div>
-      <p id="saved-message" class="saved-message" aria-live="polite"></p>
     </main>
   </body>
 </html>

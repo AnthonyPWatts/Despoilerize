@@ -49,6 +49,12 @@ button {
   font-weight: 700;
 }
 
+.save-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .sports-groups {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -101,7 +107,9 @@ button {
 }
 
 .saved-message {
+  min-width: 4.5em;
   min-height: 1.2em;
   color: #245924;
   font-weight: 700;
+  text-align: right;
 }
