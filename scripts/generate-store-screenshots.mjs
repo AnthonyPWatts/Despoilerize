@@ -74,7 +74,7 @@ const screenshots = [
             <div class="save-panel"><strong>Changes will not persist unless you save them.</strong><button>Save settings</button></div>
             <div class="sports-groups">
               ${group("Motorsport", ["Formula 1", "MotoGP"], true)}
-              ${group("Football", ["General football", "Premier League", "Championship", "Champions League", "England football", "Coventry City"], true)}
+              ${group("Football", ["General football", "World Cup 2026", "Premier League", "Championship", "Champions League", "England football"], true)}
               ${group("Rugby", ["Rugby union", "Six Nations", "Rugby league"], false)}
               ${group("Cricket", ["Cricket", "England cricket", "The Ashes"], true)}
               ${group("Tennis", ["Tennis", "Wimbledon", "Grand Slams"], true)}

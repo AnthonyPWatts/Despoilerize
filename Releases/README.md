@@ -2,6 +2,12 @@
 
 Release assets for store submission and archive use.
 
+## v0.3
+
+- [Chrome Web Store package](./v0.3/despoilerize-v0.3.0-chrome-web-store.zip)
+- [Chrome Web Store screenshots](./v0.3/screenshots/)
+- [Chrome Web Store promo tiles](./v0.3/promo/)
+
 ## v0.2
 
 - [Chrome Web Store package](./v0.2/despoilerize-v0.2.0-chrome-web-store.zip)
