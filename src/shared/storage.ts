@@ -1,5 +1,6 @@
 import { defaultSettings } from "./defaultSettings";
 import type { Settings } from "./types";
+export { isCatchUpModeActive } from "./expiry";
 
 const SETTINGS_KEY = "despoilerze.settings";
 
@@ -22,12 +23,4 @@ export async function getSettings(): Promise<Settings> {
 
 export async function saveSettings(settings: Settings): Promise<void> {
   await chrome.storage.sync.set({ [SETTINGS_KEY]: settings });
-}
-
-export function isCatchUpModeActive(settings: Settings, now = new Date()): boolean {
-  if (!settings.catchUpMode.enabled) return false;
-  if (!settings.catchUpMode.expiresAtUtc) return true;
-
-  const expiresAt = new Date(settings.catchUpMode.expiresAtUtc);
-  return expiresAt > now;
 }

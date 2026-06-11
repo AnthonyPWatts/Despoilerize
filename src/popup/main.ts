@@ -1,6 +1,7 @@
 import type { Settings, Sensitivity } from "../shared/types";
 import { getAllRulePacks } from "../rules";
 import { getSettings, saveSettings } from "../shared/storage";
+import { addHours, endOfToday, syncExpiryAlarm } from "../shared/expiry";
 
 let settings: Settings;
 
@@ -8,6 +9,7 @@ const statusElement = mustGet<HTMLElement>("status");
 const toggleButton = mustGet<HTMLButtonElement>("toggle");
 const sensitivitySelect = mustGet<HTMLSelectElement>("sensitivity");
 const packSummaryElement = mustGet<HTMLElement>("enabled-packs-summary");
+const tonightButton = mustGet<HTMLButtonElement>("tonight");
 const manualButton = mustGet<HTMLButtonElement>("manual");
 const revealAllButton = mustGet<HTMLButtonElement>("reveal-all");
 const optionsButton = mustGet<HTMLButtonElement>("open-options");
@@ -37,6 +39,13 @@ async function initialise(): Promise<void> {
       });
     });
   }
+
+  tonightButton.addEventListener("click", () => {
+    void update(draft => {
+      draft.catchUpMode.enabled = true;
+      draft.catchUpMode.expiresAtUtc = endOfToday();
+    });
+  });
 
   manualButton.addEventListener("click", () => {
     void update(draft => {
@@ -96,15 +105,10 @@ async function update(mutator: (draft: Settings) => void): Promise<void> {
   const next = structuredClone(settings);
   mutator(next);
   await saveSettings(next);
+  await syncExpiryAlarm(next);
   settings = next;
   render();
   await notifyTabs();
-}
-
-function addHours(hours: number): string {
-  const date = new Date();
-  date.setHours(date.getHours() + hours);
-  return date.toISOString();
 }
 
 async function notifyTabs(): Promise<void> {

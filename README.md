@@ -11,6 +11,7 @@ The first version focuses on my own personal highest-risk use case:
 - Chrome/Edge Manifest V3 extension
 - Catch-up Mode toggle
 - Expiry shortcuts: 2h, Tonight, 24h, Manual
+- Browser alarm support for timed Catch-up Mode expiry
 - Sensitivity modes: Gentle, Balanced, Lockdown
 - F1 rule pack
 - Basic football rule pack
@@ -66,7 +67,7 @@ npm test
 npm run package:chrome
 ```
 
-This builds the extension and creates `Releases/v0.2/despoilerize-v0.2.0-chrome-web-store.zip` with `manifest.json` at the archive root.
+This builds the extension and creates `Releases/v0.3/despoilerize-v0.3.0-chrome-web-store.zip` with `manifest.json` at the archive root.
 
 Release packages and store listing assets are kept under [`Releases`](./Releases/).
 
@@ -89,7 +90,7 @@ Release packages and store listing assets are kept under [`Releases`](./Releases
 7. Use Reveal once or Reveal all on page.
 
 
-## v0.2 sport packs
+## v0.3 sport packs
 
 The options page now supports grouped sport packs, including:
 

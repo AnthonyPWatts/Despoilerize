@@ -63,6 +63,11 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   void (async () => {
     if (message?.type === "DESPOILERZE_SETTINGS_CHANGED") {
       settings = await getSettings();
+      if (!isCatchUpModeActive(settings)) {
+        revealAll();
+        sendResponse({ ok: true });
+        return;
+      }
       runScan();
       sendResponse({ ok: true });
       return;
