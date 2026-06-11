@@ -13,8 +13,7 @@ The first version focuses on my own personal highest-risk use case:
 - Expiry shortcuts: 2h, Tonight, 24h, Manual
 - Browser alarm support for timed Catch-up Mode expiry
 - Sensitivity modes: Gentle, Balanced, Lockdown
-- F1 rule pack
-- Basic football rule pack
+- Grouped sport packs for motorsport, football, rugby, cricket, tennis, and US sports
 - Custom protected terms
 - Trusted sites
 - Headline/card scanning
@@ -91,13 +90,22 @@ Release packages and store listing assets are kept under [`Releases`](./Releases
 1. Build and load the extension.
 2. Turn on Catch-up Mode.
 3. Set sensitivity to Lockdown.
-4. Visit YouTube, Google News, BBC Sport, Reddit, or any headline-heavy page.
+4. Visit YouTube, Google News, BBC Sport, or Google Search.
 5. Search or browse for F1-related content.
 6. Confirm likely spoiler cards are blurred.
 7. Use Reveal once or Reveal all on page.
 
 
-## v0.3 sport packs
+## Supported Sites
+
+This version only runs on sites covered by the extension's host permissions:
+
+- Google Search
+- Google News
+- BBC
+- YouTube
+
+## Sport Packs
 
 The options page now supports grouped sport packs, including:
 
