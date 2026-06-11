@@ -8,6 +8,8 @@ const thresholds: Record<Sensitivity, number> = {
 
 function normaliseText(text: string): string {
   return text
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/[‘’]/g, "'")
     .replace(/[“”]/g, '"')

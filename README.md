@@ -110,7 +110,7 @@ This version only runs on sites covered by the extension's host permissions:
 The options page now supports grouped sport packs, including:
 
 - Motorsport: Formula 1, MotoGP
-- Football: general football, Premier League, Championship, Champions League, England football, Coventry City
+- Football: general football, World Cup 2026, Premier League, Championship, Champions League, England football
 - Rugby: rugby union, Six Nations, rugby league
 - Cricket: cricket, England cricket, The Ashes
 - Tennis: tennis, Wimbledon, Grand Slams

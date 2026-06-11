@@ -3,9 +3,9 @@ import { scoreText } from "../src/rules/scoring";
 import { f1RulePack } from "../src/rules/f1";
 import {
   championshipRulePack,
-  coventryCityRulePack,
   footballRulePack,
-  premierLeagueRulePack
+  premierLeagueRulePack,
+  worldCup2026RulePack
 } from "../src/rules/football";
 import { motoGpRulePack } from "../src/rules/motorsport";
 import { englandCricketRulePack } from "../src/rules/cricket";
@@ -94,10 +94,10 @@ describe("scoreText", () => {
     expect(result.shouldHide).toBe(false);
   });
 
-  it("does trigger on a full Coventry City result", () => {
+  it("does trigger on a full Championship club result", () => {
     const result = scoreText(
       "Coventry City beat Sunderland after late winner",
-      [coventryCityRulePack],
+      [championshipRulePack],
       "balanced"
     );
 
@@ -114,10 +114,31 @@ describe("scoreText", () => {
     expect(result.shouldHide).toBe(true);
   });
 
+  it("flags a World Cup 2026 tournament elimination headline", () => {
+    const result = scoreText(
+      "Scotland knocked out of the 2026 World Cup after penalty shootout",
+      [worldCup2026RulePack],
+      "balanced"
+    );
+
+    expect(result.shouldHide).toBe(true);
+    expect(result.packIds).toContain("world-cup-2026");
+  });
+
+  it("flags World Cup 2026 headlines with accented team names", () => {
+    const result = scoreText(
+      "Curaçao eliminated from group stage after late VAR call",
+      [worldCup2026RulePack],
+      "balanced"
+    );
+
+    expect(result.shouldHide).toBe(true);
+  });
+
   it("does not hide a football preview in balanced mode", () => {
     const result = scoreText(
       "Coventry City preview: team news before Sunderland fixture",
-      [coventryCityRulePack],
+      [championshipRulePack],
       "balanced"
     );
 
@@ -127,7 +148,7 @@ describe("scoreText", () => {
   it("does hide a football preview in lockdown mode", () => {
     const result = scoreText(
       "Coventry City preview: team news before Sunderland fixture",
-      [coventryCityRulePack],
+      [championshipRulePack],
       "lockdown"
     );
 

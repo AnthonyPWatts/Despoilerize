@@ -4,10 +4,10 @@ import { motoGpRulePack } from "./motorsport";
 import {
   championshipRulePack,
   championsLeagueRulePack,
-  coventryCityRulePack,
   englandFootballRulePack,
   footballRulePack,
-  premierLeagueRulePack
+  premierLeagueRulePack,
+  worldCup2026RulePack
 } from "./football";
 import { ashesRulePack, cricketRulePack, englandCricketRulePack } from "./cricket";
 import { grandSlamsRulePack, tennisRulePack, wimbledonRulePack } from "./tennis";
@@ -18,11 +18,11 @@ const allPacks: RulePack[] = [
   f1RulePack,
   motoGpRulePack,
   footballRulePack,
+  worldCup2026RulePack,
   premierLeagueRulePack,
   championshipRulePack,
   championsLeagueRulePack,
   englandFootballRulePack,
-  coventryCityRulePack,
   rugbyUnionRulePack,
   sixNationsRulePack,
   rugbyLeagueRulePack,

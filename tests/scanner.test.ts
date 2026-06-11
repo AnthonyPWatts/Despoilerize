@@ -4,7 +4,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { scanDocument } from "../src/content/scanner";
 import { f1RulePack } from "../src/rules/f1";
-import { footballRulePack } from "../src/rules/football";
+import { worldCup2026RulePack } from "../src/rules/football";
 import type { Settings } from "../src/shared/types";
 
 function settings(sensitivity: Settings["catchUpMode"]["sensitivity"]): Settings {
@@ -125,7 +125,7 @@ describe("scanDocument Google Top stories", () => {
   it("blurs a Google Top stories card when a protected scoreline appears in a link", () => {
     const card = renderGoogleTopStoriesCard("Mexico 2-0 South Africa: World Cup 2026 opening match live reaction");
 
-    scanDocument(settings("balanced"), [footballRulePack]);
+    scanDocument(settings("balanced"), [worldCup2026RulePack]);
 
     expect(card.getAttribute("data-despoilerze-hidden")).toBe("true");
   });
