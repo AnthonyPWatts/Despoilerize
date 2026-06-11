@@ -4,6 +4,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { scanDocument } from "../src/content/scanner";
 import { f1RulePack } from "../src/rules/f1";
+import { footballRulePack } from "../src/rules/football";
 import type { Settings } from "../src/shared/types";
 
 function settings(sensitivity: Settings["catchUpMode"]["sensitivity"]): Settings {
@@ -29,6 +30,28 @@ function renderGoogleSportsModule(tabLabel: string, body: string): HTMLElement {
   `;
 
   return document.getElementById("sports-module")!;
+}
+
+function renderGoogleTopStoriesCard(headline: string): HTMLElement {
+  document.body.innerHTML = `
+    <main id="main">
+      <section>
+        <h2>Top stories</h2>
+        <div class="story-card" id="spoiler-card">
+          <a href="https://example.com/live">
+            <span>The Guardian</span>
+            <span>${headline}</span>
+            <span>36 minutes ago</span>
+          </a>
+        </div>
+        <div class="story-card">
+          <a href="https://example.com/preview">World Cup opening ceremony timings and performers</a>
+        </div>
+      </section>
+    </main>
+  `;
+
+  return document.getElementById("spoiler-card")!;
 }
 
 describe("scanDocument Google sports modules", () => {
@@ -79,5 +102,31 @@ describe("scanDocument Google sports modules", () => {
     scanDocument(settings("lockdown"), [f1RulePack]);
 
     expect(module.getAttribute("data-despoilerze-hidden")).toBe("true");
+  });
+});
+
+describe("scanDocument Google Top stories", () => {
+  beforeEach(() => {
+    document.body.innerHTML = "";
+
+    vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue({
+      x: 0,
+      y: 0,
+      width: 480,
+      height: 180,
+      top: 0,
+      right: 480,
+      bottom: 180,
+      left: 0,
+      toJSON: () => ({})
+    } as DOMRect);
+  });
+
+  it("blurs a Google Top stories card when a protected scoreline appears in a link", () => {
+    const card = renderGoogleTopStoriesCard("Mexico 2-0 South Africa: World Cup 2026 opening match live reaction");
+
+    scanDocument(settings("balanced"), [footballRulePack]);
+
+    expect(card.getAttribute("data-despoilerze-hidden")).toBe("true");
   });
 });

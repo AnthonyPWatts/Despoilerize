@@ -94,6 +94,7 @@ export function scanDocument(settings: Settings, rulePacks: RulePack[], root: Pa
   if (isTrustedSite(settings)) return;
 
   scanGoogleSportsModules(settings, rulePacks, root);
+  scanGoogleSpoilerLinks(settings, rulePacks, root);
 
   const candidates = findCandidates(root);
 
@@ -229,6 +230,90 @@ const googleSportsModuleMarkers = [
   "drivers",
   "constructors"
 ];
+
+function scanGoogleSpoilerLinks(settings: Settings, rulePacks: RulePack[], root: ParentNode): void {
+  if (!isGoogleSearchPage()) return;
+
+  root.querySelectorAll?.("a[href]").forEach(element => {
+    if (!(element instanceof HTMLElement)) return;
+    if (isProcessed(element) || isAlreadyHidden(element) || isSiteChrome(element)) return;
+    if (element.closest("[data-despoilerze-hidden='true'], [data-despoilerze-shell='true'], [data-despoilerze-revealed='true']")) return;
+    if (!isVisible(element)) return;
+
+    const text = extractText(element);
+    if (!isPlausibleHeadlineText(text)) {
+      markProcessed(element);
+      return;
+    }
+
+    const risk = scoreText(
+      text,
+      rulePacks,
+      settings.catchUpMode.sensitivity,
+      settings.customTerms
+    );
+
+    if (risk.shouldHide) {
+      const container = findGoogleTopStoriesContainer(element) ?? findBestContainer(element);
+
+      if (!container.closest("[data-despoilerze-hidden='true'], [data-despoilerze-shell='true'], [data-despoilerze-revealed='true']") && !isSiteChrome(container)) {
+        obfuscate(container, risk);
+      }
+    }
+
+    markProcessed(element);
+  });
+}
+
+function findGoogleTopStoriesContainer(element: HTMLElement): HTMLElement | null {
+  const explicitContainer = element.closest("article, [role='article'], [data-news-cluster], [class*='SoaBEf'], [class*='dbsr']");
+  if (explicitContainer instanceof HTMLElement && isUsableGoogleTopStoriesContainer(explicitContainer)) {
+    return explicitContainer;
+  }
+
+  let best: HTMLElement | null = null;
+  let current: HTMLElement | null = element;
+
+  for (let depth = 0; current && depth < 6; depth += 1) {
+    if (isUsableGoogleTopStoriesContainer(current)) {
+      best = current;
+    }
+
+    const parent: HTMLElement | null = current.parentElement;
+    if (!parent || isGoogleSearchPageLevelContainer(parent) || isLikelyGoogleTopStoriesSection(parent)) {
+      break;
+    }
+
+    current = parent;
+  }
+
+  return best;
+}
+
+function isUsableGoogleTopStoriesContainer(container: HTMLElement): boolean {
+  if (isSiteChrome(container)) return false;
+  if (isGoogleSearchPageLevelContainer(container)) return false;
+
+  const text = extractText(container);
+  if (text.length < 12 || text.length > 900) return false;
+  if (isLikelyGoogleTopStoriesSection(container)) return false;
+
+  const rect = container.getBoundingClientRect();
+  if (rect.width === 0 && rect.height === 0) return true;
+  if (rect.width < 120 || rect.height < 40) return false;
+
+  const viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+  if (viewportHeight > 0 && rect.height > viewportHeight * 0.45) return false;
+
+  return true;
+}
+
+function isLikelyGoogleTopStoriesSection(element: HTMLElement): boolean {
+  const text = extractText(element).toLowerCase().replace(/\s+/g, " ").trim();
+  if (!text.includes("top stories")) return false;
+
+  return element.querySelectorAll("a[href]").length > 1;
+}
 
 function findGoogleSportsModuleMarkerElements(root: ParentNode): HTMLElement[] {
   const markerElements = new Set<HTMLElement>();
