@@ -1,4 +1,6 @@
 node_modules/
 dist/
+test-results/
+playwright-report/
 .vscode/
 .DS_Store

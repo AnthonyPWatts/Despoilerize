@@ -61,6 +61,13 @@ Then reload the extension from the browser's extensions page after each rebuild.
 npm test
 ```
 
+For browser-level extension checks:
+
+```bash
+npx playwright install chromium
+npm run test:e2e
+```
+
 ## Chrome Web Store package
 
 ```bash
