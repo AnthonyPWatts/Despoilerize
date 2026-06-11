@@ -100,7 +100,7 @@ test("sets the existing protect-until presets from the popup", async ({ browserN
 
     await popup.getByRole("button", { name: "Tonight" }).click();
     await expect(popup.locator("#status")).toHaveText("Catch-up Mode: ON");
-    await expect(popup.locator("#expiry")).toContainText("Expires:");
+    await expect(popup.locator("#expiry")).toHaveText("Expires tonight at 23:59");
 
     const tonightExpiry = await popup.evaluate(async () => {
       const result = await chrome.storage.sync.get("despoilerze.settings");

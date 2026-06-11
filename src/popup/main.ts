@@ -1,7 +1,7 @@
 import type { Settings, Sensitivity } from "../shared/types";
 import { getAllRulePacks } from "../rules";
 import { getSettings, saveSettings } from "../shared/storage";
-import { addHours, endOfToday, syncExpiryAlarm } from "../shared/expiry";
+import { addHours, endOfToday, formatExpiryLabel, syncExpiryAlarm } from "../shared/expiry";
 
 let settings: Settings;
 
@@ -81,9 +81,7 @@ function render(): void {
   sensitivitySelect.value = settings.catchUpMode.sensitivity;
   packSummaryElement.textContent = describeEnabledPacks(settings.enabledPacks);
 
-  expiryElement.textContent = settings.catchUpMode.expiresAtUtc
-    ? `Expires: ${new Date(settings.catchUpMode.expiresAtUtc).toLocaleString()}`
-    : "";
+  expiryElement.textContent = formatExpiryLabel(settings.catchUpMode.expiresAtUtc);
 }
 
 function describeEnabledPacks(enabledPackIds: string[]): string {

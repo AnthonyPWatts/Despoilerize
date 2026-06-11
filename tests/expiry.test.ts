@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { addHours, endOfToday, isCatchUpModeActive, syncExpiryAlarm } from "../src/shared/expiry";
+import { addHours, endOfToday, formatExpiryLabel, isCatchUpModeActive, syncExpiryAlarm } from "../src/shared/expiry";
 import type { Settings } from "../src/shared/types";
 
 function settings(expiresAtUtc?: string, enabled = true): Settings {
@@ -81,5 +81,44 @@ describe("expiry alarm scheduling", () => {
     expect(create).not.toHaveBeenCalled();
 
     vi.unstubAllGlobals();
+  });
+});
+
+describe("expiry display labels", () => {
+  const now = new Date(2026, 5, 11, 12, 0, 0, 0);
+
+  it("describes same-day expiries as today", () => {
+    const expiry = new Date(2026, 5, 11, 14, 30, 0, 0).toISOString();
+
+    expect(formatExpiryLabel(expiry, now)).toBe("Expires today at 14:30");
+  });
+
+  it("describes end-of-day expiries as tonight", () => {
+    const expiry = new Date(2026, 5, 11, 23, 59, 59, 999).toISOString();
+
+    expect(formatExpiryLabel(expiry, now)).toBe("Expires tonight at 23:59");
+  });
+
+  it("describes next-day expiries as tomorrow", () => {
+    const expiry = new Date(2026, 5, 12, 12, 0, 0, 0).toISOString();
+
+    expect(formatExpiryLabel(expiry, now)).toBe("Expires tomorrow at 12:00");
+  });
+
+  it("uses UK-style text dates for later expiries in the same year", () => {
+    const expiry = new Date(2026, 5, 18, 9, 5, 0, 0).toISOString();
+
+    expect(formatExpiryLabel(expiry, now)).toBe("Expires Thu 18 Jun at 09:05");
+  });
+
+  it("includes the year for expiries outside the current year", () => {
+    const expiry = new Date(2027, 0, 2, 8, 15, 0, 0).toISOString();
+
+    expect(formatExpiryLabel(expiry, now)).toBe("Expires Sat 2 Jan 2027 at 08:15");
+  });
+
+  it("returns an empty label without a valid expiry", () => {
+    expect(formatExpiryLabel(undefined, now)).toBe("");
+    expect(formatExpiryLabel("not a date", now)).toBe("");
   });
 });
