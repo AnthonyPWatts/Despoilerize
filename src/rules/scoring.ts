@@ -27,6 +27,38 @@ function containsTerm(text: string, term: string): boolean {
   return pattern.test(text);
 }
 
+function topicReason(pack: RulePack): string {
+  return `Matched ${pack.label} protected topic`;
+}
+
+function spoilerReason(pack: RulePack): string {
+  if (pack.id === "reality-tv") {
+    return "Matched Reality TV spoiler wording";
+  }
+
+  if (pack.id === "world-cup-2026") {
+    return "Matched World Cup tournament progress wording";
+  }
+
+  return `Matched ${pack.label} result wording`;
+}
+
+function patternReason(pack: RulePack): string {
+  if (pack.id === "reality-tv") {
+    return "Matched Reality TV spoiler wording";
+  }
+
+  if (pack.id === "world-cup-2026") {
+    return "Matched World Cup tournament pattern";
+  }
+
+  return `Matched ${pack.label} result pattern`;
+}
+
+function safeContextReason(pack: RulePack): string {
+  return `Possible safe context for ${pack.label}`;
+}
+
 export function scoreText(
   rawText: string,
   packs: RulePack[],
@@ -56,35 +88,36 @@ export function scoreText(
     }
 
     let packScore = 0;
+    const packReasons: string[] = [];
 
     packScore += sensitivity === "lockdown" ? 4 : 3;
-    reasons.push(`${pack.label}: entity match (${entityMatches.slice(0, 3).join(", ")})`);
 
     if (spoilerMatches.length > 0) {
       packScore += spoilerMatches.length >= 2 ? 6 : 5;
-      reasons.push(`${pack.label}: spoiler wording (${spoilerMatches.slice(0, 3).join(", ")})`);
+      packReasons.push(spoilerReason(pack));
     }
 
     if (regexMatches.length > 0) {
       packScore += 6;
-      reasons.push(`${pack.label}: result-like pattern`);
+      packReasons.push(patternReason(pack));
     }
 
     if (safeMatches.length > 0 && sensitivity !== "lockdown") {
       packScore -= 2;
-      reasons.push(`${pack.label}: possible safe context (${safeMatches.slice(0, 2).join(", ")})`);
+      packReasons.push(safeContextReason(pack));
     }
 
     if (packScore > 0) {
       packIds.push(pack.id);
       score += packScore;
+      reasons.push(...(packReasons.length > 0 ? packReasons : [topicReason(pack)]));
     }
   }
 
   const customMatches = customTerms.filter(term => containsTerm(text, term));
   if (customMatches.length > 0) {
     score += sensitivity === "lockdown" ? 4 : 3;
-    reasons.push(`Custom term match (${customMatches.slice(0, 3).join(", ")})`);
+    reasons.push("Matched custom protected term");
   }
 
   return {

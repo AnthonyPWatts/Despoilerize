@@ -124,6 +124,7 @@ describe("scoreText", () => {
 
     expect(result.shouldHide).toBe(true);
     expect(result.packIds).toContain("world-cup-2026");
+    expect(result.reasons[0]).toBe("Matched World Cup tournament progress wording");
   });
 
   it("flags World Cup 2026 headlines with accented team names", () => {
@@ -228,6 +229,7 @@ describe("scoreText", () => {
 
       expect(result.shouldHide, headline).toBe(true);
       expect(result.packIds).toContain("reality-tv");
+      expect(result.reasons[0], headline).toBe("Matched Reality TV spoiler wording");
     }
   });
 
