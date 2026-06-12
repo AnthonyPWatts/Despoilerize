@@ -116,3 +116,15 @@ The options page now supports grouped protection packs, including:
 - Tennis: tennis, Wimbledon, Grand Slams
 - US sports: NFL, NBA
 - Entertainment: Reality TV
+
+## Custom protected terms
+
+Custom terms can protect topics that do not yet have a dedicated pack. Add one show, contestant, team, event, or phrase per line. Good examples are:
+
+- `The Traitors`
+- `Love Island final`
+- `Strictly dance-off`
+- Current contestant names
+- A one-off event you plan to catch up on later
+
+Use distinctive terms where possible. Very broad words such as `winner` or `final` can hide unrelated pages.
