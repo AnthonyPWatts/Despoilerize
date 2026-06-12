@@ -30,7 +30,7 @@ const screenshots = [
           ${newsCard("Highlights queue", "Save stories for later and browse with less risk.", "safe")}
         </main>
       </section>
-      ${popup({ on: true, packs: "Formula 1, MotoGP, Premier League, Championship, +8 more", expires: "Expires: tonight at 23:59" })}
+      ${popup({ on: true, packs: "Formula 1, MotoGP, World Cup 2026, Reality TV, +9 more", expires: "Expires: tonight at 23:59" })}
     `)
   },
   {
@@ -69,8 +69,8 @@ const screenshots = [
         <main class="settings-page">
           <h1>DeSpoilerize Settings</h1>
           <section class="settings-section">
-            <h2>Sports to protect</h2>
-            <p>Select the sports, teams, leagues, and events you want DeSpoilerize to protect while Catch-up Mode is enabled.</p>
+            <h2>Topics to protect</h2>
+            <p>Select the sports, shows, teams, leagues, and events you want DeSpoilerize to protect while Catch-up Mode is enabled.</p>
             <div class="save-panel"><strong>Changes will not persist unless you save them.</strong><button>Save settings</button></div>
             <div class="sports-groups">
               ${group("Motorsport", ["Formula 1", "MotoGP"], true)}
@@ -79,6 +79,7 @@ const screenshots = [
               ${group("Cricket", ["Cricket", "England cricket", "The Ashes"], true)}
               ${group("Tennis", ["Tennis", "Wimbledon", "Grand Slams"], true)}
               ${group("US sports", ["NFL", "NBA"], false)}
+              ${group("Entertainment", ["Reality TV"], true)}
             </div>
           </section>
         </main>
@@ -95,7 +96,7 @@ const screenshots = [
           <section class="two-column">
             <div>
               <h2>Custom protected terms</h2>
-              <p>Add one team, driver, event, or phrase per line.</p>
+              <p>Add one team, driver, show, event, or phrase per line.</p>
               <pre class="textarea">Coventry City
 British Grand Prix
 England cricket
@@ -125,7 +126,7 @@ my-highlights.example</pre>
               ${overlay("Matched event, driver, and result vocabulary")}
               <div class="video-inner">
                 <div class="video-thumb"></div>
-                <div><h2>Possible sports result hidden</h2><p>Reveal once when you are ready, or reveal all on this page.</p></div>
+                <div><h2>Possible spoiler hidden</h2><p>Reveal once when you are ready, or reveal all on this page.</p></div>
               </div>
             </div>
             ${video("Official highlights playlist", "Queue safe videos for later without browsing result-heavy recommendations.")}
@@ -184,7 +185,7 @@ function popup({ on, packs, expires }) {
     <button class="primary">${on ? "Turn off" : "Turn on"}</button>
     <section><h2>Protect until</h2><div class="row"><button>2h</button><button>Tonight</button><button>24h</button><button>Manual</button></div></section>
     <section><h2>Sensitivity</h2><select><option>Lockdown</option></select></section>
-    <section><h2>Protecting</h2><p class="pack-summary">${packs}</p><button>Change sports and settings</button></section>
+    <section><h2>Protecting</h2><p class="pack-summary">${packs}</p><button>Change topics and settings</button></section>
     <section><button>Reveal all on this page</button></section>
     <p class="small">${expires}</p>
   </aside>`;
@@ -203,7 +204,7 @@ function video(title, copy) {
 }
 
 function overlay(reason) {
-  return `<div class="despoilerze-overlay"><div class="despoilerze-card"><div class="despoilerze-title">Possible sports result hidden</div><div class="despoilerze-reason">${reason}</div><button>Reveal once</button><button>Reveal all on page</button></div></div>`;
+  return `<div class="despoilerze-overlay"><div class="despoilerze-card"><div class="despoilerze-title">Possible spoiler hidden</div><div class="despoilerze-reason">${reason}</div><button>Reveal once</button><button>Reveal all on page</button></div></div>`;
 }
 
 function group(title, items, checked) {

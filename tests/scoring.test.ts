@@ -12,6 +12,7 @@ import { englandCricketRulePack } from "../src/rules/cricket";
 import { wimbledonRulePack } from "../src/rules/tennis";
 import { sixNationsRulePack } from "../src/rules/rugby";
 import { nflRulePack } from "../src/rules/usSports";
+import { realityTvRulePack } from "../src/rules/entertainment";
 
 describe("scoreText", () => {
   it("flags a clear F1 winner headline", () => {
@@ -206,6 +207,45 @@ describe("scoreText", () => {
       "Chiefs beat Eagles in overtime to win Super Bowl",
       [nflRulePack],
       "balanced"
+    );
+
+    expect(result.shouldHide).toBe(true);
+  });
+
+  it("flags Reality TV elimination and reveal spoilers", () => {
+    const headlines = [
+      "The Traitors finalist revealed after dramatic round table",
+      "Love Island couple dumped after recoupling",
+      "Strictly star voted out after dance-off",
+      "Bake Off contestant crowned winner in emotional final"
+    ];
+
+    for (const headline of headlines) {
+      const result = scoreText(headline, [realityTvRulePack], "balanced");
+
+      expect(result.shouldHide, headline).toBe(true);
+      expect(result.packIds).toContain("reality-tv");
+    }
+  });
+
+  it("does not hide Reality TV safe context in balanced mode", () => {
+    const headlines = [
+      "The Apprentice 2026 line-up confirmed",
+      "What time is The Traitors on tonight?"
+    ];
+
+    for (const headline of headlines) {
+      const result = scoreText(headline, [realityTvRulePack], "balanced");
+
+      expect(result.shouldHide, headline).toBe(false);
+    }
+  });
+
+  it("does hide Reality TV safe context in lockdown mode", () => {
+    const result = scoreText(
+      "What time is The Traitors on tonight?",
+      [realityTvRulePack],
+      "lockdown"
     );
 
     expect(result.shouldHide).toBe(true);

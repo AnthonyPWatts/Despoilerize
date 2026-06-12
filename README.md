@@ -1,6 +1,6 @@
 # DeSpoilerize
 
-**DeSpoilerize** is a local-first browser extension that hides likely sports-result spoilers while you are in Catch-up Mode.
+**DeSpoilerize** is a local-first browser extension that hides likely catch-up spoilers while you are in Catch-up Mode.
 
 The first version focuses on my own personal highest-risk use case:
 
@@ -13,7 +13,7 @@ The first version focuses on my own personal highest-risk use case:
 - Expiry shortcuts: 2h, Tonight, 24h, Manual
 - Browser alarm support for timed Catch-up Mode expiry
 - Sensitivity modes: Gentle, Balanced, Lockdown
-- Grouped sport packs for motorsport, football, rugby, cricket, tennis, and US sports
+- Grouped protection packs for sport and entertainment topics
 - Custom protected terms
 - Trusted sites
 - Headline/card scanning
@@ -105,9 +105,9 @@ This version only runs on sites covered by the extension's host permissions:
 - BBC
 - YouTube
 
-## Sport Packs
+## Protection Packs
 
-The options page now supports grouped sport packs, including:
+The options page now supports grouped protection packs, including:
 
 - Motorsport: Formula 1, MotoGP
 - Football: general football, World Cup 2026, Premier League, Championship, Champions League, England football
@@ -115,3 +115,4 @@ The options page now supports grouped sport packs, including:
 - Cricket: cricket, England cricket, The Ashes
 - Tennis: tennis, Wimbledon, Grand Slams
 - US sports: NFL, NBA
+- Entertainment: Reality TV

@@ -88,7 +88,7 @@ function describeEnabledPacks(enabledPackIds: string[]): string {
   const packs = getAllRulePacks().filter(pack => enabledPackIds.includes(pack.id));
 
   if (packs.length === 0) {
-    return "No sport packs selected. Add packs in Settings or use custom terms.";
+    return "No protection packs selected. Add packs in Settings or use custom terms.";
   }
 
   if (packs.length <= 4) {
