@@ -2,7 +2,7 @@
 
 **DeSpoilerize** is a local-first browser extension that hides likely catch-up spoilers while you are in Catch-up Mode.
 
-The first version focuses on my own personal highest-risk use case:
+The project began with my own highest-risk use case:
 
 > Wake up, plan to watch F1 highlights later, scroll headlines, and accidentally see the result.
 
@@ -13,7 +13,7 @@ The first version focuses on my own personal highest-risk use case:
 - Expiry shortcuts: 2h, Tonight, 24h, Manual
 - Browser alarm support for timed Catch-up Mode expiry
 - Sensitivity modes: Gentle, Balanced, Lockdown
-- Grouped protection packs for sport and entertainment topics
+- Grouped protection packs for sport and Reality TV topics
 - Custom protected terms
 - Trusted sites
 - Headline/card scanning
@@ -21,6 +21,7 @@ The first version focuses on my own personal highest-risk use case:
 - Reveal once
 - Reveal all on current page
 - MutationObserver support for dynamic feeds
+- Friendlier hidden-card reason text
 
 ## Privacy stance
 
@@ -58,14 +59,17 @@ Then reload the extension from the browser's extensions page after each rebuild.
 
 ```bash
 npm test
+npm run typecheck
 ```
 
-For browser-level extension checks:
+For browser-level extension smoke checks:
 
 ```bash
 npx playwright install chromium
 npm run test:e2e
 ```
+
+The e2e smoke suite builds the extension and checks popup presets, options-page saving, and content-script hide/reveal/settings refresh behaviour in Chromium.
 
 ## Chrome Web Store package
 
@@ -81,9 +85,9 @@ Release packages and store listing assets are kept under [`Releases`](./Releases
 
 - Host permissions are currently scoped to Google Search, Google News, BBC, and YouTube.
 - The scanner is intentionally aggressive in Lockdown mode.
-- Site-specific adapters are basic; YouTube/BBC/Google will need refinement after real browsing tests.
+- Site reliability is improving through fixtures and e2e smoke tests, but YouTube/BBC/Google still need broader real browsing checks before v1.0.
 - It does not yet use official race calendars or event windows.
-- It does not yet provide a "safe route to highlights" workflow.
+- It does not yet provide a dedicated "safe route to highlights" workflow.
 
 ## Suggested manual test
 
@@ -91,10 +95,9 @@ Release packages and store listing assets are kept under [`Releases`](./Releases
 2. Turn on Catch-up Mode.
 3. Set sensitivity to Lockdown.
 4. Visit YouTube, Google News, BBC Sport, or Google Search.
-5. Search or browse for F1-related content.
-6. Confirm likely spoiler cards are blurred.
+5. Search or browse for protected topics such as F1, World Cup 2026, or Reality TV.
+6. Confirm likely spoiler cards are blurred while safe preview/how-to-watch pages remain usable in Balanced mode.
 7. Use Reveal once or Reveal all on page.
-
 
 ## Supported Sites
 

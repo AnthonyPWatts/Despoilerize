@@ -9,6 +9,7 @@ Chrome Web Store release assets for DeSpoilerize v0.4.0.
 - Expanded Reality TV spoiler and safe-context wording for UK-facing catch-up browsing.
 - Improved hidden-card reason text so users see friendlier spoiler explanations.
 - Added README guidance for custom protected terms beyond sport.
+- Added fixture-backed scanner coverage and active e2e smoke tests for popup, options, and content-script flows.
 
 ## Package
 
@@ -26,3 +27,9 @@ Chrome Web Store release assets for DeSpoilerize v0.4.0.
 
 - [Small promo tile](./promo/small-promo-tile.png)
 - [Marquee promo tile](./promo/marquee-promo-tile.png)
+
+## Verification
+
+- `npm test`
+- `npm run typecheck`
+- `npm run test:e2e`

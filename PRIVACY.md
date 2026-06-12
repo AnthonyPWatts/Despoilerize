@@ -1,6 +1,6 @@
 # Privacy Policy for DeSpoilerize
 
-DeSpoilerize is a local-first browser extension that hides likely sports-result spoilers while browsing.
+DeSpoilerize is a local-first browser extension that hides likely sport and entertainment spoilers while browsing.
 
 ## Data collection
 
@@ -8,7 +8,7 @@ DeSpoilerize does not collect, transmit, sell, rent, or share personal data.
 
 ## Page content
 
-DeSpoilerize scans visible page text locally in your browser to decide whether an item may contain a sports-result spoiler.
+DeSpoilerize scans visible page text locally in your browser to decide whether an item may contain a protected topic spoiler.
 
 Page content is not sent to any server.
 
@@ -17,7 +17,7 @@ Page content is not sent to any server.
 DeSpoilerize stores extension settings using the browser's extension storage. These settings may include:
 
 - whether Catch-up Mode is enabled
-- selected spoiler categories
+- selected protection packs
 - sensitivity level
 - custom protected terms
 - trusted sites
