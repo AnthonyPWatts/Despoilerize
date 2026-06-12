@@ -1,0 +1,125 @@
+const usefulContainerSelectors = [
+  "article",
+  "[role='article']",
+  "[data-testid*='post']",
+  "[data-testid*='card']",
+  "ytd-rich-item-renderer",
+  "ytd-rich-grid-media",
+  "ytd-video-renderer",
+  "ytd-compact-video-renderer",
+  "ytd-grid-video-renderer",
+  "ytd-reel-item-renderer",
+  "ytd-reel-video-renderer",
+  "yt-lockup-view-model",
+  "ytm-shorts-lockup-view-model",
+  "li",
+  ".card",
+  ".promo",
+  ".media",
+  ".gs-result",
+  ".g"
+];
+
+const googleSearchResultContainerSelectors = [
+  /*
+   * Modern Google Search result blocks. These sit high enough to include
+   * favicon/site line, heading, snippet, thumbnails, and sitelinks.
+   */
+  ".MjjYud",
+  ".hlcw0c",
+  ".Ww4FFb",
+  /*
+   * Older/fallback Google result containers. Keep these after the newer
+   * result wrappers so we do not stop at a small inner child first.
+   */
+  ".g",
+  ".rc"
+];
+
+const ignoredChromeSelectors = [
+  "nav",
+  "header",
+  "footer",
+  "form",
+  "button",
+  "select",
+  "textarea",
+  "input",
+  "[role='navigation']",
+  "[role='banner']",
+  "[role='search']",
+  "[role='menubar']",
+  "[role='menu']",
+  "[aria-label*='breadcrumb' i]",
+  "[class*='breadcrumb' i]",
+  "[class*='navbar' i]",
+  "[class*='nav-' i]",
+  "[class*='masthead' i]",
+  "#masthead",
+  "ytd-masthead",
+  "tp-yt-paper-dialog"
+];
+
+export function findBestContainer(element: HTMLElement): HTMLElement {
+  /*
+   * Google Search has very nested result cards. If we blur the nearest generic
+   * child, the headline/snippet siblings can remain visible. So, on Google
+   * search pages, deliberately climb to the whole search-result block first.
+   */
+  if (isGoogleSearchPage()) {
+    const googleContainer = findGoogleSearchResultContainer(element);
+    if (googleContainer) {
+      return googleContainer;
+    }
+  }
+
+  for (const selector of usefulContainerSelectors) {
+    const container = element.closest(selector);
+    if (container instanceof HTMLElement && !isSiteChrome(container)) {
+      return container;
+    }
+  }
+
+  return element;
+}
+
+export function findGoogleSearchResultContainer(element: HTMLElement): HTMLElement | null {
+  for (const selector of googleSearchResultContainerSelectors) {
+    const container = element.closest(selector);
+    if (container instanceof HTMLElement && isUsableGoogleResultContainer(container)) {
+      return container;
+    }
+  }
+
+  return null;
+}
+
+export function isSiteChrome(element: HTMLElement): boolean {
+  return ignoredChromeSelectors.some(selector => {
+    try {
+      return !!element.closest(selector);
+    } catch {
+      return false;
+    }
+  });
+}
+
+export function isGoogleSearchPage(): boolean {
+  return /(^|\.)google\./i.test(window.location.hostname) && window.location.pathname === "/search";
+}
+
+function isUsableGoogleResultContainer(container: HTMLElement): boolean {
+  if (isSiteChrome(container)) return false;
+
+  /*
+   * Avoid accidentally selecting huge page-level containers. A normal result
+   * card should be visible and not occupy most of the document.
+   */
+  const rect = container.getBoundingClientRect();
+  if (rect.width < 120 || rect.height < 40) return false;
+
+  const viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+  if (rect.height > viewportHeight * 0.8) return false;
+
+  return true;
+}
