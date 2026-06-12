@@ -48,6 +48,19 @@ const youtubeContainerSelectors = [
   "ytm-shorts-lockup-view-model"
 ];
 
+const bbcContainerSelectors = [
+  "[data-testid='liverpool-card']",
+  "[data-testid='edinburgh-card']",
+  "[data-testid='manchester-card']",
+  "[data-testid='promo']",
+  "[data-testid*='promo' i]",
+  "[data-testid$='-card' i]",
+  "[data-component='card']",
+  "[data-component*='card' i]",
+  "[class*='promo' i]",
+  "article"
+];
+
 const ignoredChromeSelectors = [
   "nav",
   "header",
@@ -92,6 +105,13 @@ export function findBestContainer(element: HTMLElement): HTMLElement {
     }
   }
 
+  if (isBBCPage()) {
+    const bbcContainer = findBBCContainer(element);
+    if (bbcContainer) {
+      return bbcContainer;
+    }
+  }
+
   for (const selector of usefulContainerSelectors) {
     const container = element.closest(selector);
     if (container instanceof HTMLElement && !isSiteChrome(container)) {
@@ -106,6 +126,17 @@ export function findYouTubeContainer(element: HTMLElement): HTMLElement | null {
   for (const selector of youtubeContainerSelectors) {
     const container = element.closest(selector);
     if (container instanceof HTMLElement && isUsableYouTubeContainer(container)) {
+      return container;
+    }
+  }
+
+  return null;
+}
+
+export function findBBCContainer(element: HTMLElement): HTMLElement | null {
+  for (const selector of bbcContainerSelectors) {
+    const container = element.closest(selector);
+    if (container instanceof HTMLElement && isUsableBBCContainer(container)) {
       return container;
     }
   }
@@ -142,6 +173,10 @@ export function isYouTubePage(): boolean {
   return /(^|\.)youtube\.com$/i.test(window.location.hostname);
 }
 
+export function isBBCPage(): boolean {
+  return /(^|\.)bbc\.(co\.uk|com)$/i.test(window.location.hostname);
+}
+
 function isUsableYouTubeContainer(container: HTMLElement): boolean {
   if (isSiteChrome(container)) return false;
 
@@ -151,6 +186,21 @@ function isUsableYouTubeContainer(container: HTMLElement): boolean {
 
   const viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
   if (viewportHeight > 0 && rect.height > viewportHeight * 0.8) return false;
+
+  return true;
+}
+
+function isUsableBBCContainer(container: HTMLElement): boolean {
+  if (isSiteChrome(container)) return false;
+  if (container === document.body || container === document.documentElement) return false;
+  if (container.getAttribute("role") === "main") return false;
+
+  const rect = container.getBoundingClientRect();
+  if (rect.width === 0 && rect.height === 0) return true;
+  if (rect.width < 120 || rect.height < 40) return false;
+
+  const viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+  if (viewportHeight > 0 && rect.height > viewportHeight * 0.65) return false;
 
   return true;
 }

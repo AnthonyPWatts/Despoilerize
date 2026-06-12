@@ -2,7 +2,7 @@
 // @vitest-environment-options {"url":"https://www.google.com/search?q=f1+results"}
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { findBestContainer, findGoogleSearchResultContainer, findYouTubeContainer, isSiteChrome } from "../src/content/containerSelection";
+import { findBBCContainer, findBestContainer, findGoogleSearchResultContainer, findYouTubeContainer, isSiteChrome } from "../src/content/containerSelection";
 
 function mockRect(width: number, height: number): DOMRect {
   return {
@@ -141,6 +141,23 @@ describe("container selection", () => {
     vi.spyOn(hugeResult, "getBoundingClientRect").mockReturnValue(mockRect(900, 900));
 
     expect(findGoogleSearchResultContainer(document.getElementById("headline")!)).toBeNull();
+  });
+
+  it("selects the outer BBC card around nested promo text", () => {
+    document.body.innerHTML = `
+      <div data-testid="liverpool-card" id="bbc-card">
+        <a href="/sport/football/world-cup-report">
+          <div data-testid="card-text-wrapper" id="text-wrapper">
+            <h2 id="headline">England through after dramatic stoppage-time winner</h2>
+            <p>Reaction and analysis from the World Cup group stage.</p>
+          </div>
+        </a>
+      </div>
+    `;
+
+    const headline = document.getElementById("headline")!;
+
+    expect(findBBCContainer(headline)?.id).toBe("bbc-card");
   });
 
   it("does not select site chrome as a useful container", () => {
