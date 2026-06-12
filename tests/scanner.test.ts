@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 // @vitest-environment-options {"url":"https://www.google.com/search?q=f1+results"}
 
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { scanDocument } from "../src/content/scanner";
 import { f1RulePack } from "../src/rules/f1";
@@ -19,39 +21,8 @@ function settings(sensitivity: Settings["catchUpMode"]["sensitivity"]): Settings
   };
 }
 
-function renderGoogleSportsModule(tabLabel: string, body: string): HTMLElement {
-  document.body.innerHTML = `
-    <main id="main">
-      <div id="sports-module" data-attrid="kc:/sports/formula_1">
-        <div role="tab">${tabLabel}</div>
-        <div>${body}</div>
-      </div>
-    </main>
-  `;
-
-  return document.getElementById("sports-module")!;
-}
-
-function renderGoogleTopStoriesCard(headline: string): HTMLElement {
-  document.body.innerHTML = `
-    <main id="main">
-      <section>
-        <h2>Top stories</h2>
-        <div class="story-card" id="spoiler-card">
-          <a href="https://example.com/live">
-            <span>The Guardian</span>
-            <span>${headline}</span>
-            <span>36 minutes ago</span>
-          </a>
-        </div>
-        <div class="story-card">
-          <a href="https://example.com/preview">World Cup opening ceremony timings and performers</a>
-        </div>
-      </section>
-    </main>
-  `;
-
-  return document.getElementById("spoiler-card")!;
+function loadFixture(path: string): void {
+  document.body.innerHTML = readFileSync(join(process.cwd(), "tests", "fixtures", "sites", path), "utf8");
 }
 
 describe("scanDocument Google sports modules", () => {
@@ -72,10 +43,8 @@ describe("scanDocument Google sports modules", () => {
   });
 
   it("blurs the whole Google sports module in balanced mode when result indicators appear", () => {
-    const module = renderGoogleSportsModule(
-      "Results",
-      "Formula 1 Monaco GP results: Norris P1, Verstappen P2, Hamilton P3"
-    );
+    loadFixture("google-search/sports-module-f1.html");
+    const module = document.getElementById("sports-module")!;
 
     scanDocument(settings("balanced"), [f1RulePack]);
 
@@ -83,10 +52,15 @@ describe("scanDocument Google sports modules", () => {
   });
 
   it("does not blur a Google race details module in balanced mode without result indicators", () => {
-    const module = renderGoogleSportsModule(
-      "Race details",
-      "Formula 1 Monaco GP race details, circuit length, lap count, and start time"
-    );
+    document.body.innerHTML = `
+      <main id="main">
+        <div id="sports-module" data-attrid="kc:/sports/formula_1">
+          <div role="tab">Race details</div>
+          <div>Formula 1 Monaco GP race details, circuit length, lap count, and start time</div>
+        </div>
+      </main>
+    `;
+    const module = document.getElementById("sports-module")!;
 
     scanDocument(settings("balanced"), [f1RulePack]);
 
@@ -94,10 +68,15 @@ describe("scanDocument Google sports modules", () => {
   });
 
   it("blurs the whole Google race details module in lockdown mode for a protected sport", () => {
-    const module = renderGoogleSportsModule(
-      "Race details",
-      "Formula 1 Monaco GP race details, circuit length, lap count, and start time"
-    );
+    document.body.innerHTML = `
+      <main id="main">
+        <div id="sports-module" data-attrid="kc:/sports/formula_1">
+          <div role="tab">Race details</div>
+          <div>Formula 1 Monaco GP race details, circuit length, lap count, and start time</div>
+        </div>
+      </main>
+    `;
+    const module = document.getElementById("sports-module")!;
 
     scanDocument(settings("lockdown"), [f1RulePack]);
 
@@ -123,10 +102,13 @@ describe("scanDocument Google Top stories", () => {
   });
 
   it("blurs a Google Top stories card when a protected scoreline appears in a link", () => {
-    const card = renderGoogleTopStoriesCard("Mexico 2-0 South Africa: World Cup 2026 opening match live reaction");
+    loadFixture("google-search/top-stories-world-cup.html");
+    const card = document.getElementById("spoiler-card")!;
+    const safeCard = document.getElementById("safe-card")!;
 
     scanDocument(settings("balanced"), [worldCup2026RulePack]);
 
     expect(card.getAttribute("data-despoilerze-hidden")).toBe("true");
+    expect(safeCard.getAttribute("data-despoilerze-hidden")).toBeNull();
   });
 });
