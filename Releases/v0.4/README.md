@@ -1,6 +1,6 @@
 # DeSpoilerize v0.4
 
-Chrome Web Store release assets for DeSpoilerize v0.4.0.
+Chrome Web Store release assets for DeSpoilerize v0.4.x.
 
 ## Highlights
 
@@ -10,9 +10,11 @@ Chrome Web Store release assets for DeSpoilerize v0.4.0.
 - Improved hidden-card reason text so users see friendlier spoiler explanations.
 - Added README guidance for custom protected terms beyond sport.
 - Added fixture-backed scanner coverage and active e2e smoke tests for popup, options, and content-script flows.
+- Added container-selection helper coverage for Google, YouTube, and site-chrome card selection.
 
 ## Package
 
+- [despoilerize-v0.4.1-chrome-web-store.zip](./despoilerize-v0.4.1-chrome-web-store.zip)
 - [despoilerize-v0.4.0-chrome-web-store.zip](./despoilerize-v0.4.0-chrome-web-store.zip)
 
 ## Screenshots

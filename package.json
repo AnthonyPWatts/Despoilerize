@@ -1,6 +1,6 @@
 {
   "name": "despoilerize",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "private": true,
   "description": "Catch-up mode for hiding accidental sport and entertainment spoilers while browsing.",
   "type": "module",
