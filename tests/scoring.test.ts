@@ -217,7 +217,10 @@ describe("scoreText", () => {
       "The Traitors finalist revealed after dramatic round table",
       "Love Island couple dumped after recoupling",
       "Strictly star voted out after dance-off",
-      "Bake Off contestant crowned winner in emotional final"
+      "Bake Off contestant crowned winner in emotional final",
+      "Big Brother favourite booted after shock exit",
+      "I'm a Celebrity contestant out of the competition",
+      "The Apprentice candidate loses place after boardroom backlash"
     ];
 
     for (const headline of headlines) {
@@ -231,7 +234,9 @@ describe("scoreText", () => {
   it("does not hide Reality TV safe context in balanced mode", () => {
     const headlines = [
       "The Apprentice 2026 line-up confirmed",
-      "What time is The Traitors on tonight?"
+      "What time is The Traitors on tonight?",
+      "Where to watch Love Island streaming episodes",
+      "Big Brother start date and channel confirmed"
     ];
 
     for (const headline of headlines) {

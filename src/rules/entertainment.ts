@@ -28,6 +28,7 @@ const realityTvSpoilerTerms = [
   "wins",
   "won",
   "crowned",
+  "crowned winner",
   "champion",
   "finalist",
   "finalists",
@@ -39,11 +40,17 @@ const realityTvSpoilerTerms = [
   "voted out",
   "dumped",
   "evicted",
+  "axed",
+  "booted",
   "sent home",
+  "leaves",
+  "exit",
+  "shock exit",
   "left the show",
   "quit",
   "walked out",
   "revealed",
+  "winner revealed",
   "unmasked",
   "traitor revealed",
   "faithful",
@@ -56,7 +63,13 @@ const realityTvSpoilerTerms = [
   "dance-off",
   "star baker",
   "handshake",
-  "fired"
+  "fired",
+  "wins final",
+  "loses place",
+  "survives",
+  "safe",
+  "in tears",
+  "backlash"
 ];
 
 const realityTvSafeTerms = [
@@ -70,8 +83,20 @@ const realityTvSafeTerms = [
   "lineup",
   "cast",
   "contestants",
+  "start time",
   "start date",
+  "release date",
+  "episode",
+  "episodes",
   "episode guide",
+  "schedule",
+  "where to watch",
+  "stream",
+  "streaming",
+  "channel",
+  "returns",
+  "renewed",
+  "cancelled",
   "trailer",
   "odds"
 ];
@@ -87,6 +112,7 @@ export const realityTvRulePack: RulePack = {
   regexes: [
     "\\bvoted\\s+(?:off|out)\\b",
     "\\bleft\\s+the\\s+show\\b",
-    "\\btraitor\\s+revealed\\b"
+    "\\btraitor\\s+revealed\\b",
+    "\\bout\\s+of\\s+(?:the\\s+)?(?:show|competition|final|finale)\\b"
   ]
 };
