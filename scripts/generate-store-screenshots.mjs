@@ -267,12 +267,12 @@ function styles() {
     .despoilerze-reason { font-size: 12px; line-height: 1.35; opacity: 0.85; margin-bottom: 8px; }
     .despoilerze-card button { appearance: none; border: 1px solid rgba(255,255,255,0.35); border-radius: 5px; padding: 4px 8px; background: rgba(255,255,255,0.12); color: #fff; cursor: pointer; font-size: 12px; margin-right: 6px; }
 
-    .settings-page { max-width: 960px; margin: 0 auto; padding: 26px 28px; }
+    .settings-page { max-width: 1120px; margin: 0 auto; padding: 22px 28px; }
     .settings-section h2, .lower h2 { font-size: 22px; margin-bottom: 6px; }
     .save-panel { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 16px 0; padding: 10px 12px; border: 1px solid #d4c47a; border-radius: 8px; background: #fff8d8; }
     .save-panel button, .group-actions button { background: #fff; color: #1f1f1f; border: 1px solid #999; }
-    .sports-groups { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-    .sports-group { border: 1px solid #ddd; border-radius: 10px; background: #fff; padding: 14px; min-height: 178px; }
+    .sports-groups { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .sports-group { border: 1px solid #ddd; border-radius: 10px; background: #fff; padding: 12px; min-height: 164px; }
     .group-actions { display: flex; gap: 6px; margin-bottom: 8px; }
     .group-actions button { padding: 4px 8px; font-size: 12px; }
     .sports-pack-list { display: flex; flex-direction: column; gap: 7px; }

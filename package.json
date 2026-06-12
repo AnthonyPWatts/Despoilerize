@@ -1,8 +1,8 @@
 {
   "name": "despoilerize",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
-  "description": "Catch-up mode for hiding accidental sports result spoilers while browsing.",
+  "description": "Catch-up mode for hiding accidental sport and entertainment spoilers while browsing.",
   "type": "module",
   "scripts": {
     "clean": "rimraf dist",

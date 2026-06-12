@@ -73,7 +73,7 @@ npm run test:e2e
 npm run package:chrome
 ```
 
-This builds the extension and creates `Releases/v0.3/despoilerize-v0.3.0-chrome-web-store.zip` with `manifest.json` at the archive root.
+This builds the extension and creates `Releases/v0.4/despoilerize-v0.4.0-chrome-web-store.zip` with `manifest.json` at the archive root.
 
 Release packages and store listing assets are kept under [`Releases`](./Releases/).
 
