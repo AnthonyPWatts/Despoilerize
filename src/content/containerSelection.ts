@@ -36,6 +36,18 @@ const googleSearchResultContainerSelectors = [
   ".rc"
 ];
 
+const youtubeContainerSelectors = [
+  "ytd-video-renderer",
+  "ytd-rich-item-renderer",
+  "ytd-rich-grid-media",
+  "ytd-compact-video-renderer",
+  "ytd-grid-video-renderer",
+  "ytd-reel-item-renderer",
+  "ytd-reel-video-renderer",
+  "yt-lockup-view-model",
+  "ytm-shorts-lockup-view-model"
+];
+
 const ignoredChromeSelectors = [
   "nav",
   "header",
@@ -73,6 +85,13 @@ export function findBestContainer(element: HTMLElement): HTMLElement {
     }
   }
 
+  if (isYouTubePage()) {
+    const youtubeContainer = findYouTubeContainer(element);
+    if (youtubeContainer) {
+      return youtubeContainer;
+    }
+  }
+
   for (const selector of usefulContainerSelectors) {
     const container = element.closest(selector);
     if (container instanceof HTMLElement && !isSiteChrome(container)) {
@@ -81,6 +100,17 @@ export function findBestContainer(element: HTMLElement): HTMLElement {
   }
 
   return element;
+}
+
+export function findYouTubeContainer(element: HTMLElement): HTMLElement | null {
+  for (const selector of youtubeContainerSelectors) {
+    const container = element.closest(selector);
+    if (container instanceof HTMLElement && isUsableYouTubeContainer(container)) {
+      return container;
+    }
+  }
+
+  return null;
 }
 
 export function findGoogleSearchResultContainer(element: HTMLElement): HTMLElement | null {
@@ -106,6 +136,23 @@ export function isSiteChrome(element: HTMLElement): boolean {
 
 export function isGoogleSearchPage(): boolean {
   return /(^|\.)google\./i.test(window.location.hostname) && window.location.pathname === "/search";
+}
+
+export function isYouTubePage(): boolean {
+  return /(^|\.)youtube\.com$/i.test(window.location.hostname);
+}
+
+function isUsableYouTubeContainer(container: HTMLElement): boolean {
+  if (isSiteChrome(container)) return false;
+
+  const rect = container.getBoundingClientRect();
+  if (rect.width === 0 && rect.height === 0) return true;
+  if (rect.width < 120 || rect.height < 40) return false;
+
+  const viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+  if (viewportHeight > 0 && rect.height > viewportHeight * 0.8) return false;
+
+  return true;
 }
 
 function isUsableGoogleResultContainer(container: HTMLElement): boolean {

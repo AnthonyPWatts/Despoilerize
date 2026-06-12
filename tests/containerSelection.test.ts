@@ -2,7 +2,7 @@
 // @vitest-environment-options {"url":"https://www.google.com/search?q=f1+results"}
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { findBestContainer, findGoogleSearchResultContainer, isSiteChrome } from "../src/content/containerSelection";
+import { findBestContainer, findGoogleSearchResultContainer, findYouTubeContainer, isSiteChrome } from "../src/content/containerSelection";
 
 function mockRect(width: number, height: number): DOMRect {
   return {
@@ -46,6 +46,73 @@ describe("container selection", () => {
     const title = document.getElementById("video-title")!;
 
     expect(findBestContainer(title).id).toBe("video");
+  });
+
+  it("prefers a YouTube rich item over its inner rich grid media", () => {
+    document.body.innerHTML = `
+      <ytd-rich-item-renderer id="rich-item">
+        <ytd-rich-grid-media id="grid-media">
+          <a id="video-title-link" href="/watch?v=spoiler">Hamilton P3 after Verstappen DNF</a>
+        </ytd-rich-grid-media>
+      </ytd-rich-item-renderer>
+    `;
+
+    const title = document.getElementById("video-title-link")!;
+
+    expect(findYouTubeContainer(title)?.id).toBe("rich-item");
+    expect(findBestContainer(title).id).toBe("rich-item");
+  });
+
+  it("selects a YouTube compact recommendation item", () => {
+    document.body.innerHTML = `
+      <ytd-compact-video-renderer id="compact-video">
+        <a id="video-title" href="/watch?v=spoiler">Norris wins chaotic Monaco GP</a>
+      </ytd-compact-video-renderer>
+    `;
+
+    const title = document.getElementById("video-title")!;
+
+    expect(findYouTubeContainer(title)?.id).toBe("compact-video");
+  });
+
+  it("selects a YouTube Shorts reel item", () => {
+    document.body.innerHTML = `
+      <ytd-reel-item-renderer id="short">
+        <a id="video-title" href="/shorts/spoiler">Norris wins chaotic Monaco GP</a>
+      </ytd-reel-item-renderer>
+    `;
+
+    const title = document.getElementById("video-title")!;
+
+    expect(findYouTubeContainer(title)?.id).toBe("short");
+  });
+
+  it("rejects YouTube masthead chrome", () => {
+    document.body.innerHTML = `
+      <ytd-masthead id="masthead">
+        <ytd-video-renderer id="chrome-video">
+          <a id="video-title" href="/watch?v=spoiler">Norris wins chaotic Monaco GP</a>
+        </ytd-video-renderer>
+      </ytd-masthead>
+    `;
+
+    const title = document.getElementById("video-title")!;
+
+    expect(isSiteChrome(title)).toBe(true);
+    expect(findYouTubeContainer(title)).toBeNull();
+  });
+
+  it("rejects oversized YouTube containers", () => {
+    document.body.innerHTML = `
+      <ytd-video-renderer id="huge-video">
+        <a id="video-title" href="/watch?v=spoiler">Norris wins chaotic Monaco GP</a>
+      </ytd-video-renderer>
+    `;
+
+    const hugeVideo = document.getElementById("huge-video")!;
+    vi.spyOn(hugeVideo, "getBoundingClientRect").mockReturnValue(mockRect(900, 900));
+
+    expect(findYouTubeContainer(document.getElementById("video-title")!)).toBeNull();
   });
 
   it("prefers the whole Google result wrapper over a nested generic card", () => {

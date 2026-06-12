@@ -50,4 +50,32 @@ describe("scanDocument YouTube fixtures", () => {
     expect(document.getElementById("safe-video")?.getAttribute("data-despoilerze-hidden")).toBeNull();
     expect(document.getElementById("unrelated-video")?.getAttribute("data-despoilerze-hidden")).toBeNull();
   });
+
+  it("hides a spoilery YouTube home grid item at the outer rich item", () => {
+    loadFixture("youtube/home-grid-f1.html");
+
+    scanDocument(settings("balanced"), [f1RulePack]);
+
+    expect(document.getElementById("spoiler-rich-item")?.getAttribute("data-despoilerze-hidden")).toBe("true");
+    expect(document.querySelector("ytd-rich-grid-media")?.getAttribute("data-despoilerze-hidden")).toBeNull();
+    expect(document.getElementById("safe-rich-item")?.getAttribute("data-despoilerze-hidden")).toBeNull();
+  });
+
+  it("hides a spoilery YouTube watch recommendation at the compact renderer", () => {
+    loadFixture("youtube/watch-recommendations-f1.html");
+
+    scanDocument(settings("balanced"), [f1RulePack]);
+
+    expect(document.getElementById("spoiler-compact-video")?.getAttribute("data-despoilerze-hidden")).toBe("true");
+    expect(document.getElementById("safe-compact-video")?.getAttribute("data-despoilerze-hidden")).toBeNull();
+  });
+
+  it("hides a spoilery YouTube Shorts result at the reel item", () => {
+    loadFixture("youtube/shorts-f1.html");
+
+    scanDocument(settings("balanced"), [f1RulePack]);
+
+    expect(document.getElementById("spoiler-short")?.getAttribute("data-despoilerze-hidden")).toBe("true");
+    expect(document.getElementById("safe-short")?.getAttribute("data-despoilerze-hidden")).toBeNull();
+  });
 });
