@@ -97,10 +97,11 @@ const screenshots = [
             <div>
               <h2>Custom protected terms</h2>
               <p>Add one team, driver, show, event, or phrase per line.</p>
-              <pre class="textarea">Coventry City
+              <pre class="textarea">The Traitors
+Love Island final
+Strictly dance-off
 British Grand Prix
-England cricket
-Wimbledon final</pre>
+Current contestant names</pre>
             </div>
             <div>
               <h2>Trusted sites</h2>
