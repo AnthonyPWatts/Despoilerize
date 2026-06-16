@@ -148,6 +148,41 @@ test("content script hides, reveals, and responds to settings changes", async ({
   }
 });
 
+test("content script runs on The Guardian and hides Guardian story cards", async ({ browserName, playwright }) => {
+  test.skip(browserName !== "chromium", "Chrome extensions can only be loaded in Chromium.");
+
+  const harness = await launchExtension(playwright);
+
+  try {
+    await writeSettings(harness.extensionPage, {
+      catchUpMode: {
+        enabled: true,
+        expiresAtUtc: new Date(Date.now() + 60_000).toISOString(),
+        sensitivity: "balanced"
+      },
+      enabledPacks: ["world-cup-2026"],
+      customTerms: [],
+      trustedSites: []
+    });
+
+    const page = await harness.context.newPage();
+    await page.route("https://www.theguardian.com/football", route => {
+      route.fulfill({
+        contentType: "text/html",
+        body: guardianFixtureHtml()
+      });
+    });
+
+    await page.goto("https://www.theguardian.com/football", { waitUntil: "domcontentloaded" });
+
+    await expect(page.locator("#guardian-spoiler[data-despoilerze-hidden='true']")).toHaveCount(1);
+    await expect(page.locator("#guardian-safe[data-despoilerze-hidden='true']")).toHaveCount(0);
+    await expect(page.getByText("Possible spoiler hidden")).toBeVisible();
+  } finally {
+    await harness.context.close();
+  }
+});
+
 async function launchExtension(playwright: PlaywrightApi): Promise<ExtensionHarness> {
   const userDataDir = await mkdtemp(join(tmpdir(), "despoilerize-e2e-"));
   const context = await playwright.chromium.launchPersistentContext(userDataDir, {
@@ -231,6 +266,35 @@ function bbcFixtureHtml(): string {
             <h2>England World Cup fixture preview and team news</h2>
             <p>Everything to know before kick-off.</p>
           </article>
+        </main>
+      </body>
+    </html>`;
+}
+
+function guardianFixtureHtml(): string {
+  return `<!doctype html>
+    <html>
+      <head>
+        <title>Guardian fixture</title>
+        <style>
+          [data-component='card'], li { display: block; width: 520px; min-height: 96px; margin: 16px; }
+        </style>
+      </head>
+      <body>
+        <main id="maincontent">
+          <section data-component="front-container">
+            <div data-component="card" data-link-name="article" id="guardian-spoiler">
+              <a data-link-name="article" href="/football/2026/jun/16/england-through-after-dramatic-stoppage-time-winner">
+                <h3>England through after dramatic stoppage-time winner</h3>
+                <p>Reaction and analysis from the World Cup group stage.</p>
+              </a>
+            </div>
+            <div data-component="card" data-link-name="article" id="guardian-safe">
+              <a data-link-name="article" href="/football/2026/jun/16/world-cup-preview">
+                <h3>World Cup fixture preview and team news</h3>
+              </a>
+            </div>
+          </section>
         </main>
       </body>
     </html>`;

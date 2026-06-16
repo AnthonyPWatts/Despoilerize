@@ -10,6 +10,7 @@
     "https://www.bbc.co.uk/*",
     "https://www.bbc.com/*",
     "https://www.youtube.com/*",
+    "https://www.theguardian.com/*",
     "https://news.google.com/*"
   ],
   "background": {
@@ -29,6 +30,7 @@
       "https://www.bbc.co.uk/*",
       "https://www.bbc.com/*",
       "https://www.youtube.com/*",
+      "https://www.theguardian.com/*",
       "https://news.google.com/*"
     ],
     "js": ["assets/contentScript.js"],

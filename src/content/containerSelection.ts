@@ -61,6 +61,21 @@ const bbcContainerSelectors = [
   "article"
 ];
 
+const guardianContainerSelectors = [
+  "article",
+  "[role='article']",
+  "[data-component*='card' i]",
+  "[data-component*='trail' i]",
+  "[class*='fc-item' i]",
+  "[class*='content-card' i]",
+  "[class*='trail' i]",
+  "[class*='card' i]",
+  "li",
+  "[data-link-name*='article' i]",
+  "[data-link-name*='card' i]",
+  "[data-link-name*='trail' i]"
+];
+
 const ignoredChromeSelectors = [
   "nav",
   "header",
@@ -112,6 +127,13 @@ export function findBestContainer(element: HTMLElement): HTMLElement {
     }
   }
 
+  if (isGuardianPage()) {
+    const guardianContainer = findGuardianContainer(element);
+    if (guardianContainer) {
+      return guardianContainer;
+    }
+  }
+
   for (const selector of usefulContainerSelectors) {
     const container = element.closest(selector);
     if (container instanceof HTMLElement && !isSiteChrome(container)) {
@@ -142,6 +164,17 @@ export function findBBCContainer(element: HTMLElement): HTMLElement | null {
   }
 
   return null;
+}
+
+export function findGuardianContainer(element: HTMLElement): HTMLElement | null {
+  for (const selector of guardianContainerSelectors) {
+    const container = element.closest(selector);
+    if (container instanceof HTMLElement && isUsableGuardianContainer(container)) {
+      return container;
+    }
+  }
+
+  return findGuardianLinkContainer(element);
 }
 
 export function findGoogleSearchResultContainer(element: HTMLElement): HTMLElement | null {
@@ -177,6 +210,10 @@ export function isBBCPage(): boolean {
   return /(^|\.)bbc\.(co\.uk|com)$/i.test(window.location.hostname);
 }
 
+export function isGuardianPage(): boolean {
+  return /(^|\.)theguardian\.com$/i.test(window.location.hostname);
+}
+
 function isUsableYouTubeContainer(container: HTMLElement): boolean {
   if (isSiteChrome(container)) return false;
 
@@ -201,6 +238,44 @@ function isUsableBBCContainer(container: HTMLElement): boolean {
 
   const viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
   if (viewportHeight > 0 && rect.height > viewportHeight * 0.65) return false;
+
+  return true;
+}
+
+function findGuardianLinkContainer(element: HTMLElement): HTMLElement | null {
+  const link = element.closest("a[href]");
+  let current = link?.parentElement ?? element.parentElement;
+
+  for (let depth = 0; current && depth < 6; depth += 1) {
+    if (isUsableGuardianContainer(current)) {
+      return current;
+    }
+
+    if (current === document.body || current === document.documentElement || current.getAttribute("role") === "main") {
+      break;
+    }
+
+    current = current.parentElement;
+  }
+
+  return null;
+}
+
+function isUsableGuardianContainer(container: HTMLElement): boolean {
+  if (isSiteChrome(container)) return false;
+  if (container === document.body || container === document.documentElement) return false;
+  if (container.getAttribute("role") === "main") return false;
+  if (container.matches("section, [data-component*='container' i]") && container.querySelectorAll("a[href]").length > 1) return false;
+
+  const text = (container.innerText ?? container.textContent ?? "").replace(/\s+/g, " ").trim();
+  if (text.length < 8 || text.length > 1400) return false;
+
+  const rect = container.getBoundingClientRect();
+  if (rect.width === 0 && rect.height === 0) return true;
+  if (rect.width < 100 || rect.height < 24) return false;
+
+  const viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+  if (viewportHeight > 0 && rect.height > viewportHeight * 0.7) return false;
 
   return true;
 }

@@ -1,7 +1,7 @@
 import type { RulePack, Settings } from "../shared/types";
 import { scoreText } from "../rules/scoring";
 import { isCatchUpModeActive } from "../shared/storage";
-import { findBestContainer, isGoogleSearchPage, isSiteChrome } from "./containerSelection";
+import { findBestContainer, isGoogleSearchPage, isGuardianPage, isSiteChrome } from "./containerSelection";
 import { isAlreadyHidden, isProcessed, markProcessed, obfuscate } from "./obfuscator";
 
 const candidateSelectors = [
@@ -34,6 +34,7 @@ export function scanDocument(settings: Settings, rulePacks: RulePack[], root: Pa
 
   scanGoogleSportsModules(settings, rulePacks, root);
   scanGoogleSpoilerLinks(settings, rulePacks, root);
+  scanGuardianSpoilerLinks(settings, rulePacks, root);
 
   const candidates = findCandidates(root);
 
@@ -202,6 +203,54 @@ function scanGoogleSpoilerLinks(settings: Settings, rulePacks: RulePack[], root:
 
     markProcessed(element);
   });
+}
+
+function scanGuardianSpoilerLinks(settings: Settings, rulePacks: RulePack[], root: ParentNode): void {
+  if (!isGuardianPage()) return;
+
+  root.querySelectorAll?.(guardianStoryLinkSelectors.join(", ")).forEach(element => {
+    if (!(element instanceof HTMLElement)) return;
+    if (isProcessed(element) || isAlreadyHidden(element) || isSiteChrome(element)) return;
+    if (element.closest("[data-despoilerze-hidden='true'], [data-despoilerze-shell='true'], [data-despoilerze-revealed='true']")) return;
+    if (!isVisible(element)) return;
+
+    const text = extractText(element);
+    if (!isPlausibleGuardianLinkText(text)) {
+      markProcessed(element);
+      return;
+    }
+
+    const risk = scoreText(
+      text,
+      rulePacks,
+      settings.catchUpMode.sensitivity,
+      settings.customTerms
+    );
+
+    if (risk.shouldHide) {
+      const container = findBestContainer(element);
+
+      if (!container.closest("[data-despoilerze-hidden='true'], [data-despoilerze-shell='true'], [data-despoilerze-revealed='true']") && !isSiteChrome(container)) {
+        obfuscate(container, risk);
+      }
+    }
+
+    markProcessed(element);
+  });
+}
+
+const guardianStoryLinkSelectors = [
+  "a[data-link-name*='article' i]",
+  "a[data-link-name*='card' i]",
+  "a[data-link-name*='trail' i]",
+  "a[href^='/'][href*='/20']",
+  "a[href^='https://www.theguardian.com/'][href*='/20']"
+];
+
+function isPlausibleGuardianLinkText(text: string): boolean {
+  if (!isPlausibleHeadlineText(text)) return false;
+  if (text.length > 700) return false;
+  return text.split(/\s+/).length >= 3;
 }
 
 function findGoogleTopStoriesContainer(element: HTMLElement): HTMLElement | null {

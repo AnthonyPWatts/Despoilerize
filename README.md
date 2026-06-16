@@ -83,9 +83,9 @@ Release packages and store listing assets are kept under [`Releases`](./Releases
 
 ## Current limitations
 
-- Host permissions are currently scoped to Google Search, Google News, BBC, and YouTube.
+- Host permissions are currently scoped to Google Search, Google News, BBC, YouTube, and The Guardian.
 - The scanner is intentionally aggressive in Lockdown mode.
-- Site reliability is improving through fixtures and e2e smoke tests, but YouTube/BBC/Google still need broader real browsing checks before v1.0.
+- Site reliability is improving through fixtures and e2e smoke tests, but YouTube/BBC/Guardian/Google still need broader real browsing checks before v1.0.
 - It does not yet use official race calendars or event windows.
 - It does not yet provide a dedicated "safe route to highlights" workflow.
 
@@ -94,7 +94,7 @@ Release packages and store listing assets are kept under [`Releases`](./Releases
 1. Build and load the extension.
 2. Turn on Catch-up Mode.
 3. Set sensitivity to Lockdown.
-4. Visit YouTube, Google News, BBC Sport, or Google Search.
+4. Visit YouTube, Google News, BBC Sport, The Guardian, or Google Search.
 5. Search or browse for protected topics such as F1, World Cup 2026, or Reality TV.
 6. Confirm likely spoiler cards are blurred while safe preview/how-to-watch pages remain usable in Balanced mode.
 7. Use Reveal once or Reveal all on page.
@@ -106,6 +106,7 @@ This version only runs on sites covered by the extension's host permissions:
 - Google Search
 - Google News
 - BBC
+- The Guardian
 - YouTube
 
 ## Protection Packs
