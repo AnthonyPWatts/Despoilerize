@@ -11,9 +11,11 @@ Chrome Web Store release assets for DeSpoilerize v0.4.x.
 - Added README guidance for custom protected terms beyond sport.
 - Added fixture-backed scanner coverage and active e2e smoke tests for popup, options, and content-script flows.
 - Added container-selection helper coverage for Google, YouTube, and site-chrome card selection.
+- Upgraded Vite to 8.0.16 to remove the vulnerable esbuild build dependency reported by npm audit.
 
 ## Package
 
+- [despoilerize-v0.4.3-chrome-web-store.zip](./despoilerize-v0.4.3-chrome-web-store.zip)
 - [despoilerize-v0.4.2-chrome-web-store.zip](./despoilerize-v0.4.2-chrome-web-store.zip)
 - [despoilerize-v0.4.1-chrome-web-store.zip](./despoilerize-v0.4.1-chrome-web-store.zip)
 - [despoilerize-v0.4.0-chrome-web-store.zip](./despoilerize-v0.4.0-chrome-web-store.zip)

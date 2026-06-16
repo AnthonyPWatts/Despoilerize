@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "DeSpoilerize",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "Catch-up mode for hiding accidental sport and entertainment spoilers while browsing.",
   "permissions": ["storage", "alarms"],
   "host_permissions": [
