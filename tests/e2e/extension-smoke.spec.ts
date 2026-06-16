@@ -121,6 +121,17 @@ test("content script hides, reveals, and responds to settings changes", async ({
 
     await expect(page.locator("#late-spoiler[data-despoilerze-hidden='true']")).toHaveCount(1);
 
+    const popup = await harness.context.newPage();
+    await popup.goto(extensionUrl(harness.extensionId, "src/popup/index.html"));
+    await expect(popup.locator("#status")).toHaveText("Catch-up Mode: ON");
+
+    await page.bringToFront();
+    await popup.evaluate(() => {
+      document.getElementById("reveal-all")?.click();
+    });
+
+    await expect(page.locator("[data-despoilerze-hidden='true']")).toHaveCount(0);
+
     await writeSettings(harness.extensionPage, {
       catchUpMode: {
         enabled: false,
