@@ -58,6 +58,7 @@ test("saves pack, custom term, and trusted site changes from options", async ({ 
     const options = await harness.context.newPage();
     await options.goto(extensionUrl(harness.extensionId, "src/options/index.html"));
 
+    await options.getByRole("button", { name: /Entertainment/ }).click();
     const realityTvCheckbox = options.locator("input[data-pack-id='reality-tv']");
     await expect(realityTvCheckbox).toBeVisible();
     await realityTvCheckbox.check();

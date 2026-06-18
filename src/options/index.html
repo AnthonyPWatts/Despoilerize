@@ -7,46 +7,120 @@
     <script type="module" src="./main.ts"></script>
   </head>
   <body>
-    <main>
-      <h1>DeSpoilerize Settings</h1>
+    <main class="settings-shell">
+      <header class="page-header">
+        <div>
+          <h1>DeSpoilerize Settings</h1>
+          <p>Choose what you want protected and how DeSpoilerize works for you.</p>
+        </div>
+        <div class="save-stack">
+          <button id="save-top" class="primary" type="button">
+            <img src="/public/settings-icons/save-settings.svg" alt="" aria-hidden="true" />
+            <span>Save settings</span>
+          </button>
+          <span id="save-top-status" class="saved-message" aria-live="polite">Changes are saved automatically</span>
+        </div>
+      </header>
 
-      <section>
-        <h2>Topics to protect</h2>
-        <p>Select the sports, shows, teams, leagues, and events you want DeSpoilerize to protect while Catch-up Mode is enabled.</p>
+      <section class="panel topics-panel" aria-labelledby="topics-title">
+        <header class="section-header">
+          <span class="section-icon purple" aria-hidden="true">
+            <img src="/public/settings-icons/topics-to-protect.svg" alt="" />
+          </span>
+          <div>
+            <h2 id="topics-title">Topics to protect</h2>
+            <p>Select the sports, shows, teams, leagues, and events you want DeSpoilerize to protect while Catch-up Mode is enabled.</p>
+          </div>
+          <button id="expand-all" class="secondary" type="button">Expand all</button>
+        </header>
 
-        <div class="save-panel" role="note" aria-label="Settings save reminder">
-          <p class="save-reminder">Changes will not persist unless you save them.</p>
-          <div class="save-actions">
-            <span id="save-top-status" class="saved-message" aria-live="polite"></span>
-            <button id="save-top" type="button">Save settings</button>
+        <div id="sports-groups" class="topic-grid"></div>
+      </section>
+
+      <section class="panel text-panel" aria-labelledby="custom-terms-title">
+        <header class="section-header compact">
+          <span class="section-icon purple" aria-hidden="true">
+            <img src="/public/settings-icons/custom-protected-terms.svg" alt="" />
+          </span>
+          <div>
+            <h2 id="custom-terms-title">Custom protected terms</h2>
+            <p>Add one team, driver, show, event, or phrase per line.</p>
+          </div>
+          <span id="custom-terms-count" class="count-pill">0 terms</span>
+        </header>
+        <textarea id="custom-terms" placeholder="e.g. My team, My driver, My show"></textarea>
+        <p class="helper">These will be hidden wherever possible across supported sites.</p>
+      </section>
+
+      <section class="panel text-panel" aria-labelledby="trusted-sites-title">
+        <header class="section-header compact">
+          <span class="section-icon green" aria-hidden="true">
+            <img src="/public/settings-icons/trusted-sites.svg" alt="" />
+          </span>
+          <div>
+            <h2 id="trusted-sites-title">Trusted sites</h2>
+            <p>DeSpoilerize will not hide anything on these domains. Add one domain per line.</p>
+          </div>
+          <span id="trusted-sites-count" class="count-pill">0 sites</span>
+        </header>
+        <textarea id="trusted-sites" placeholder="e.g. example.com"></textarea>
+        <p class="helper">Use this for sites you always trust, such as news sources or your own sites.</p>
+      </section>
+
+      <section class="panel actions-panel" aria-labelledby="actions-title">
+        <header class="section-header compact">
+          <span class="section-icon purple" aria-hidden="true">
+            <img src="/public/settings-icons/global-actions.svg" alt="" />
+          </span>
+          <div>
+            <h2 id="actions-title">Global actions</h2>
+            <p>Quick settings for your protection setup.</p>
+          </div>
+        </header>
+        <div class="action-grid">
+          <button id="export-settings" class="action-card" type="button">
+            <span class="action-icon purple" aria-hidden="true">
+              <img src="/public/settings-icons/export-settings.svg" alt="" />
+            </span>
+            <span>
+              <strong>Export settings</strong>
+              <small>Save a backup of your current settings.</small>
+            </span>
+          </button>
+          <button id="import-settings" class="action-card" type="button">
+            <span class="action-icon purple" aria-hidden="true">
+              <img src="/public/settings-icons/import-settings.svg" alt="" />
+            </span>
+            <span>
+              <strong>Import settings</strong>
+              <small>Restore settings from a previous backup.</small>
+            </span>
+          </button>
+          <button id="reset-settings" class="action-card danger" type="button">
+            <span class="action-icon rose" aria-hidden="true">
+              <img src="/public/settings-icons/reset-to-defaults.svg" alt="" />
+            </span>
+            <span>
+              <strong>Reset to defaults</strong>
+              <small>Clear all settings and start afresh.</small>
+            </span>
+          </button>
+        </div>
+        <input id="import-file" type="file" accept="application/json,.json" hidden />
+      </section>
+
+      <footer class="footer-panel">
+        <div>
+          <span class="section-icon purple" aria-hidden="true">
+            <img src="/public/settings-icons/in-control.svg" alt="" />
+          </span>
+          <div>
+            <strong>You're in control</strong>
+            <p>Your settings stay on your device and are only used to protect you from spoilers.</p>
           </div>
         </div>
-
-        <div id="sports-groups" class="sports-groups"></div>
-      </section>
-
-      <section>
-        <h2>Custom protected terms</h2>
-        <p>Add one team, driver, show, event, or phrase per line.</p>
-        <textarea id="custom-terms"></textarea>
-      </section>
-
-      <section>
-        <h2>Trusted sites</h2>
-        <p>
-          DeSpoilerize will not hide anything on these domains. Add one domain per line,
-          for example <code>example.com</code>.
-        </p>
-        <textarea id="trusted-sites"></textarea>
-      </section>
-
-      <div class="save-panel save-panel-bottom" role="note" aria-label="Settings save reminder">
-        <p class="save-reminder">Changes will not persist unless you save them.</p>
-        <div class="save-actions">
-          <span id="save-bottom-status" class="saved-message" aria-live="polite"></span>
-          <button id="save-bottom" type="button">Save settings</button>
-        </div>
-      </div>
+        <a href="https://github.com/AnthonyPWatts/Despoilerize#readme" target="_blank" rel="noreferrer">Read the user guide</a>
+      </footer>
     </main>
   </body>
 </html>
