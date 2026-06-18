@@ -1,11 +1,12 @@
 import { chromium, expect, test, type BrowserContext, type Page } from "@playwright/test";
-import { mkdtemp } from "node:fs/promises";
+import { mkdtemp, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import type { Settings } from "../../src/shared/types";
 
 const extensionPath = resolve("dist");
 const settingsKey = "despoilerze.settings";
+const manifest = JSON.parse(await readFile("manifest.json", "utf8")) as { version: string };
 
 type ExtensionHarness = {
   context: BrowserContext;
@@ -27,6 +28,8 @@ test("sets the existing protect-until presets from the popup", async ({ browserN
   try {
     const popup = await harness.context.newPage();
     await popup.goto(extensionUrl(harness.extensionId, "src/popup/index.html"));
+
+    await expect(popup.getByRole("heading", { name: `DeSpoilerize v${manifest.version}` })).toBeVisible();
 
     await popup.getByRole("button", { name: "Tonight" }).click();
     await expect(popup.locator("#status")).toHaveText("Catch-up Mode: ON");

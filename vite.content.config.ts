@@ -9,11 +9,6 @@ export default defineConfig({
       name: "DeSpoilerizeContentScript",
       formats: ["iife"],
       fileName: () => "assets/contentScript.js"
-    },
-    rollupOptions: {
-      output: {
-        inlineDynamicImports: true
-      }
     }
   }
 });

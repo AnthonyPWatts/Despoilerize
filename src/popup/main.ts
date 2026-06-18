@@ -6,6 +6,7 @@ import { addHours, endOfToday, formatExpiryLabel, syncExpiryAlarm } from "../sha
 let settings: Settings;
 
 const statusElement = mustGet<HTMLElement>("status");
+const titleElement = mustGet<HTMLHeadingElement>("popup-title");
 const toggleButton = mustGet<HTMLButtonElement>("toggle");
 const sensitivitySelect = mustGet<HTMLSelectElement>("sensitivity");
 const packSummaryElement = mustGet<HTMLElement>("enabled-packs-summary");
@@ -18,6 +19,7 @@ const expiryElement = mustGet<HTMLElement>("expiry");
 void initialise();
 
 async function initialise(): Promise<void> {
+  renderTitle();
   settings = await getSettings();
   render();
 
@@ -67,6 +69,12 @@ async function initialise(): Promise<void> {
   optionsButton.addEventListener("click", () => {
     void chrome.runtime.openOptionsPage();
   });
+}
+
+function renderTitle(): void {
+  const title = `DeSpoilerize v${chrome.runtime.getManifest().version}`;
+  titleElement.textContent = title;
+  document.title = title;
 }
 
 function render(): void {
