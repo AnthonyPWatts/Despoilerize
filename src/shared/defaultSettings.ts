@@ -1,14 +1,10 @@
 import type { Settings } from "./types";
+import { defaultSchedule } from "./schedulePresets";
 
 export const defaultSettings: Settings = {
   catchUpMode: {
     enabled: true,
-    schedule: {
-      mode: "weekend",
-      days: [6, 0],
-      startTime: "00:00",
-      endTime: "23:59"
-    },
+    schedule: defaultSchedule,
     sensitivity: "lockdown"
   },
   enabledPacks: ["f1"],

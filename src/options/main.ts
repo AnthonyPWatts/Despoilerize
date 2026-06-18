@@ -1,7 +1,15 @@
-import type { RulePackGroup, Settings } from "../shared/types";
+import type { ProtectionSchedule, ProtectionScheduleMode, RulePackGroup, Settings, Sensitivity } from "../shared/types";
 import { defaultSettings } from "../shared/defaultSettings";
 import { getRulePackGroups } from "../rules";
 import { getSettings, saveSettings } from "../shared/storage";
+import { supportedSites } from "../shared/supportedSites";
+import { syncExpiryAlarm } from "../shared/expiry";
+import {
+  describeSchedule,
+  formatScheduleDateTime,
+  getNextProtectionWindow
+} from "../shared/schedule";
+import { cloneSchedule, defaultSchedule, scheduleForMode } from "../shared/schedulePresets";
 
 let settings: Settings;
 let saveTimeout: number | undefined;
@@ -43,7 +51,7 @@ const groupMetadata: Record<string, { description: string; icon: string }> = {
 
 const sportsGroupsElement = mustGet<HTMLElement>("sports-groups");
 const customTermsTextArea = mustGet<HTMLTextAreaElement>("custom-terms");
-const trustedSitesTextArea = mustGet<HTMLTextAreaElement>("trusted-sites");
+const supportedSitesElement = mustGet<HTMLElement>("supported-sites");
 const customTermsCount = mustGet<HTMLElement>("custom-terms-count");
 const trustedSitesCount = mustGet<HTMLElement>("trusted-sites-count");
 const saveTopButton = mustGet<HTMLButtonElement>("save-top");
@@ -53,15 +61,25 @@ const exportButton = mustGet<HTMLButtonElement>("export-settings");
 const importButton = mustGet<HTMLButtonElement>("import-settings");
 const resetButton = mustGet<HTMLButtonElement>("reset-settings");
 const importFileInput = mustGet<HTMLInputElement>("import-file");
+const sensitivitySelect = mustGet<HTMLSelectElement>("sensitivity");
+const nextProtectionElement = mustGet<HTMLElement>("next-protection");
+const protectionEndsElement = mustGet<HTMLElement>("protection-ends");
+const scheduleStartInput = mustGet<HTMLInputElement>("schedule-start");
+const scheduleEndInput = mustGet<HTMLInputElement>("schedule-end");
+const timeControls = mustGet<HTMLElement>("time-controls");
+const scheduleCards = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-schedule-mode]"));
+const dayButtons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-schedule-day]"));
 
 void initialise();
 
 async function initialise(): Promise<void> {
   settings = await getSettings();
   customTermsTextArea.value = settings.customTerms.join("\n");
-  trustedSitesTextArea.value = settings.trustedSites.join("\n");
   renderSportsGroups();
+  renderSupportedSites();
+  renderSchedule();
   updateTextCounts();
+  sensitivitySelect.value = settings.catchUpMode.sensitivity;
 
   saveTopButton.addEventListener("click", () => {
     void saveNow();
@@ -77,8 +95,33 @@ async function initialise(): Promise<void> {
     queueSave();
   });
 
-  trustedSitesTextArea.addEventListener("input", () => {
-    updateTextCounts();
+  for (const card of scheduleCards) {
+    card.addEventListener("click", () => {
+      const mode = card.dataset.scheduleMode as ProtectionScheduleMode;
+      updateSchedule(scheduleForMode(mode, currentSchedule()));
+    });
+  }
+
+  for (const button of dayButtons) {
+    button.addEventListener("click", () => {
+      const day = Number(button.dataset.scheduleDay);
+      const schedule = scheduleForMode("custom", currentSchedule());
+      schedule.days = toggleDay(schedule.days, day);
+      updateSchedule(schedule);
+    });
+  }
+
+  scheduleStartInput.addEventListener("change", updateScheduleTimes);
+  scheduleEndInput.addEventListener("change", updateScheduleTimes);
+
+  sensitivitySelect.addEventListener("change", () => {
+    settings = {
+      ...settings,
+      catchUpMode: {
+        ...settings.catchUpMode,
+        sensitivity: sensitivitySelect.value as Sensitivity
+      }
+    };
     queueSave();
   });
 
@@ -121,21 +164,27 @@ function renderGroup(group: RulePackGroup): HTMLElement {
   const icon = createIcon("section-icon purple", metadata.icon);
 
   const copy = document.createElement("span");
+  copy.className = "topic-card-copy";
   const title = document.createElement("span");
   title.className = "topic-title";
   title.textContent = group.label;
   const description = document.createElement("p");
+  description.className = "topic-description";
   description.textContent = metadata.description;
-  copy.append(title, description);
+  copy.append(title);
 
   const count = document.createElement("span");
   count.className = "count-pill";
   count.dataset.groupCount = group.id;
-  count.textContent = formatCount(selectedCount, "selected");
+  count.textContent = formatGroupCount(selectedCount, group.packs.length);
 
   const chevron = createIcon("chevron-icon", expanded ? "collapse-section" : "open-section");
 
-  header.append(icon, copy, count, chevron);
+  const meta = document.createElement("span");
+  meta.className = "topic-meta-row";
+  meta.append(description, count);
+
+  header.append(icon, copy, chevron, meta);
 
   const list = document.createElement("div");
   list.className = "sports-pack-list";
@@ -194,12 +243,147 @@ function refreshGroupCount(groupId: string): void {
   if (!group || !count) return;
 
   const selectedCount = group.packs.filter(pack => settings.enabledPacks.includes(pack.id)).length;
-  count.textContent = formatCount(selectedCount, "selected");
+  count.textContent = formatGroupCount(selectedCount, group.packs.length);
 }
 
 function updateTextCounts(): void {
   customTermsCount.textContent = formatCount(lines(customTermsTextArea.value).length, "terms");
-  trustedSitesCount.textContent = formatCount(lines(trustedSitesTextArea.value).length, "sites");
+  trustedSitesCount.textContent = `${disabledSupportedSites().length} disabled`;
+}
+
+function renderSupportedSites(): void {
+  supportedSitesElement.innerHTML = "";
+
+  for (const site of supportedSites) {
+    const label = document.createElement("label");
+    label.className = "site-toggle-card";
+
+    const copy = document.createElement("span");
+    copy.className = "site-toggle-copy";
+
+    const title = document.createElement("strong");
+    title.textContent = site.label;
+
+    const description = document.createElement("span");
+    description.textContent = site.description;
+
+    const domains = document.createElement("small");
+    domains.textContent = site.domains.join(", ");
+
+    copy.append(title, description, domains);
+
+    const control = document.createElement("span");
+    control.className = "toggle-control";
+
+    const text = document.createElement("span");
+    text.textContent = "Filter";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = isSiteFilteringEnabled(site.domains);
+    checkbox.addEventListener("change", () => {
+      setSiteFiltering(site.domains, checkbox.checked);
+      updateTextCounts();
+      queueSave();
+    });
+
+    control.append(text, checkbox);
+    label.append(copy, control);
+    supportedSitesElement.appendChild(label);
+  }
+
+  updateTextCounts();
+}
+
+function isSiteFilteringEnabled(domains: string[]): boolean {
+  const disabled = new Set(settings.trustedSites.map(site => site.toLowerCase()));
+  return domains.every(domain => !disabled.has(domain.toLowerCase()));
+}
+
+function setSiteFiltering(domains: string[], enabled: boolean): void {
+  const domainSet = new Set(domains.map(domain => domain.toLowerCase()));
+  const existing = settings.trustedSites.filter(site => !domainSet.has(site.toLowerCase()));
+
+  settings = {
+    ...settings,
+    trustedSites: enabled ? existing : [...existing, ...domains]
+  };
+}
+
+function disabledSupportedSites(): typeof supportedSites {
+  return supportedSites.filter(site => !isSiteFilteringEnabled(site.domains));
+}
+
+function renderSchedule(): void {
+  const schedule = currentSchedule();
+  const nextWindow = getNextProtectionWindow(settings);
+
+  for (const card of scheduleCards) {
+    const mode = card.dataset.scheduleMode as ProtectionScheduleMode;
+    const selected = schedule.mode === mode;
+    card.classList.toggle("selected", selected);
+    card.setAttribute("aria-checked", String(selected));
+
+    const copy = card.querySelector<HTMLElement>(".schedule-copy span:last-child");
+    if (copy && selected) {
+      copy.textContent = describeSchedule(schedule);
+    }
+  }
+
+  for (const button of dayButtons) {
+    const day = Number(button.dataset.scheduleDay);
+    const selected = schedule.mode === "daily" || schedule.days.includes(day);
+    button.classList.toggle("selected", selected);
+  }
+
+  timeControls.hidden = schedule.mode !== "daily" && schedule.mode !== "custom";
+  scheduleStartInput.value = schedule.startTime;
+  scheduleEndInput.value = schedule.endTime;
+
+  if (nextWindow && schedule.mode !== "always") {
+    nextProtectionElement.textContent = formatScheduleDateTime(nextWindow.start);
+    protectionEndsElement.textContent = formatScheduleDateTime(nextWindow.end);
+  } else if (schedule.mode === "always") {
+    nextProtectionElement.textContent = "Active now";
+    protectionEndsElement.textContent = "When paused";
+  } else {
+    nextProtectionElement.textContent = "Not scheduled";
+    protectionEndsElement.textContent = "Not scheduled";
+  }
+}
+
+function currentSchedule(): ProtectionSchedule {
+  return cloneSchedule(settings.catchUpMode.schedule ?? defaultSchedule);
+}
+
+function updateSchedule(schedule: ProtectionSchedule): void {
+  settings = {
+    ...settings,
+    catchUpMode: {
+      ...settings.catchUpMode,
+      enabled: schedule.mode !== "paused",
+      expiresAtUtc: undefined,
+      schedule
+    }
+  };
+
+  renderSchedule();
+  queueSave();
+}
+
+function updateScheduleTimes(): void {
+  const schedule = scheduleForMode(currentSchedule().mode, currentSchedule());
+  schedule.startTime = scheduleStartInput.value || "00:00";
+  schedule.endTime = scheduleEndInput.value || "23:59";
+  updateSchedule(schedule);
+}
+
+function toggleDay(days: number[], day: number): number[] {
+  const next = days.includes(day)
+    ? days.filter(value => value !== day)
+    : [...days, day];
+
+  return next.length > 0 ? next : [day];
 }
 
 function queueSave(): void {
@@ -224,11 +408,13 @@ async function saveNow(): Promise<void> {
   const next: Settings = {
     ...settings,
     customTerms: lines(customTermsTextArea.value),
-    trustedSites: lines(trustedSitesTextArea.value)
+    trustedSites: normaliseTrustedSites(settings.trustedSites)
   };
 
   await saveSettings(next);
+  await syncExpiryAlarm(next);
   settings = next;
+  renderSchedule();
   await notifyTabs();
   showSavedMessage();
 }
@@ -277,9 +463,11 @@ async function importSettings(): Promise<void> {
   };
 
   customTermsTextArea.value = settings.customTerms.join("\n");
-  trustedSitesTextArea.value = settings.trustedSites.join("\n");
   renderSportsGroups();
+  renderSupportedSites();
+  renderSchedule();
   updateTextCounts();
+  sensitivitySelect.value = settings.catchUpMode.sensitivity;
   await saveNow();
 }
 
@@ -288,17 +476,23 @@ async function resetSettings(): Promise<void> {
 
   settings = structuredClone(defaultSettings);
   customTermsTextArea.value = settings.customTerms.join("\n");
-  trustedSitesTextArea.value = settings.trustedSites.join("\n");
   renderSportsGroups();
+  renderSupportedSites();
+  renderSchedule();
   updateTextCounts();
+  sensitivitySelect.value = settings.catchUpMode.sensitivity;
   await saveNow();
 }
 
 function currentDraftSettings(): Settings {
   return {
     ...settings,
+    catchUpMode: {
+      ...settings.catchUpMode,
+      sensitivity: sensitivitySelect.value as Sensitivity
+    },
     customTerms: lines(customTermsTextArea.value),
-    trustedSites: lines(trustedSitesTextArea.value)
+    trustedSites: normaliseTrustedSites(settings.trustedSites)
   };
 }
 
@@ -321,6 +515,18 @@ function lines(value: string): string[] {
 function formatCount(count: number, noun: string): string {
   const singular = noun.endsWith("s") ? noun.slice(0, -1) : noun;
   return `${count} ${count === 1 ? singular : noun}`;
+}
+
+function formatGroupCount(selected: number, total: number): string {
+  return `${selected} of ${total} selected`;
+}
+
+function normaliseTrustedSites(sites: string[]): string[] {
+  return Array.from(new Set(
+    sites
+      .map(site => site.trim().toLowerCase())
+      .filter(Boolean)
+  ));
 }
 
 function createIcon(className: string, name: string): HTMLSpanElement {

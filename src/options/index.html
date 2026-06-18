@@ -22,6 +22,114 @@
         </div>
       </header>
 
+      <section class="panel schedule-panel" aria-labelledby="schedule-title">
+        <header class="section-header">
+          <span class="section-icon purple" aria-hidden="true">
+            <img src="/public/settings-icons/topics-to-protect.svg" alt="" />
+          </span>
+          <div>
+            <h2 id="schedule-title">Protection schedule</h2>
+            <p>Choose when DeSpoilerize should automatically protect you from spoilers.</p>
+          </div>
+        </header>
+
+        <div class="schedule-list" role="radiogroup" aria-label="Protection schedule">
+          <button class="schedule-card selected" data-schedule-mode="weekend" type="button" role="radio" aria-checked="true">
+            <span class="radio-dot" aria-hidden="true"></span>
+            <span class="schedule-icon" aria-hidden="true">WE</span>
+            <span class="schedule-copy">
+              <strong>Every weekend <span class="badge">Recommended</span></strong>
+              <span>All day Saturday -&gt; Sunday</span>
+            </span>
+          </button>
+
+          <button class="schedule-card" data-schedule-mode="daily" type="button" role="radio" aria-checked="false">
+            <span class="radio-dot" aria-hidden="true"></span>
+            <span class="schedule-icon" aria-hidden="true">24</span>
+            <span class="schedule-copy">
+              <strong>Daily</strong>
+              <span>Protect every day</span>
+            </span>
+          </button>
+
+          <button class="schedule-card" data-schedule-mode="custom" type="button" role="radio" aria-checked="false">
+            <span class="radio-dot" aria-hidden="true"></span>
+            <span class="schedule-icon" aria-hidden="true">Sel</span>
+            <span class="schedule-copy">
+              <strong>Custom days</strong>
+              <span>Pick specific days and times</span>
+            </span>
+          </button>
+
+          <button class="schedule-card" data-schedule-mode="always" type="button" role="radio" aria-checked="false">
+            <span class="radio-dot" aria-hidden="true"></span>
+            <span class="schedule-icon" aria-hidden="true">All</span>
+            <span class="schedule-copy">
+              <strong>Always on</strong>
+              <span>Protect 24/7 until I turn it off</span>
+            </span>
+          </button>
+
+          <button class="schedule-card" data-schedule-mode="paused" type="button" role="radio" aria-checked="false">
+            <span class="radio-dot" aria-hidden="true"></span>
+            <span class="schedule-icon" aria-hidden="true">II</span>
+            <span class="schedule-copy">
+              <strong>Paused</strong>
+              <span>Do not protect automatically</span>
+            </span>
+          </button>
+        </div>
+
+        <div class="day-grid" aria-label="Custom schedule days">
+          <button data-schedule-day="1" type="button">Mon</button>
+          <button data-schedule-day="2" type="button">Tue</button>
+          <button data-schedule-day="3" type="button">Wed</button>
+          <button data-schedule-day="4" type="button">Thu</button>
+          <button data-schedule-day="5" type="button">Fri</button>
+          <button data-schedule-day="6" type="button">Sat</button>
+          <button data-schedule-day="0" type="button">Sun</button>
+        </div>
+
+        <div class="time-row" id="time-controls">
+          <label>
+            <span>Starts</span>
+            <input id="schedule-start" type="time" />
+          </label>
+          <label>
+            <span>Ends</span>
+            <input id="schedule-end" type="time" />
+          </label>
+        </div>
+
+        <div class="schedule-summary">
+          <div>
+            <span>Next protection:</span>
+            <strong id="next-protection">Not scheduled</strong>
+          </div>
+          <div>
+            <span>Ends:</span>
+            <strong id="protection-ends">Not scheduled</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel sensitivity-panel" aria-labelledby="sensitivity-title">
+        <header class="section-header compact">
+          <span class="section-icon purple" aria-hidden="true">
+            <img src="/public/settings-icons/in-control.svg" alt="" />
+          </span>
+          <div>
+            <h2 id="sensitivity-title">Sensitivity</h2>
+            <p>Adjust how strictly spoilers are hidden.</p>
+          </div>
+          <select id="sensitivity">
+            <option value="gentle">Gentle</option>
+            <option value="balanced">Balanced</option>
+            <option value="lockdown">Lockdown</option>
+          </select>
+        </header>
+      </section>
+
       <section class="panel topics-panel" aria-labelledby="topics-title">
         <header class="section-header">
           <span class="section-icon purple" aria-hidden="true">
@@ -29,7 +137,7 @@
           </span>
           <div>
             <h2 id="topics-title">Topics to protect</h2>
-            <p>Select the sports, shows, teams, leagues, and events you want DeSpoilerize to protect while Catch-up Mode is enabled.</p>
+            <p>Select the sports, shows, teams, leagues, and events you want DeSpoilerize to protect while spoiler protection is active.</p>
           </div>
           <button id="expand-all" class="secondary" type="button">Expand all</button>
         </header>
@@ -58,13 +166,13 @@
             <img src="/public/settings-icons/trusted-sites.svg" alt="" />
           </span>
           <div>
-            <h2 id="trusted-sites-title">Trusted sites</h2>
-            <p>DeSpoilerize will not hide anything on these domains. Add one domain per line.</p>
+            <h2 id="trusted-sites-title">Supported sites</h2>
+            <p>Choose which supported sites DeSpoilerize should filter.</p>
           </div>
-          <span id="trusted-sites-count" class="count-pill">0 sites</span>
+          <span id="trusted-sites-count" class="count-pill">0 disabled</span>
         </header>
-        <textarea id="trusted-sites" placeholder="e.g. example.com"></textarea>
-        <p class="helper">Use this for sites you always trust, such as news sources or your own sites.</p>
+        <div id="supported-sites" class="site-toggle-list"></div>
+        <p class="helper">Turning filtering off for a supported site keeps it visible even while protection is active.</p>
       </section>
 
       <section class="panel actions-panel" aria-labelledby="actions-title">

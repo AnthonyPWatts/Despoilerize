@@ -176,7 +176,7 @@ function createOverlay(container: HTMLElement, risk: RiskResult): HTMLElement {
   overlay.innerHTML = `
     <div class="despoilerze-card">
       <div class="despoilerze-title">Possible spoiler hidden</div>
-      <div class="despoilerze-reason">${escapeHtml(risk.reasons[0] ?? "Catch-up Mode is active")}</div>
+      <div class="despoilerze-reason">${escapeHtml(risk.reasons[0] ?? "Spoiler protection is active")}</div>
       <button class="despoilerze-button" data-action="reveal-once">Reveal once</button>
       <button class="despoilerze-button" data-action="reveal-all">Reveal all on page</button>
     </div>

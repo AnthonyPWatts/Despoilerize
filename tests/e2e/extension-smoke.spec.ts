@@ -20,36 +20,48 @@ type PlaywrightApi = {
   };
 };
 
-test("sets protection schedules from the popup", async ({ browserName, playwright }) => {
+test("sets protection schedules and sensitivity from options", async ({ browserName, playwright }) => {
   test.skip(browserName !== "chromium", "Chrome extensions can only be loaded in Chromium.");
 
   const harness = await launchExtension(playwright);
 
   try {
-    const popup = await harness.context.newPage();
-    await popup.goto(extensionUrl(harness.extensionId, "src/popup/index.html"));
+    const options = await harness.context.newPage();
+    await options.goto(extensionUrl(harness.extensionId, "src/options/index.html"));
 
-    await expect(popup.getByRole("heading", { name: `DeSpoilerize v${manifest.version}` })).toBeVisible();
-    await expect(popup.getByRole("radio", { name: /Every weekend/i })).toHaveAttribute("aria-checked", "true");
-    await expect(popup.locator("#status-text")).toHaveText(/Catch-up Mode: (ON|OFF)/);
+    await expect(options.getByRole("heading", { name: "DeSpoilerize Settings" })).toBeVisible();
+    await expect(options.getByRole("radio", { name: /Every weekend/i })).toHaveAttribute("aria-checked", "true");
 
-    await popup.getByRole("radio", { name: /Always on/i }).click();
-    await expect(popup.locator("#status-text")).toHaveText("Catch-up Mode: ON");
+    await options.getByRole("radio", { name: /Always on/i }).click();
+    await expect(options.locator("#save-top-status")).toHaveText("Saved.");
 
     const alwaysOnSettings = await readSettings(harness.extensionPage);
     expect(alwaysOnSettings.catchUpMode.schedule?.mode).toBe("always");
 
-    await popup.getByRole("radio", { name: /Paused/i }).click();
-    await expect(popup.locator("#status-text")).toHaveText("Catch-up Mode: OFF");
+    const popup = await harness.context.newPage();
+    await popup.goto(extensionUrl(harness.extensionId, "src/popup/index.html"));
+    await expect(popup.getByRole("heading", { name: `DeSpoilerize v${manifest.version}` })).toBeVisible();
+    await expect(popup.locator("#schedule-description")).toContainText("Always on");
+    await expect(popup.locator("#status-text")).toHaveText("Protection: ON");
+
+    await options.getByRole("radio", { name: /Paused/i }).click();
+    await expect(options.locator("#save-top-status")).toHaveText("Saved.");
+    await expect(popup.locator("#status-text")).toHaveText("Protection: OFF");
 
     const pausedSettings = await readSettings(harness.extensionPage);
     expect(pausedSettings.catchUpMode.schedule?.mode).toBe("paused");
+
+    await options.locator("#sensitivity").selectOption("balanced");
+    await expect(options.locator("#save-top-status")).toHaveText("Saved.");
+
+    const sensitivitySettings = await readSettings(harness.extensionPage);
+    expect(sensitivitySettings.catchUpMode.sensitivity).toBe("balanced");
   } finally {
     await harness.context.close();
   }
 });
 
-test("saves pack, custom term, and trusted site changes from options", async ({ browserName, playwright }) => {
+test("saves pack, custom term, and supported site filtering changes from options", async ({ browserName, playwright }) => {
   test.skip(browserName !== "chromium", "Chrome extensions can only be loaded in Chromium.");
 
   const harness = await launchExtension(playwright);
@@ -64,7 +76,7 @@ test("saves pack, custom term, and trusted site changes from options", async ({ 
     await realityTvCheckbox.check();
 
     await options.locator("#custom-terms").fill("The Traitors\nLove Island final");
-    await options.locator("#trusted-sites").fill("example.com\nf1tv.formula1.com");
+    await options.locator(".site-toggle-card", { hasText: "BBC" }).locator("input").uncheck();
     await options.getByRole("button", { name: "Save settings" }).first().click();
     await expect(options.locator("#save-top-status")).toHaveText("Saved.");
 
@@ -72,7 +84,7 @@ test("saves pack, custom term, and trusted site changes from options", async ({ 
     expect(saved.enabledPacks).toContain("f1");
     expect(saved.enabledPacks).toContain("reality-tv");
     expect(saved.customTerms).toEqual(["The Traitors", "Love Island final"]);
-    expect(saved.trustedSites).toEqual(["example.com", "f1tv.formula1.com"]);
+    expect(saved.trustedSites).toEqual(["www.bbc.co.uk", "www.bbc.com"]);
   } finally {
     await harness.context.close();
   }
@@ -125,7 +137,7 @@ test("content script hides, reveals, and responds to settings changes", async ({
 
     const popup = await harness.context.newPage();
     await popup.goto(extensionUrl(harness.extensionId, "src/popup/index.html"));
-    await expect(popup.locator("#status")).toHaveText("Catch-up Mode: ON");
+    await expect(popup.locator("#status")).toHaveText("Protection: ON");
 
     await page.bringToFront();
     await popup.evaluate(() => {

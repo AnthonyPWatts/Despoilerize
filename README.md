@@ -1,6 +1,6 @@
 # DeSpoilerize
 
-**DeSpoilerize** is a local-first browser extension that hides likely catch-up spoilers while you are in Catch-up Mode.
+**DeSpoilerize** is a local-first browser extension that hides likely catch-up spoilers while spoiler protection is active.
 
 The project began with my own highest-risk use case:
 
@@ -9,13 +9,13 @@ The project began with my own highest-risk use case:
 ## What this version does
 
 - Chrome/Edge Manifest V3 extension
-- Catch-up Mode toggle
-- Expiry shortcuts: 2h, Tonight, 24h, Manual
-- Browser alarm support for timed Catch-up Mode expiry
+- Compact popup for current protection state, quick toggle, page reveal, and settings navigation
+- Settings page for schedule, sensitivity, topic, custom term, supported-site filtering, export/import, and reset configuration
+- Browser alarm support for scheduled protection transitions
 - Sensitivity modes: Gentle, Balanced, Lockdown
 - Grouped protection packs for sport and Reality TV topics
 - Custom protected terms
-- Trusted sites
+- Per-site filtering toggles for supported sites
 - Headline/card scanning
 - Thumbnail/card blurring
 - Reveal once
@@ -69,7 +69,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-The e2e smoke suite builds the extension and checks popup presets, options-page saving, and content-script hide/reveal/settings refresh behaviour in Chromium.
+The e2e smoke suite builds the extension and checks schedule/sensitivity settings, options-page saving, popup state summaries, and content-script hide/reveal/settings refresh behaviour in Chromium.
 
 ## Chrome Web Store package
 
@@ -77,7 +77,7 @@ The e2e smoke suite builds the extension and checks popup presets, options-page 
 npm run package:chrome
 ```
 
-This builds the extension and creates `Releases/v0.4/despoilerize-v0.4.3-chrome-web-store.zip` with `manifest.json` at the archive root.
+This builds the extension and creates a Chrome Web Store zip under `Releases/v0.5` with `manifest.json` at the archive root.
 
 Release packages and store listing assets are kept under [`Releases`](./Releases/).
 
@@ -92,7 +92,7 @@ Release packages and store listing assets are kept under [`Releases`](./Releases
 ## Suggested manual test
 
 1. Build and load the extension.
-2. Turn on Catch-up Mode.
+2. Open settings and choose a protection schedule.
 3. Set sensitivity to Lockdown.
 4. Visit YouTube, Google News, BBC Sport, The Guardian, or Google Search.
 5. Search or browse for protected topics such as F1, World Cup 2026, or Reality TV.
