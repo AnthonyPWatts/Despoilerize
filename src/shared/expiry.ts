@@ -1,4 +1,5 @@
 import type { Settings } from "./types";
+import { getNextProtectionTransition, isScheduledProtectionActive } from "./schedule";
 
 export const EXPIRY_ALARM_NAME = "despoilerze-expiry-check";
 
@@ -24,6 +25,10 @@ export function getValidExpiryDate(expiresAtUtc?: string): Date | null {
 }
 
 export function isCatchUpModeActive(settings: Settings, now = new Date()): boolean {
+  if (settings.catchUpMode.schedule) {
+    return isScheduledProtectionActive(settings, now);
+  }
+
   if (!settings.catchUpMode.enabled) return false;
 
   const expiresAt = getValidExpiryDate(settings.catchUpMode.expiresAtUtc);
@@ -55,6 +60,14 @@ export async function syncExpiryAlarm(settings: Settings): Promise<void> {
   if (!chrome.alarms) return;
 
   await chrome.alarms.clear(EXPIRY_ALARM_NAME);
+
+  if (settings.catchUpMode.schedule) {
+    const nextTransition = getNextProtectionTransition(settings);
+    if (nextTransition && nextTransition > new Date()) {
+      await chrome.alarms.create(EXPIRY_ALARM_NAME, { when: nextTransition.getTime() });
+    }
+    return;
+  }
 
   if (!settings.catchUpMode.enabled) return;
 

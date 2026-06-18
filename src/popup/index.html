@@ -10,22 +10,120 @@
     <main class="popup">
       <h1 id="popup-title">DeSpoilerize</h1>
 
-      <p id="status" class="status off">Catch-up Mode: OFF</p>
+      <p id="status" class="status off">
+        <span class="status-icon" aria-hidden="true"></span>
+        <span id="status-text">Catch-up Mode: OFF</span>
+      </p>
 
-      <button id="toggle" class="primary" type="button">Turn on</button>
+      <button id="toggle" class="primary" type="button">
+        <span class="power-icon" aria-hidden="true"></span>
+        <span>Turn on</span>
+      </button>
 
-      <section>
-        <h2>Protect until</h2>
-        <div class="row">
-          <button data-expiry-hours="2" type="button">2h</button>
-          <button id="tonight" type="button">Tonight</button>
-          <button data-expiry-hours="24" type="button">24h</button>
-          <button id="manual" type="button">Manual</button>
+      <section class="panel schedule-panel" aria-labelledby="schedule-title">
+        <header class="panel-header">
+          <span class="panel-icon purple" aria-hidden="true">Cal</span>
+          <div>
+            <h2 id="schedule-title">Protection schedule</h2>
+            <p>Choose when I should protect you from spoilers.</p>
+          </div>
+          <button class="icon-button" type="button" title="All times use your local time zone." aria-label="Schedule help">?</button>
+        </header>
+
+        <div class="schedule-list" role="radiogroup" aria-label="Protection schedule">
+          <button class="schedule-card selected" data-schedule-mode="weekend" type="button" role="radio" aria-checked="true">
+            <span class="radio-dot" aria-hidden="true"></span>
+            <span class="schedule-icon" aria-hidden="true">WE</span>
+            <span class="schedule-copy">
+              <strong>Every weekend <span class="badge">Recommended</span></strong>
+              <span>All day Saturday -> Sunday</span>
+            </span>
+            <span class="card-action">Customize</span>
+          </button>
+
+          <button class="schedule-card" data-schedule-mode="daily" type="button" role="radio" aria-checked="false">
+            <span class="radio-dot" aria-hidden="true"></span>
+            <span class="schedule-icon" aria-hidden="true">24</span>
+            <span class="schedule-copy">
+              <strong>Daily</strong>
+              <span>Protect every day</span>
+            </span>
+            <span class="card-action">Set hours</span>
+          </button>
+
+          <button class="schedule-card" data-schedule-mode="custom" type="button" role="radio" aria-checked="false">
+            <span class="radio-dot" aria-hidden="true"></span>
+            <span class="schedule-icon" aria-hidden="true">Sel</span>
+            <span class="schedule-copy">
+              <strong>Custom days</strong>
+              <span>Pick specific days and times</span>
+            </span>
+            <span class="card-action">Configure</span>
+          </button>
+
+          <button class="schedule-card" data-schedule-mode="always" type="button" role="radio" aria-checked="false">
+            <span class="radio-dot" aria-hidden="true"></span>
+            <span class="schedule-icon" aria-hidden="true">All</span>
+            <span class="schedule-copy">
+              <strong>Always on</strong>
+              <span>Protect 24/7 until I turn it off</span>
+            </span>
+            <span class="active-badge" hidden>Active</span>
+          </button>
+
+          <button class="schedule-card" data-schedule-mode="paused" type="button" role="radio" aria-checked="false">
+            <span class="radio-dot" aria-hidden="true"></span>
+            <span class="schedule-icon" aria-hidden="true">II</span>
+            <span class="schedule-copy">
+              <strong>Paused</strong>
+              <span>Do not protect automatically</span>
+            </span>
+            <span class="card-action">Pause</span>
+          </button>
+        </div>
+
+        <div class="day-grid" aria-label="Custom schedule days">
+          <button data-schedule-day="1" type="button">Mon</button>
+          <button data-schedule-day="2" type="button">Tue</button>
+          <button data-schedule-day="3" type="button">Wed</button>
+          <button data-schedule-day="4" type="button">Thu</button>
+          <button data-schedule-day="5" type="button">Fri</button>
+          <button data-schedule-day="6" type="button">Sat</button>
+          <button data-schedule-day="0" type="button">Sun</button>
+        </div>
+
+        <div class="time-row" id="time-controls">
+          <label>
+            <span>Starts</span>
+            <input id="schedule-start" type="time" />
+          </label>
+          <label>
+            <span>Ends</span>
+            <input id="schedule-end" type="time" />
+          </label>
+        </div>
+
+        <div class="summary-row">
+          <span class="panel-icon purple" aria-hidden="true">Next</span>
+          <div>
+            <span>Next protection:</span>
+            <strong id="next-protection">Not scheduled</strong>
+          </div>
+          <div class="divider"></div>
+          <span class="panel-icon purple" aria-hidden="true">End</span>
+          <div>
+            <span>Ends:</span>
+            <strong id="protection-ends">Not scheduled</strong>
+          </div>
         </div>
       </section>
 
-      <section>
-        <h2>Sensitivity</h2>
+      <section class="panel setting-row">
+        <span class="panel-icon purple" aria-hidden="true">Sh</span>
+        <div>
+          <h2>Sensitivity</h2>
+          <p>Adjust how strictly spoilers are hidden.</p>
+        </div>
         <select id="sensitivity">
           <option value="gentle">Gentle</option>
           <option value="balanced">Balanced</option>
@@ -33,17 +131,39 @@
         </select>
       </section>
 
-      <section>
-        <h2>Protecting</h2>
-        <p id="enabled-packs-summary" class="pack-summary"></p>
-        <button id="open-options" type="button">Change topics and settings</button>
+      <section class="panel setting-row">
+        <span class="panel-icon gold" aria-hidden="true">Cup</span>
+        <div>
+          <h2>Protecting</h2>
+          <p>You're using: <strong id="enabled-packs-summary"></strong></p>
+        </div>
       </section>
 
-      <section>
-        <button id="reveal-all" type="button">Reveal all on this page</button>
+      <section class="panel setting-row">
+        <span class="panel-icon purple" aria-hidden="true">Set</span>
+        <div>
+          <h2>Topics &amp; settings</h2>
+          <p>Manage what to hide and how DeSpoilerize works.</p>
+        </div>
+        <button id="open-options" class="secondary" type="button">
+          <span>Change topics and settings</span>
+          <span aria-hidden="true">></span>
+        </button>
       </section>
 
-      <p id="expiry" class="small"></p>
+      <section class="panel setting-row reveal-row">
+        <span class="panel-icon rose" aria-hidden="true">Eye</span>
+        <div>
+          <h2>Reveal</h2>
+          <p>Temporarily reveal everything on this page.</p>
+        </div>
+        <button id="reveal-all" class="danger" type="button">
+          <span>Reveal all on this page</span>
+          <span aria-hidden="true">O</span>
+        </button>
+      </section>
+
+      <p class="timezone-note">All times are based on your local time zone.</p>
     </main>
   </body>
 </html>

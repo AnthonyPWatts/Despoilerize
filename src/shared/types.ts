@@ -1,8 +1,18 @@
 export type Sensitivity = "gentle" | "balanced" | "lockdown";
 
+export type ProtectionScheduleMode = "weekend" | "daily" | "custom" | "always" | "paused";
+
+export type ProtectionSchedule = {
+  mode: ProtectionScheduleMode;
+  days: number[];
+  startTime: string;
+  endTime: string;
+};
+
 export type CatchUpMode = {
   enabled: boolean;
   expiresAtUtc?: string;
+  schedule?: ProtectionSchedule;
   sensitivity: Sensitivity;
 };
 

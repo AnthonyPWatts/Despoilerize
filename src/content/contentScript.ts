@@ -10,7 +10,7 @@ let scanQueued = false;
 
 async function initialise(): Promise<void> {
   settings = await getSettings();
-  await updateActionIcon();
+  void updateActionIcon();
 
   if (!isCatchUpModeActive(settings)) {
     return;
@@ -80,7 +80,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   void (async () => {
     if (message?.type === "DESPOILERZE_SETTINGS_CHANGED") {
       settings = await getSettings();
-      await updateActionIcon();
+      void updateActionIcon();
       if (!isCatchUpModeActive(settings)) {
         revealAll();
         sendResponse({ ok: true });

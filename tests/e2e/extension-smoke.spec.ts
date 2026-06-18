@@ -20,7 +20,7 @@ type PlaywrightApi = {
   };
 };
 
-test("sets the existing protect-until presets from the popup", async ({ browserName, playwright }) => {
+test("sets protection schedules from the popup", async ({ browserName, playwright }) => {
   test.skip(browserName !== "chromium", "Chrome extensions can only be loaded in Chromium.");
 
   const harness = await launchExtension(playwright);
@@ -30,22 +30,20 @@ test("sets the existing protect-until presets from the popup", async ({ browserN
     await popup.goto(extensionUrl(harness.extensionId, "src/popup/index.html"));
 
     await expect(popup.getByRole("heading", { name: `DeSpoilerize v${manifest.version}` })).toBeVisible();
+    await expect(popup.getByRole("radio", { name: /Every weekend/i })).toHaveAttribute("aria-checked", "true");
+    await expect(popup.locator("#status-text")).toHaveText(/Catch-up Mode: (ON|OFF)/);
 
-    await popup.getByRole("button", { name: "Tonight" }).click();
-    await expect(popup.locator("#status")).toHaveText("Catch-up Mode: ON");
-    await expect(popup.locator("#expiry")).toHaveText("Expires tonight at 23:59");
+    await popup.getByRole("radio", { name: /Always on/i }).click();
+    await expect(popup.locator("#status-text")).toHaveText("Catch-up Mode: ON");
 
-    const tonightSettings = await readSettings(harness.extensionPage);
-    const tonightDate = new Date(tonightSettings.catchUpMode.expiresAtUtc as string);
-    expect(tonightDate.getHours()).toBe(23);
-    expect(tonightDate.getMinutes()).toBe(59);
+    const alwaysOnSettings = await readSettings(harness.extensionPage);
+    expect(alwaysOnSettings.catchUpMode.schedule?.mode).toBe("always");
 
-    await popup.getByRole("button", { name: "Manual" }).click();
-    await expect(popup.locator("#expiry")).toHaveText("");
+    await popup.getByRole("radio", { name: /Paused/i }).click();
+    await expect(popup.locator("#status-text")).toHaveText("Catch-up Mode: OFF");
 
-    const manualSettings = await readSettings(harness.extensionPage);
-    expect(manualSettings.catchUpMode.enabled).toBe(true);
-    expect(manualSettings.catchUpMode.expiresAtUtc).toBeUndefined();
+    const pausedSettings = await readSettings(harness.extensionPage);
+    expect(pausedSettings.catchUpMode.schedule?.mode).toBe("paused");
   } finally {
     await harness.context.close();
   }

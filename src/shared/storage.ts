@@ -7,14 +7,21 @@ export const SETTINGS_KEY = "despoilerze.settings";
 export async function getSettings(): Promise<Settings> {
   const result = await chrome.storage.sync.get(SETTINGS_KEY);
   const saved = result[SETTINGS_KEY] as Partial<Settings> | undefined;
+  const savedCatchUpMode = saved?.catchUpMode;
+  const hasSavedSchedule = !!savedCatchUpMode && "schedule" in savedCatchUpMode;
+  const catchUpMode = {
+    ...defaultSettings.catchUpMode,
+    ...(savedCatchUpMode ?? {})
+  };
+
+  if (savedCatchUpMode && !hasSavedSchedule) {
+    catchUpMode.schedule = undefined;
+  }
 
   return {
     ...defaultSettings,
     ...saved,
-    catchUpMode: {
-      ...defaultSettings.catchUpMode,
-      ...(saved?.catchUpMode ?? {})
-    },
+    catchUpMode,
     enabledPacks: saved?.enabledPacks ?? defaultSettings.enabledPacks,
     customTerms: saved?.customTerms ?? defaultSettings.customTerms,
     trustedSites: saved?.trustedSites ?? defaultSettings.trustedSites

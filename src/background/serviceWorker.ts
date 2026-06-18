@@ -65,7 +65,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 async function reconcileExpiryState(): Promise<void> {
   const settings = await getSettings();
 
-  if (!isCatchUpModeActive(settings) && settings.catchUpMode.enabled) {
+  if (!settings.catchUpMode.schedule && !isCatchUpModeActive(settings) && settings.catchUpMode.enabled) {
     settings.catchUpMode.enabled = false;
     settings.catchUpMode.expiresAtUtc = undefined;
     await saveSettings(settings);
