@@ -2,7 +2,7 @@ import { defaultSettings } from "./defaultSettings";
 import type { Settings } from "./types";
 export { isCatchUpModeActive } from "./expiry";
 
-const SETTINGS_KEY = "despoilerze.settings";
+export const SETTINGS_KEY = "despoilerze.settings";
 
 export async function getSettings(): Promise<Settings> {
   const result = await chrome.storage.sync.get(SETTINGS_KEY);

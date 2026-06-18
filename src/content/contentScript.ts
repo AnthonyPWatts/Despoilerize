@@ -1,6 +1,7 @@
 import { getRulePacks } from "../rules";
 import type { Settings } from "../shared/types";
 import { getSettings, isCatchUpModeActive } from "../shared/storage";
+import { getProtectionState } from "../shared/protectionState";
 import { scanDocument } from "./scanner";
 import { revealAll } from "./obfuscator";
 
@@ -9,6 +10,7 @@ let scanQueued = false;
 
 async function initialise(): Promise<void> {
   settings = await getSettings();
+  await updateActionIcon();
 
   if (!isCatchUpModeActive(settings)) {
     return;
@@ -59,10 +61,26 @@ function queueScan(roots: ParentNode[] = [document]): void {
   }, 250);
 }
 
+async function updateActionIcon(): Promise<void> {
+  if (!settings) return;
+
+  const response = await chrome.runtime.sendMessage({
+    type: "DESPOILERZE_PAGE_STATE_CHANGED",
+    state: getProtectionState(settings, window.location.hostname)
+  }).catch(() => {
+    // The background service worker may be unavailable during extension reloads.
+  });
+
+  if (response?.ok === false) {
+    console.warn(`DeSpoilerize could not update the action icon: ${response.error ?? "unknown error"}`);
+  }
+}
+
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   void (async () => {
     if (message?.type === "DESPOILERZE_SETTINGS_CHANGED") {
       settings = await getSettings();
+      await updateActionIcon();
       if (!isCatchUpModeActive(settings)) {
         revealAll();
         sendResponse({ ok: true });

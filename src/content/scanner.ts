@@ -1,6 +1,7 @@
 import type { RulePack, Settings } from "../shared/types";
 import { scoreText } from "../rules/scoring";
 import { isCatchUpModeActive } from "../shared/storage";
+import { isTrustedHostname } from "../shared/protectionState";
 import { findBestContainer, isGoogleSearchPage, isGuardianPage, isSiteChrome } from "./containerSelection";
 import { isAlreadyHidden, isProcessed, markProcessed, obfuscate } from "./obfuscator";
 
@@ -413,8 +414,5 @@ function isVisible(element: HTMLElement): boolean {
 }
 
 function isTrustedSite(settings: Settings): boolean {
-  const hostname = window.location.hostname.toLowerCase();
-  return settings.trustedSites.some(site =>
-    hostname === site.toLowerCase() || hostname.endsWith(`.${site.toLowerCase()}`)
-  );
+  return isTrustedHostname(settings, window.location.hostname);
 }
