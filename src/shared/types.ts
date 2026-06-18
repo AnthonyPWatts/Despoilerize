@@ -9,9 +9,15 @@ export type ProtectionSchedule = {
   endTime: string;
 };
 
+export type ProtectionOverride = {
+  state: "on" | "off";
+  untilUtc?: string;
+};
+
 export type CatchUpMode = {
   enabled: boolean;
   expiresAtUtc?: string;
+  override?: ProtectionOverride;
   schedule?: ProtectionSchedule;
   sensitivity: Sensitivity;
 };

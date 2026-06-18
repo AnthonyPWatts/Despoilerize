@@ -2,7 +2,7 @@ import type { ProtectionState } from "../shared/protectionState";
 import type { Settings } from "../shared/types";
 import { getProtectionState } from "../shared/protectionState";
 import { getSettings, isCatchUpModeActive, saveSettings, SETTINGS_KEY } from "../shared/storage";
-import { EXPIRY_ALARM_NAME, syncExpiryAlarm } from "../shared/expiry";
+import { clearExpiredProtectionOverride, EXPIRY_ALARM_NAME, syncExpiryAlarm } from "../shared/expiry";
 
 const actionIconPaths: Record<ProtectionState, Record<number, string>> = {
   enabled: {
@@ -64,10 +64,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 async function reconcileExpiryState(): Promise<void> {
   const settings = await getSettings();
+  const removedExpiredOverride = clearExpiredProtectionOverride(settings);
 
   if (!settings.catchUpMode.schedule && !isCatchUpModeActive(settings) && settings.catchUpMode.enabled) {
     settings.catchUpMode.enabled = false;
     settings.catchUpMode.expiresAtUtc = undefined;
+    await saveSettings(settings);
+    await syncExpiryAlarm(settings);
+    await refreshActionState(settings);
+    await notifyTabs();
+    return;
+  }
+
+  if (removedExpiredOverride) {
     await saveSettings(settings);
     await syncExpiryAlarm(settings);
     await refreshActionState(settings);

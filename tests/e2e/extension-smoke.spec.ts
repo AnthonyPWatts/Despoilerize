@@ -61,6 +61,52 @@ test("sets protection schedules and sensitivity from options", async ({ browserN
   }
 });
 
+test("popup protects now without replacing the saved schedule", async ({ browserName, playwright }) => {
+  test.skip(browserName !== "chromium", "Chrome extensions can only be loaded in Chromium.");
+
+  const harness = await launchExtension(playwright);
+
+  try {
+    const inactiveDay = (new Date().getDay() + 1) % 7;
+    await writeSettings(harness.extensionPage, {
+      catchUpMode: {
+        enabled: true,
+        schedule: {
+          mode: "custom",
+          days: [inactiveDay],
+          startTime: "00:00",
+          endTime: "23:59"
+        },
+        sensitivity: "lockdown"
+      },
+      enabledPacks: ["f1"],
+      customTerms: [],
+      trustedSites: []
+    });
+
+    const popup = await harness.context.newPage();
+    await popup.goto(extensionUrl(harness.extensionId, "src/popup/index.html"));
+    await expect(popup.locator("#status-text")).toHaveText("Protection: OFF");
+
+    await popup.getByRole("button", { name: "Protect now" }).click();
+    await expect(popup.locator("#status-text")).toHaveText("Protection: ON");
+    await expect(popup.getByRole("button", { name: "Return to schedule" })).toBeVisible();
+
+    const overrideSettings = await readSettings(harness.extensionPage);
+    expect(overrideSettings.catchUpMode.schedule?.mode).toBe("custom");
+    expect(overrideSettings.catchUpMode.override?.state).toBe("on");
+
+    await popup.getByRole("button", { name: "Return to schedule" }).click();
+    await expect(popup.locator("#status-text")).toHaveText("Protection: OFF");
+
+    const restoredSettings = await readSettings(harness.extensionPage);
+    expect(restoredSettings.catchUpMode.schedule?.mode).toBe("custom");
+    expect(restoredSettings.catchUpMode.override).toBeUndefined();
+  } finally {
+    await harness.context.close();
+  }
+});
+
 test("saves pack, custom term, and supported site filtering changes from options", async ({ browserName, playwright }) => {
   test.skip(browserName !== "chromium", "Chrome extensions can only be loaded in Chromium.");
 

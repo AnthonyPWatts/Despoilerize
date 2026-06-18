@@ -357,14 +357,17 @@ function currentSchedule(): ProtectionSchedule {
 }
 
 function updateSchedule(schedule: ProtectionSchedule): void {
+  const catchUpMode = {
+    ...settings.catchUpMode,
+    enabled: schedule.mode !== "paused",
+    expiresAtUtc: undefined,
+    schedule
+  };
+  delete catchUpMode.override;
+
   settings = {
     ...settings,
-    catchUpMode: {
-      ...settings.catchUpMode,
-      enabled: schedule.mode !== "paused",
-      expiresAtUtc: undefined,
-      schedule
-    }
+    catchUpMode
   };
 
   renderSchedule();

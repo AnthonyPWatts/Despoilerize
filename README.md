@@ -10,6 +10,7 @@ The project began with my own highest-risk use case:
 
 - Chrome/Edge Manifest V3 extension
 - Compact popup for current protection state, quick toggle, page reveal, and settings navigation
+- Temporary popup overrides that return to the saved schedule without replacing it
 - Settings page for schedule, sensitivity, topic, custom term, supported-site filtering, export/import, and reset configuration
 - Browser alarm support for scheduled protection transitions
 - Sensitivity modes: Gentle, Balanced, Lockdown

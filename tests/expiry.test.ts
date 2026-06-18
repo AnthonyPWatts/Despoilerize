@@ -38,6 +38,30 @@ describe("catch-up mode expiry", () => {
     expect(isCatchUpModeActive(settings(undefined, false), now)).toBe(false);
   });
 
+  it("lets a protection override turn protection on temporarily", () => {
+    const value = settings(undefined, false);
+    value.catchUpMode.override = { state: "on" };
+
+    expect(isCatchUpModeActive(value, now)).toBe(true);
+  });
+
+  it("lets a protection override pause protection temporarily", () => {
+    const value = settings(undefined, true);
+    value.catchUpMode.override = { state: "off" };
+
+    expect(isCatchUpModeActive(value, now)).toBe(false);
+  });
+
+  it("ignores expired protection overrides", () => {
+    const value = settings(undefined, false);
+    value.catchUpMode.override = {
+      state: "on",
+      untilUtc: "2026-06-11T11:59:59.999Z"
+    };
+
+    expect(isCatchUpModeActive(value, now)).toBe(false);
+  });
+
   it("calculates fixed hour presets from the current time", () => {
     expect(addHours(2, now)).toBe("2026-06-11T14:00:00.000Z");
     expect(addHours(24, now)).toBe("2026-06-12T12:00:00.000Z");
@@ -79,6 +103,27 @@ describe("expiry alarm scheduling", () => {
 
     expect(clear).toHaveBeenCalledWith("despoilerze-expiry-check");
     expect(create).not.toHaveBeenCalled();
+
+    vi.unstubAllGlobals();
+  });
+
+  it("schedules override expiry before schedule transitions", async () => {
+    const clear = vi.fn().mockResolvedValue(true);
+    const create = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal("chrome", { alarms: { clear, create } });
+
+    const value = settings(undefined);
+    value.catchUpMode.override = {
+      state: "off",
+      untilUtc: "2999-06-11T13:00:00.000Z"
+    };
+
+    await syncExpiryAlarm(value);
+
+    expect(clear).toHaveBeenCalledWith("despoilerze-expiry-check");
+    expect(create).toHaveBeenCalledWith("despoilerze-expiry-check", {
+      when: new Date("2999-06-11T13:00:00.000Z").getTime()
+    });
 
     vi.unstubAllGlobals();
   });

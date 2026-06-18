@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import { pathToFileURL } from "node:url";
@@ -13,7 +13,17 @@ if (!releaseVersion) {
 const releaseDir = join(root, "Releases", `v${releaseVersion}`);
 const outputDir = join(releaseDir, "promo");
 const workDir = join(releaseDir, ".generated");
-const chromePath = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+const browserCandidates = [
+  "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+  "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe",
+  "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
+];
+const browserPath = browserCandidates.find(existsSync);
+if (!browserPath) {
+  throw new Error("Could not find Chrome, Edge, or Brave to render store promo assets.");
+}
 
 mkdirSync(outputDir, { recursive: true });
 mkdirSync(workDir, { recursive: true });
@@ -52,7 +62,7 @@ for (const asset of assets) {
   const pngPath = join(outputDir, `${asset.name}.png`);
   writeFileSync(htmlPath, asset.html);
 
-  const result = spawnSync(chromePath, [
+  const result = spawnSync(browserPath, [
     "--headless=new",
     "--disable-gpu",
     "--hide-scrollbars",
@@ -64,7 +74,7 @@ for (const asset of assets) {
   ], { stdio: "inherit" });
 
   if (result.status !== 0) {
-    throw new Error(`Failed to create ${pngPath}`);
+    throw new Error(`Failed to create ${pngPath}: ${result.error?.message ?? `browser exited with status ${result.status}`}`);
   }
 }
 
@@ -72,8 +82,8 @@ console.log(`Created ${assets.length} promo assets in ${outputDir}`);
 
 function promoPage({ width, height, titleSize, subtitleSize, iconSize, layout }) {
   const text = layout === "marquee"
-    ? `<h1>DeSpoilerize</h1><p>Catch up on sport without accidental result spoilers</p>`
-    : `<h1>DeSpoilerize</h1><p>Catch-up Mode for sport spoilers</p>`;
+    ? `<h1>DeSpoilerize</h1><p>Scheduled spoiler protection for sport and entertainment</p>`
+    : `<h1>DeSpoilerize</h1><p>Spoiler protection for sport and entertainment</p>`;
 
   return `<!doctype html>
 <html>

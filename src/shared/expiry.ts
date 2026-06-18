@@ -1,4 +1,4 @@
-import type { Settings } from "./types";
+import type { ProtectionOverride, Settings } from "./types";
 import { getNextProtectionTransition, isScheduledProtectionActive } from "./schedule";
 
 export const EXPIRY_ALARM_NAME = "despoilerze-expiry-check";
@@ -25,6 +25,9 @@ export function getValidExpiryDate(expiresAtUtc?: string): Date | null {
 }
 
 export function isCatchUpModeActive(settings: Settings, now = new Date()): boolean {
+  const override = getActiveProtectionOverride(settings, now);
+  if (override) return override.state === "on";
+
   if (settings.catchUpMode.schedule) {
     return isScheduledProtectionActive(settings, now);
   }
@@ -35,6 +38,33 @@ export function isCatchUpModeActive(settings: Settings, now = new Date()): boole
   if (!expiresAt) return !settings.catchUpMode.expiresAtUtc;
 
   return expiresAt > now;
+}
+
+export function getActiveProtectionOverride(settings: Settings, now = new Date()): ProtectionOverride | undefined {
+  const override = settings.catchUpMode.override;
+  if (!override) return undefined;
+
+  if (!override.untilUtc) return override;
+
+  const until = getValidExpiryDate(override.untilUtc);
+  if (!until || until <= now) return undefined;
+
+  return override;
+}
+
+export function getProtectionOverrideTransition(settings: Settings, now = new Date()): Date | null {
+  const override = getActiveProtectionOverride(settings, now);
+  if (!override?.untilUtc) return null;
+
+  return getValidExpiryDate(override.untilUtc);
+}
+
+export function clearExpiredProtectionOverride(settings: Settings, now = new Date()): boolean {
+  if (!settings.catchUpMode.override?.untilUtc) return false;
+  if (getActiveProtectionOverride(settings, now)) return false;
+
+  delete settings.catchUpMode.override;
+  return true;
 }
 
 export function formatExpiryLabel(expiresAtUtc?: string, now = new Date()): string {
@@ -60,6 +90,12 @@ export async function syncExpiryAlarm(settings: Settings): Promise<void> {
   if (!chrome.alarms) return;
 
   await chrome.alarms.clear(EXPIRY_ALARM_NAME);
+
+  const overrideTransition = getProtectionOverrideTransition(settings);
+  if (overrideTransition && overrideTransition > new Date()) {
+    await chrome.alarms.create(EXPIRY_ALARM_NAME, { when: overrideTransition.getTime() });
+    return;
+  }
 
   if (settings.catchUpMode.schedule) {
     const nextTransition = getNextProtectionTransition(settings);

@@ -1,13 +1,19 @@
-import type { ProtectionScheduleMode, Settings } from "../shared/types";
+import type { ProtectionOverride, ProtectionScheduleMode, Settings } from "../shared/types";
 import { getAllRulePacks } from "../rules";
 import { getSettings, saveSettings, SETTINGS_KEY } from "../shared/storage";
-import { isCatchUpModeActive, syncExpiryAlarm } from "../shared/expiry";
+import {
+  getActiveProtectionOverride,
+  getProtectionOverrideTransition,
+  isCatchUpModeActive,
+  syncExpiryAlarm
+} from "../shared/expiry";
 import {
   describeSchedule,
   formatScheduleDateTime,
+  getNextProtectionTransition,
   getNextProtectionWindow
 } from "../shared/schedule";
-import { cloneSchedule, defaultSchedule, schedulePresets } from "../shared/schedulePresets";
+import { cloneSchedule, defaultSchedule } from "../shared/schedulePresets";
 
 let settings: Settings;
 
@@ -31,13 +37,7 @@ async function initialise(): Promise<void> {
   render();
 
   toggleButton.addEventListener("click", () => {
-    void update(draft => {
-      draft.catchUpMode.enabled = true;
-      draft.catchUpMode.expiresAtUtc = undefined;
-      draft.catchUpMode.schedule = isCatchUpModeActive(settings)
-        ? cloneSchedule(schedulePresets.paused)
-        : cloneSchedule(schedulePresets.always);
-    });
+    void update(toggleProtectionOverride);
   });
 
   revealAllButton.addEventListener("click", () => {
@@ -67,16 +67,28 @@ function renderTitle(): void {
 function render(): void {
   const active = isCatchUpModeActive(settings);
   const schedule = currentSchedule();
+  const override = getActiveProtectionOverride(settings);
+  const overrideTransition = getProtectionOverrideTransition(settings);
   const nextWindow = getNextProtectionWindow(settings);
 
   statusTextElement.textContent = `Protection: ${active ? "ON" : "OFF"}`;
   statusElement.classList.toggle("on", active);
   statusElement.classList.toggle("off", !active);
 
-  toggleButton.querySelector("span:last-child")!.textContent = active ? "Stop protection" : "Start protection";
-  scheduleDescriptionElement.textContent = `${formatScheduleMode(schedule.mode)}: ${describeSchedule(schedule)}`;
+  toggleButton.querySelector("span:last-child")!.textContent = buttonText(active, override);
+  scheduleDescriptionElement.textContent = scheduleDescription(schedule.mode, schedule, override);
 
-  if (nextWindow && schedule.mode !== "always") {
+  if (override?.state === "on") {
+    nextProtectionElement.textContent = "Active now";
+    protectionEndsElement.textContent = overrideTransition
+      ? formatScheduleDateTime(overrideTransition)
+      : "When you return to schedule";
+  } else if (override?.state === "off") {
+    nextProtectionElement.textContent = overrideTransition
+      ? `After ${formatScheduleDateTime(overrideTransition)}`
+      : "When you return to schedule";
+    protectionEndsElement.textContent = "Paused now";
+  } else if (nextWindow && schedule.mode !== "always") {
     nextProtectionElement.textContent = active ? "Active now" : formatScheduleDateTime(nextWindow.start);
     protectionEndsElement.textContent = formatScheduleDateTime(nextWindow.end);
   } else if (schedule.mode === "always") {
@@ -93,6 +105,28 @@ function render(): void {
 
 function currentSchedule() {
   return cloneSchedule(settings.catchUpMode.schedule ?? defaultSchedule);
+}
+
+function toggleProtectionOverride(draft: Settings): void {
+  const override = getActiveProtectionOverride(settings);
+  const active = isCatchUpModeActive(settings);
+
+  if (override) {
+    delete draft.catchUpMode.override;
+    return;
+  }
+
+  if (!settings.catchUpMode.schedule) {
+    draft.catchUpMode.enabled = !active;
+    draft.catchUpMode.expiresAtUtc = undefined;
+    return;
+  }
+
+  draft.catchUpMode.enabled = true;
+  draft.catchUpMode.expiresAtUtc = undefined;
+  draft.catchUpMode.override = active
+    ? temporaryOverride("off", getNextProtectionTransition(settings))
+    : temporaryOverride("on");
 }
 
 function describeEnabledPacks(enabledPackIds: string[]): string {
@@ -122,6 +156,30 @@ function formatSensitivity(value: string): string {
   if (value === "gentle") return "Gentle";
   if (value === "balanced") return "Balanced";
   return "Lockdown";
+}
+
+function buttonText(active: boolean, override?: ProtectionOverride): string {
+  if (override) return "Return to schedule";
+  if (!settings.catchUpMode.schedule) return active ? "Stop protection" : "Start protection";
+  return active ? "Pause protection" : "Protect now";
+}
+
+function scheduleDescription(
+  mode: ProtectionScheduleMode,
+  schedule: ReturnType<typeof currentSchedule>,
+  override?: ProtectionOverride
+): string {
+  if (override?.state === "on") return `Temporary override: ${formatScheduleMode(mode)} schedule unchanged`;
+  if (override?.state === "off") return `Temporary pause: ${formatScheduleMode(mode)} schedule unchanged`;
+
+  return `${formatScheduleMode(mode)}: ${describeSchedule(schedule)}`;
+}
+
+function temporaryOverride(state: ProtectionOverride["state"], until?: Date | null): ProtectionOverride {
+  return {
+    state,
+    ...(until ? { untilUtc: until.toISOString() } : {})
+  };
 }
 
 async function update(mutator: (draft: Settings) => void): Promise<void> {
