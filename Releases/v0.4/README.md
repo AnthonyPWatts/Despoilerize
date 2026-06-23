@@ -15,6 +15,7 @@ Chrome Web Store release assets for DeSpoilerize v0.4.x.
 
 ## Package
 
+- [despoilerize-v0.4.4-chrome-web-store.zip](./despoilerize-v0.4.4-chrome-web-store.zip)
 - [despoilerize-v0.4.3-chrome-web-store.zip](./despoilerize-v0.4.3-chrome-web-store.zip)
 - [despoilerize-v0.4.2-chrome-web-store.zip](./despoilerize-v0.4.2-chrome-web-store.zip)
 - [despoilerize-v0.4.1-chrome-web-store.zip](./despoilerize-v0.4.1-chrome-web-store.zip)

@@ -1,6 +1,6 @@
 {
   "name": "despoilerize",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": true,
   "description": "Spoiler protection for sport and entertainment browsing.",
   "type": "module",

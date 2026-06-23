@@ -4,13 +4,13 @@ Release assets for store submission and archive use.
 
 ## v0.5
 
-- [Chrome Web Store package](./v0.5/despoilerize-v0.5.0-chrome-web-store.zip)
+- [Chrome Web Store package](./v0.5/despoilerize-v0.5.1-chrome-web-store.zip)
 - [Chrome Web Store screenshots](./v0.5/screenshots/)
 - [Chrome Web Store promo tiles](./v0.5/promo/)
 
 ## v0.4
 
-- [Chrome Web Store package](./v0.4/despoilerize-v0.4.3-chrome-web-store.zip)
+- [Chrome Web Store package](./v0.4/despoilerize-v0.4.4-chrome-web-store.zip)
 - [Chrome Web Store screenshots](./v0.4/screenshots/)
 - [Chrome Web Store promo tiles](./v0.4/promo/)
 

@@ -54,8 +54,7 @@ const customTermsTextArea = mustGet<HTMLTextAreaElement>("custom-terms");
 const supportedSitesElement = mustGet<HTMLElement>("supported-sites");
 const customTermsCount = mustGet<HTMLElement>("custom-terms-count");
 const trustedSitesCount = mustGet<HTMLElement>("trusted-sites-count");
-const saveTopButton = mustGet<HTMLButtonElement>("save-top");
-const saveTopStatus = mustGet<HTMLElement>("save-top-status");
+const autosaveStatus = mustGet<HTMLElement>("autosave-status");
 const expandAllButton = mustGet<HTMLButtonElement>("expand-all");
 const exportButton = mustGet<HTMLButtonElement>("export-settings");
 const importButton = mustGet<HTMLButtonElement>("import-settings");
@@ -80,10 +79,6 @@ async function initialise(): Promise<void> {
   renderSchedule();
   updateTextCounts();
   sensitivitySelect.value = settings.catchUpMode.sensitivity;
-
-  saveTopButton.addEventListener("click", () => {
-    void saveNow();
-  });
 
   expandAllButton.addEventListener("click", () => {
     allExpanded = !allExpanded;
@@ -390,8 +385,8 @@ function toggleDay(days: number[], day: number): number[] {
 }
 
 function queueSave(): void {
-  saveTopStatus.textContent = "Saving...";
-  saveTopStatus.classList.remove("saved");
+  autosaveStatus.textContent = "Saving...";
+  autosaveStatus.classList.remove("saved");
 
   if (saveTimeout !== undefined) {
     window.clearTimeout(saveTimeout);
@@ -427,12 +422,12 @@ function showSavedMessage(): void {
     window.clearTimeout(savedMessageTimeout);
   }
 
-  saveTopStatus.textContent = "Saved.";
-  saveTopStatus.classList.add("saved");
+  autosaveStatus.textContent = "Saved.";
+  autosaveStatus.classList.add("saved");
 
   savedMessageTimeout = window.setTimeout(() => {
-    saveTopStatus.textContent = "Changes are saved automatically";
-    saveTopStatus.classList.remove("saved");
+    autosaveStatus.textContent = "Changes are saved automatically";
+    autosaveStatus.classList.remove("saved");
     savedMessageTimeout = undefined;
   }, 2000);
 }

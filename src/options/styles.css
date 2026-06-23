@@ -85,13 +85,13 @@ button {
   margin-top: 8px;
 }
 
-.save-stack {
+.autosave-stack {
   display: grid;
   justify-items: end;
   gap: 8px;
 }
 
-.primary, .secondary {
+.secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -103,11 +103,6 @@ button {
   color: #fff;
   padding: 0 18px;
   font-weight: 720;
-}
-
-.primary img {
-  width: 16px;
-  height: 16px;
 }
 
 .secondary {
@@ -577,7 +572,7 @@ textarea::placeholder {
     display: grid;
   }
 
-  .save-stack {
+  .autosave-stack {
     justify-items: start;
   }
 

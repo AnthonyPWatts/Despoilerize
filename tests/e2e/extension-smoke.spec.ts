@@ -33,7 +33,7 @@ test("sets protection schedules and sensitivity from options", async ({ browserN
     await expect(options.getByRole("radio", { name: /Every weekend/i })).toHaveAttribute("aria-checked", "true");
 
     await options.getByRole("radio", { name: /Always on/i }).click();
-    await expect(options.locator("#save-top-status")).toHaveText("Saved.");
+    await expect(options.locator("#autosave-status")).toHaveText("Saved.");
 
     const alwaysOnSettings = await readSettings(harness.extensionPage);
     expect(alwaysOnSettings.catchUpMode.schedule?.mode).toBe("always");
@@ -45,14 +45,14 @@ test("sets protection schedules and sensitivity from options", async ({ browserN
     await expect(popup.locator("#status-text")).toHaveText("Protection: ON");
 
     await options.getByRole("radio", { name: /Paused/i }).click();
-    await expect(options.locator("#save-top-status")).toHaveText("Saved.");
+    await expect(options.locator("#autosave-status")).toHaveText("Saved.");
     await expect(popup.locator("#status-text")).toHaveText("Protection: OFF");
 
     const pausedSettings = await readSettings(harness.extensionPage);
     expect(pausedSettings.catchUpMode.schedule?.mode).toBe("paused");
 
     await options.locator("#sensitivity").selectOption("balanced");
-    await expect(options.locator("#save-top-status")).toHaveText("Saved.");
+    await expect(options.locator("#autosave-status")).toHaveText("Saved.");
 
     const sensitivitySettings = await readSettings(harness.extensionPage);
     expect(sensitivitySettings.catchUpMode.sensitivity).toBe("balanced");
@@ -107,7 +107,7 @@ test("popup protects now without replacing the saved schedule", async ({ browser
   }
 });
 
-test("saves pack, custom term, and supported site filtering changes from options", async ({ browserName, playwright }) => {
+test("auto-saves pack, custom term, and supported site filtering changes from options", async ({ browserName, playwright }) => {
   test.skip(browserName !== "chromium", "Chrome extensions can only be loaded in Chromium.");
 
   const harness = await launchExtension(playwright);
@@ -123,8 +123,8 @@ test("saves pack, custom term, and supported site filtering changes from options
 
     await options.locator("#custom-terms").fill("The Traitors\nLove Island final");
     await options.locator(".site-toggle-card", { hasText: "BBC" }).locator("input").uncheck();
-    await options.getByRole("button", { name: "Save settings" }).first().click();
-    await expect(options.locator("#save-top-status")).toHaveText("Saved.");
+    await expect(options.getByRole("button", { name: "Save settings" })).toHaveCount(0);
+    await expect(options.locator("#autosave-status")).toHaveText("Saved.");
 
     const saved = await readSettings(harness.extensionPage);
     expect(saved.enabledPacks).toContain("f1");
@@ -256,6 +256,7 @@ async function launchExtension(playwright: PlaywrightApi): Promise<ExtensionHarn
   const extensionId = await getExtensionId(context);
   const extensionPage = await context.newPage();
   await extensionPage.goto(extensionUrl(extensionId, "assets/storage.js"));
+  await expect.poll(async () => (await readSettings(extensionPage))?.catchUpMode.schedule?.mode).toBe("weekend");
 
   return {
     context,
@@ -297,6 +298,7 @@ async function writeSettings(extensionPage: ExtensionHarness["extensionPage"], s
     async ({ key, value }) => chrome.storage.sync.set({ [key]: value }),
     { key: settingsKey, value: settings }
   );
+  await expect.poll(async () => readSettings(extensionPage)).toEqual(settings);
 }
 
 async function sendSettingsChanged(extensionPage: ExtensionHarness["extensionPage"], url: string): Promise<void> {

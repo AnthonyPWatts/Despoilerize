@@ -70,7 +70,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-The e2e smoke suite builds the extension and checks schedule/sensitivity settings, options-page saving, popup state summaries, and content-script hide/reveal/settings refresh behaviour in Chromium.
+The e2e smoke suite builds the extension and checks schedule/sensitivity settings, options-page auto-save behaviour, popup state summaries, and content-script hide/reveal/settings refresh behaviour in Chromium.
 
 ## Chrome Web Store package
 
@@ -95,10 +95,11 @@ Release packages and store listing assets are kept under [`Releases`](./Releases
 1. Build and load the extension.
 2. Open settings and choose a protection schedule.
 3. Set sensitivity to Lockdown.
-4. Visit YouTube, Google News, BBC Sport, The Guardian, or Google Search.
-5. Search or browse for protected topics such as F1, World Cup 2026, or Reality TV.
-6. Confirm likely spoiler cards are blurred while safe preview/how-to-watch pages remain usable in Balanced mode.
-7. Use Reveal once or Reveal all on page.
+4. Confirm settings changes save automatically without a separate save step.
+5. Visit YouTube, Google News, BBC Sport, The Guardian, or Google Search.
+6. Search or browse for protected topics such as F1, World Cup 2026, or Reality TV.
+7. Confirm likely spoiler cards are blurred while safe preview/how-to-watch pages remain usable in Balanced mode.
+8. Use Reveal once or Reveal all on page.
 
 ## Supported Sites
 
