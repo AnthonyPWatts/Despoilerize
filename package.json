@@ -10,7 +10,7 @@
     "dev": "vite build --watch",
     "package:chrome": "npm run build && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-chrome.ps1",
     "promo:store": "node scripts/generate-store-promo-assets.mjs",
-    "screenshots:store": "node scripts/generate-store-screenshots.mjs",
+    "screenshots:store": "npm run build && node scripts/generate-store-screenshots.mjs",
     "test:e2e": "npm run build && playwright test",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"

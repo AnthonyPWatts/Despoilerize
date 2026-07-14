@@ -82,6 +82,14 @@ This builds the extension and creates a Chrome Web Store zip under `Releases/v0.
 
 Release packages and store listing assets are kept under [`Releases`](./Releases/).
 
+## Chrome Web Store screenshots
+
+```bash
+npm run screenshots:store
+```
+
+This builds and loads the unpacked extension in Playwright Chromium, then captures the real popup, options page, injected spoiler overlay, and reveal controls at 1280 × 800. The on-page images use a clearly labelled deterministic fixture from [`tests/fixtures/store/capture-page.html`](./tests/fixtures/store/capture-page.html); they do not imitate a third-party site or browser chrome.
+
 ## Current limitations
 
 - Host permissions are currently scoped to Google Search, Google News, BBC, YouTube, and The Guardian.
