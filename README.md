@@ -88,7 +88,7 @@ Release packages and store listing assets are kept under [`Releases`](./Releases
 npm run screenshots:store
 ```
 
-This builds and loads the unpacked extension in Playwright Chromium, then captures the real popup, options page, injected spoiler overlay, and reveal controls at 1280 × 800. The on-page images use a clearly labelled deterministic fixture from [`tests/fixtures/store/capture-page.html`](./tests/fixtures/store/capture-page.html); they do not imitate a third-party site or browser chrome.
+This builds and loads the unpacked extension in Playwright Chromium, then captures the real popup, options page, injected spoiler overlay, and reveal controls at 1280 × 800. The on-page images use current public content from BBC Football and its World Cup page. The command fails if the live extension does not hide content or expose its real reveal controls. These sources can change over time, so the screenshots record the public pages available when the command is run rather than a deterministic fixture.
 
 ## Current limitations
 
