@@ -20,6 +20,10 @@ try {
 
 const viewport = { width: 1280, height: 800 };
 const outputDir = join(root, "Releases", `v${releaseVersion}`, "screenshots");
+const fixtureHtml = await readFile(
+  join(root, "tests", "fixtures", "store", "capture-page.html"),
+  "utf8"
+);
 const userDataDir = await mkdtemp(join(tmpdir(), "despoilerize-store-capture-"));
 
 await mkdir(outputDir, { recursive: true });
@@ -45,7 +49,7 @@ try {
 
   await capturePopup(context, extensionId);
   await captureOptions(context, extensionId);
-  await captureProtectedPages(context, extensionPage);
+  await captureProtectedPage(context);
 
   console.log(`Captured 5 screenshots from the running extension in ${outputDir}`);
 } finally {
@@ -104,8 +108,8 @@ async function captureOptions(browserContext, extensionId) {
     `
   });
 
-  const football = page.locator(".topic-card-header", { hasText: "Football" });
-  await football.evaluate(element => element.click());
+  const motorsport = page.locator(".topic-card-header", { hasText: "Motorsport" });
+  await motorsport.evaluate(element => element.click());
   await page.evaluate(() => window.scrollTo(0, 0));
   await capture(page, "02-settings-schedule-topics.png");
 
@@ -116,72 +120,33 @@ async function captureOptions(browserContext, extensionId) {
   await page.close();
 }
 
-async function captureProtectedPages(browserContext, extensionPage) {
-  const bbc = await openLiveProtectedPage(
-    browserContext,
-    extensionPage,
-    "https://www.bbc.com/sport/football",
-    "Reject additional cookies"
-  );
-
-  await bbc.evaluate(() => window.scrollTo(0, 0));
-  await capture(bbc, "04-spoiler-hidden-on-page.png");
-  await bbc.close();
-
-  const worldCup = await openLiveProtectedPage(
-    browserContext,
-    extensionPage,
-    "https://www.bbc.com/sport/football/world-cup"
-  );
-  const protectedResult = worldCup.locator("[data-despoilerze-hidden='true']").nth(1);
-  await protectedResult.waitFor();
-  await protectedResult.scrollIntoViewIfNeeded();
-  await worldCup.waitForTimeout(500);
-  await capture(worldCup, "05-reveal-controls.png");
-
-  const revealOnce = protectedResult.locator("xpath=ancestor::*[@data-despoilerze-shell='true'][1]")
-    .getByRole("button", { name: "Reveal once" })
-    .first();
-  const protectedElement = await protectedResult.elementHandle();
-  if (!protectedElement) throw new Error("Could not retain the protected World Cup result for reveal verification.");
-  await revealOnce.click();
-  await worldCup.waitForFunction(
-    element => !element.hasAttribute("data-despoilerze-hidden"),
-    protectedElement
-  );
-  await worldCup.close();
-}
-
-async function openLiveProtectedPage(browserContext, extensionPage, url, consentButton) {
+async function captureProtectedPage(browserContext) {
   const page = await browserContext.newPage();
-  await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60_000 });
+  const fixtureUrl = "https://www.bbc.co.uk/despoilerize-capture-fixture";
 
-  if (consentButton) {
-    const consent = page.getByRole("button", { name: consentButton, exact: true });
-    const consentAppeared = await consent.waitFor({ state: "visible", timeout: 8_000 })
-      .then(() => true)
-      .catch(() => false);
-    if (consentAppeared) {
-      await consent.click();
-      await consent.waitFor({ state: "hidden", timeout: 10_000 });
-    }
-  }
-
-  await page.waitForTimeout(2_000);
-  await notifyPage(extensionPage, page.url());
-  await page.locator("[data-despoilerze-hidden='true']").first().waitFor({ timeout: 20_000 });
+  await page.route(fixtureUrl, route => route.fulfill({
+    status: 200,
+    contentType: "text/html",
+    body: fixtureHtml
+  }));
+  await page.goto(fixtureUrl, { waitUntil: "domcontentloaded" });
+  await page.locator("#overview-card[data-despoilerze-hidden='true']").waitFor();
+  await page.locator("#reveal-card[data-despoilerze-hidden='true']").waitFor();
   await page.getByRole("button", { name: "Reveal once" }).first().waitFor();
   await page.getByRole("button", { name: "Reveal all on page" }).first().waitFor();
-  return page;
-}
 
-async function notifyPage(extensionPage, url) {
-  await extensionPage.evaluate(async targetUrl => {
-    const tabs = await chrome.tabs.query({});
-    const tab = tabs.find(candidate => candidate.url === targetUrl);
-    if (!tab?.id) throw new Error(`Could not find the live capture tab for ${targetUrl}`);
-    await chrome.tabs.sendMessage(tab.id, { type: "DESPOILERZE_SETTINGS_CHANGED" });
-  }, url);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await capture(page, "04-spoiler-hidden-on-page.png");
+
+  await page.locator("#reveal-showcase").evaluate(element => element.scrollIntoView({ block: "start" }));
+  await page.evaluate(() => window.scrollBy(0, -20));
+  await capture(page, "05-reveal-controls.png");
+
+  // Exercise the captured control so a successful command also proves that the
+  // screenshot is backed by the extension's live reveal behaviour.
+  await page.locator("#reveal-showcase [data-action='reveal-once']").click();
+  await page.locator("#reveal-card[data-despoilerze-hidden='true']").waitFor({ state: "detached" });
+  await page.close();
 }
 
 async function capture(page, filename) {
@@ -221,11 +186,11 @@ async function writeCaptureSettings(extensionPage) {
         startTime: "00:00",
         endTime: "23:59"
       },
-      sensitivity: "lockdown"
+      sensitivity: "balanced"
     },
-    enabledPacks: ["world-cup-2026"],
-    customTerms: [],
-    trustedSites: []
+    enabledPacks: ["f1"],
+    customTerms: ["The Traitors", "Love Island final", "British Grand Prix"],
+    trustedSites: ["www.theguardian.com"]
   };
 
   await extensionPage.evaluate(

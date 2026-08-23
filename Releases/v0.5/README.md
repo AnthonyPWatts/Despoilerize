@@ -24,7 +24,7 @@ Chrome Web Store release assets for DeSpoilerize v0.5.x.
 - [Spoiler hidden on page](./screenshots/04-spoiler-hidden-on-page.png)
 - [Reveal controls](./screenshots/05-reveal-controls.png)
 
-Run `npm run screenshots:store` to rebuild the extension and reproduce all five images in Playwright Chromium. The popup and settings images use the built extension pages. The on-page images browse current public content on BBC Football and its World Cup page, then fail unless the live content script injects its blur, spoiler reason, and reveal controls. The World Cup capture also activates `Reveal once` and fails if the protected result is not restored. Live page content can change over time, so regenerated images may differ.
+Run `npm run screenshots:store` to rebuild the extension and reproduce all five images in Playwright Chromium. The popup and settings images use the built extension pages. The on-page images serve the clearly labelled [`capture-page.html`](../../tests/fixtures/store/capture-page.html) fixture through a locally intercepted supported URL, allowing the real content script to inject its blur, spoiler reason, and reveal controls without presenting the fixture as a live third-party page. The capture also activates `Reveal once` and fails if the protected card is not restored.
 
 ## Promo tiles
 
