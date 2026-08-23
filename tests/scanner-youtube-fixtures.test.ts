@@ -61,6 +61,30 @@ describe("scanDocument YouTube fixtures", () => {
     expect(document.getElementById("safe-rich-item")?.getAttribute("data-despoilerze-hidden")).toBeNull();
   });
 
+  it("rescans a YouTube lockup when hydration replaces placeholder text", () => {
+    document.body.innerHTML = `
+      <ytd-rich-item-renderer id="reported-rich-item">
+        <yt-lockup-view-model id="reported-lockup">
+          <h3>
+            <a class="yt-lockup-metadata-view-model__title" href="/watch?v=qualifying">
+              <span id="reported-title">Loading video...</span>
+            </a>
+          </h3>
+        </yt-lockup-view-model>
+      </ytd-rich-item-renderer>`;
+
+    const lockup = document.getElementById("reported-lockup")!;
+    scanDocument(settings("lockdown"), [f1RulePack], lockup);
+    expect(document.getElementById("reported-rich-item")?.getAttribute("data-despoilerze-hidden")).toBeNull();
+
+    const title = document.getElementById("reported-title")!;
+    title.textContent = "Qualifying Highlights | 2026 Dutch Grand Prix";
+
+    scanDocument(settings("lockdown"), [f1RulePack], title);
+
+    expect(document.getElementById("reported-rich-item")?.getAttribute("data-despoilerze-hidden")).toBe("true");
+  });
+
   it("hides a spoilery YouTube watch recommendation at the compact renderer", () => {
     loadFixture("youtube/watch-recommendations-f1.html");
 

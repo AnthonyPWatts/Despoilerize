@@ -243,6 +243,45 @@ test("content script runs on The Guardian and hides Guardian story cards", async
   }
 });
 
+test("content script hides YouTube F1 cards populated after initial render", async ({ browserName, playwright }) => {
+  test.skip(browserName !== "chromium", "Chrome extensions can only be loaded in Chromium.");
+
+  const harness = await launchExtension(playwright);
+
+  try {
+    await writeSettings(harness.extensionPage, {
+      catchUpMode: {
+        enabled: true,
+        schedule: {
+          mode: "always",
+          days: [],
+          startTime: "00:00",
+          endTime: "23:59"
+        },
+        sensitivity: "lockdown"
+      },
+      enabledPacks: ["f1"],
+      customTerms: [],
+      trustedSites: []
+    });
+
+    const page = await harness.context.newPage();
+    await page.route("https://www.youtube.com/", route => {
+      route.fulfill({
+        contentType: "text/html",
+        body: youtubeHydrationFixtureHtml()
+      });
+    });
+
+    await page.goto("https://www.youtube.com/", { waitUntil: "domcontentloaded" });
+
+    await expect(page.locator("#qualifying-card[data-despoilerze-hidden='true']")).toHaveCount(1);
+    await expect(page.locator("#sprint-card[data-despoilerze-hidden='true']")).toHaveCount(1);
+  } finally {
+    await harness.context.close();
+  }
+});
+
 async function launchExtension(playwright: PlaywrightApi): Promise<ExtensionHarness> {
   const userDataDir = await mkdtemp(join(tmpdir(), "despoilerize-e2e-"));
   const context = await playwright.chromium.launchPersistentContext(userDataDir, {
@@ -358,6 +397,43 @@ function guardianFixtureHtml(): string {
             </div>
           </section>
         </main>
+      </body>
+    </html>`;
+}
+
+function youtubeHydrationFixtureHtml(): string {
+  return `<!doctype html>
+    <html>
+      <head>
+        <title>YouTube hydration fixture</title>
+        <style>
+          ytd-rich-item-renderer, yt-lockup-view-model, a {
+            display: block;
+            width: 520px;
+            min-height: 48px;
+            margin: 16px;
+          }
+        </style>
+      </head>
+      <body>
+        <main>
+          <ytd-rich-item-renderer id="qualifying-card">
+            <yt-lockup-view-model>
+              <h3><a class="yt-lockup-metadata-view-model__title"><span id="qualifying-title">Loading video...</span></a></h3>
+            </yt-lockup-view-model>
+          </ytd-rich-item-renderer>
+          <ytd-rich-item-renderer id="sprint-card">
+            <yt-lockup-view-model>
+              <h3><a class="yt-lockup-metadata-view-model__title"><span id="sprint-title">Loading video...</span></a></h3>
+            </yt-lockup-view-model>
+          </ytd-rich-item-renderer>
+        </main>
+        <script>
+          window.setTimeout(() => {
+            document.getElementById("qualifying-title").textContent = "Qualifying Highlights | 2026 Dutch Grand Prix";
+            document.getElementById("sprint-title").textContent = "Sprint Highlights | 2026 Dutch Grand Prix";
+          }, 1_000);
+        </script>
       </body>
     </html>`;
 }

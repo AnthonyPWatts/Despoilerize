@@ -45,6 +45,16 @@ describe("scoreText", () => {
     expect(result.shouldHide).toBe(true);
   });
 
+  it.each([
+    "Qualifying Highlights | 2026 Dutch Grand Prix",
+    "Sprint Highlights | 2026 Dutch Grand Prix"
+  ])("hides the reported YouTube F1 title in lockdown mode: %s", headline => {
+    const result = scoreText(headline, [f1RulePack], "lockdown");
+
+    expect(result.shouldHide).toBe(true);
+    expect(result.packIds).toContain("f1");
+  });
+
   it("flags DNF and position-style F1 result language", () => {
     const result = scoreText(
       "Hamilton P3 after Verstappen DNF in dramatic race",

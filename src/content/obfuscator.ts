@@ -122,11 +122,22 @@ export function injectStyles(): void {
 }
 
 export function markProcessed(element: HTMLElement): void {
-  element.setAttribute(PROCESSED_ATTR, "true");
+  element.setAttribute(PROCESSED_ATTR, contentSignature(element));
 }
 
 export function isProcessed(element: HTMLElement): boolean {
-  return element.getAttribute(PROCESSED_ATTR) === "true";
+  const processedSignature = element.getAttribute(PROCESSED_ATTR);
+  return processedSignature !== null && processedSignature === contentSignature(element);
+}
+
+export function clearProcessed(root: ParentNode = document): void {
+  if (root instanceof HTMLElement) {
+    root.removeAttribute(PROCESSED_ATTR);
+  }
+
+  root.querySelectorAll?.(`[${PROCESSED_ATTR}]`).forEach(element => {
+    element.removeAttribute(PROCESSED_ATTR);
+  });
 }
 
 export function isAlreadyHidden(element: HTMLElement): boolean {
@@ -282,4 +293,20 @@ function escapeHtml(input: string): string {
       default: return char;
     }
   });
+}
+
+function contentSignature(element: HTMLElement): string {
+  const content = [
+    element.getAttribute("aria-label") ?? "",
+    element.getAttribute("title") ?? "",
+    element.innerText ?? element.textContent ?? ""
+  ].join("\u0000");
+  let hash = 2166136261;
+
+  for (let index = 0; index < content.length; index += 1) {
+    hash ^= content.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+
+  return `${content.length}:${(hash >>> 0).toString(36)}`;
 }

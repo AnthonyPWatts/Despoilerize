@@ -3,41 +3,53 @@ import type { Settings } from "../shared/types";
 import { getSettings, isCatchUpModeActive } from "../shared/storage";
 import { getProtectionState } from "../shared/protectionState";
 import { scanDocument } from "./scanner";
-import { revealAll } from "./obfuscator";
+import { clearProcessed, revealAll } from "./obfuscator";
 
 let settings: Settings | null = null;
 let scanQueued = false;
+const pendingScanRoots = new Set<ParentNode>();
 
 async function initialise(): Promise<void> {
   settings = await getSettings();
   void updateActionIcon();
+
+  observeDocumentChanges();
 
   if (!isCatchUpModeActive(settings)) {
     return;
   }
 
   runScan();
+}
 
+function observeDocumentChanges(): void {
   const observer = new MutationObserver(mutations => {
     if (!settings || !isCatchUpModeActive(settings)) return;
 
-    const addedNodes: ParentNode[] = [];
+    const changedRoots = new Set<ParentNode>();
 
     for (const mutation of mutations) {
+      if (mutation.target instanceof Element) {
+        changedRoots.add(mutation.target);
+      } else if (mutation.target.parentElement) {
+        changedRoots.add(mutation.target.parentElement);
+      }
+
       for (const node of Array.from(mutation.addedNodes)) {
         if (node instanceof Element || node instanceof DocumentFragment) {
-          addedNodes.push(node);
+          changedRoots.add(node);
         }
       }
     }
 
-    if (addedNodes.length > 0) {
-      queueScan(addedNodes);
+    if (changedRoots.size > 0) {
+      queueScan(Array.from(changedRoots));
     }
   });
 
   observer.observe(document.body, {
     childList: true,
+    characterData: true,
     subtree: true
   });
 }
@@ -52,12 +64,18 @@ function runScan(roots: ParentNode[] = [document]): void {
 }
 
 function queueScan(roots: ParentNode[] = [document]): void {
+  for (const root of roots) {
+    pendingScanRoots.add(root);
+  }
+
   if (scanQueued) return;
   scanQueued = true;
 
   window.setTimeout(() => {
     scanQueued = false;
-    runScan(roots);
+    const queuedRoots = Array.from(pendingScanRoots);
+    pendingScanRoots.clear();
+    runScan(queuedRoots);
   }, 250);
 }
 
@@ -81,6 +99,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     if (message?.type === "DESPOILERZE_SETTINGS_CHANGED") {
       settings = await getSettings();
       void updateActionIcon();
+      clearProcessed();
       if (!isCatchUpModeActive(settings)) {
         revealAll();
         sendResponse({ ok: true });

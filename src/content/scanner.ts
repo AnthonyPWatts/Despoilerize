@@ -81,8 +81,13 @@ export function scanDocument(settings: Settings, rulePacks: RulePack[], root: Pa
 function findCandidates(root: ParentNode): Element[] {
   const candidates = new Set<Element>();
 
-  if (root instanceof Element && matchesAny(root, candidateSelectors)) {
-    candidates.add(root);
+  if (root instanceof Element) {
+    for (const selector of candidateSelectors) {
+      const ancestor = root.closest(selector);
+      if (ancestor) {
+        candidates.add(ancestor);
+      }
+    }
   }
 
   for (const selector of candidateSelectors) {
@@ -377,16 +382,6 @@ function isGoogleSearchPageLevelContainer(element: HTMLElement): boolean {
   if (["main", "search", "rso", "center_col"].includes(id)) return true;
 
   return element.getAttribute("role") === "main";
-}
-
-function matchesAny(element: Element, selectors: string[]): boolean {
-  return selectors.some(selector => {
-    try {
-      return element.matches(selector);
-    } catch {
-      return false;
-    }
-  });
 }
 
 function extractText(element: HTMLElement): string {
