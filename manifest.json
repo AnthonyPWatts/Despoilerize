@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "DeSpoilerize",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Spoiler protection for sport and entertainment browsing.",
   "permissions": ["storage", "alarms"],
   "host_permissions": [

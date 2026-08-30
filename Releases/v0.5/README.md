@@ -10,9 +10,11 @@ Chrome Web Store release assets for DeSpoilerize v0.5.x.
 - Added enabled, paused, and disabled extension action icons so the toolbar reflects the current protection state.
 - Refreshed the Chrome Web Store screenshots from the running extension rather than staged copies of its UI.
 - Removed the manual settings save button because settings changes are saved automatically.
+- Fixed YouTube cards that populate their titles after the initial page render so F1 spoilers are still hidden.
 
 ## Package
 
+- [despoilerize-v0.5.2-chrome-web-store.zip](./despoilerize-v0.5.2-chrome-web-store.zip)
 - [despoilerize-v0.5.1-chrome-web-store.zip](./despoilerize-v0.5.1-chrome-web-store.zip)
 - [despoilerize-v0.5.0-chrome-web-store.zip](./despoilerize-v0.5.0-chrome-web-store.zip)
 
