@@ -2,6 +2,14 @@
 
 Chrome Web Store release assets for DeSpoilerize v0.5.x.
 
+## v0.5.3 bug fix
+
+- Fixed hidden YouTube home cards expanding to the full feed width. Cards and thumbnails now retain their original sizes and grid positions when hidden or revealed.
+- Kept reveal controls aligned with their cards during resizing, scrolling and feed changes, and removed controls when their cards leave the page.
+- Added Chromium regressions for layout preservation, both reveal actions, responsive layouts and card removal/reinsertion.
+
+See [issue #4](https://github.com/AnthonyPWatts/Despoilerize/issues/4) for the investigation and [the YouTube smoke test](../../README.md#youtube-home-grid-regression) for live browser checks. The blur strength is unchanged; this fix corrects the unintended enlargement.
+
 ## Highlights
 
 - Added schedule-led protection controls for weekend, daily, custom, always-on, and paused protection.
@@ -14,6 +22,7 @@ Chrome Web Store release assets for DeSpoilerize v0.5.x.
 
 ## Package
 
+- [despoilerize-v0.5.3-chrome-web-store.zip](./despoilerize-v0.5.3-chrome-web-store.zip)
 - [despoilerize-v0.5.2-chrome-web-store.zip](./despoilerize-v0.5.2-chrome-web-store.zip)
 - [despoilerize-v0.5.1-chrome-web-store.zip](./despoilerize-v0.5.1-chrome-web-store.zip)
 - [despoilerize-v0.5.0-chrome-web-store.zip](./despoilerize-v0.5.0-chrome-web-store.zip)
