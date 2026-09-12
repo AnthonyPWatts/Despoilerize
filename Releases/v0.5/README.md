@@ -10,6 +10,22 @@ Chrome Web Store release assets for DeSpoilerize v0.5.x.
 
 See [issue #4](https://github.com/AnthonyPWatts/Despoilerize/issues/4) for the investigation and [the YouTube smoke test](../../README.md#youtube-home-grid-regression) for live browser checks. The blur strength is unchanged; this fix corrects the unintended enlargement.
 
+### Submission status — 12 September 2026
+
+v0.5.3 was uploaded to the existing [Chrome Web Store item](https://chromewebstore.google.com/detail/ekckhdeeoilbnocmcpnhbcocbapjpmof) and submitted for review. The dashboard confirmed **Pending review**, with automatic publication enabled after approval. v0.5.2 was the published version at submission; v0.5.3 has not yet been confirmed live.
+
+The fix and release package are on `main` in commits `13d2fb4` and `ae9bf79`. Issue #4 is closed. The prepared [GitHub release](https://github.com/AnthonyPWatts/Despoilerize/releases) remains a draft pending store approval. Once Google confirms publication, check that the store lists v0.5.3 and publish that existing GitHub draft.
+
+Release verification completed:
+
+- `npm test`: 80 tests passed.
+- `npm run typecheck`: passed.
+- `npx playwright test`: all eight Chromium extension tests passed against the v0.5.3 build.
+- `npm run package:chrome`: built and packaged successfully; the root manifest reports v0.5.3 and all 44 archived files match the tested build.
+- The GitHub release asset's SHA-256 matches the local ZIP: `527a4546e44afd77e316f14e582681491ba88a1edf8b25d2b6c9bd5af8caa47f`.
+
+Browser regression tests use synthetic fixtures. Live YouTube behaviour and thumbnail readability still require the documented manual smoke test.
+
 ## Highlights
 
 - Added schedule-led protection controls for weekend, daily, custom, always-on, and paused protection.
