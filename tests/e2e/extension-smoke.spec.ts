@@ -282,6 +282,151 @@ test("content script hides YouTube F1 cards populated after initial render", asy
   }
 });
 
+test("YouTube home grid keeps card and thumbnail geometry through hiding and both reveal actions", async ({ playwright }, testInfo) => {
+  const harness = await launchExtension(playwright);
+
+  try {
+    const settings: Settings = {
+      catchUpMode: { enabled: false, sensitivity: "lockdown" },
+      enabledPacks: ["f1"],
+      customTerms: [],
+      trustedSites: []
+    };
+    await writeSettings(harness.extensionPage, settings);
+
+    const page = await harness.context.newPage();
+    await page.setViewportSize({ width: 1600, height: 1000 });
+    const fixture = await readFile("tests/fixtures/sites/youtube/home-grid-layout.html", "utf8");
+    await page.route("https://www.youtube.com/", route => route.fulfill({ contentType: "text/html", body: fixture }));
+    await page.goto("https://www.youtube.com/", { waitUntil: "domcontentloaded" });
+    await sendSettingsChanged(harness.extensionPage, "https://www.youtube.com/*");
+
+    const originalGeometry = await youtubeCardGeometry(page);
+    await page.screenshot({ path: testInfo.outputPath("youtube-original.png") });
+    await writeSettings(harness.extensionPage, { ...settings, catchUpMode: { enabled: true, sensitivity: "lockdown" } });
+    await sendSettingsChanged(harness.extensionPage, "https://www.youtube.com/*");
+    await expect(page.locator("[data-despoilerze-hidden='true']")).toHaveCount(2);
+    await page.screenshot({ path: testInfo.outputPath("youtube-hidden.png") });
+
+    expect(await youtubeCardGeometry(page)).toEqual(originalGeometry);
+    await expect(page.locator("#contents > ytd-rich-item-renderer")).toHaveCount(6);
+    await expect(page.locator("#fp2-card")).toHaveCSS("filter", "blur(10px)");
+    await expect(page.locator("#gaming-card")).toHaveCSS("filter", "none");
+
+    await page.getByRole("button", { name: "Reveal once", exact: true }).first().click();
+    await expect(page.locator("#fp2-card[data-despoilerze-hidden='true']")).toHaveCount(0);
+    await expect(page.locator("#qualifying-card[data-despoilerze-hidden='true']")).toHaveCount(1);
+    expect(await youtubeCardGeometry(page)).toEqual(originalGeometry);
+
+    await page.getByRole("button", { name: "Reveal all on page", exact: true }).click();
+    await expect(page.locator("[data-despoilerze-hidden='true'], .despoilerze-overlay")).toHaveCount(0);
+    expect(await youtubeCardGeometry(page)).toEqual(originalGeometry);
+    await expect(page.locator("#fp2-card")).toHaveCSS("filter", "none");
+    await page.screenshot({ path: testInfo.outputPath("youtube-revealed.png") });
+
+    // A subsequent scan must respect both explicit reveal choices.
+    await sendSettingsChanged(harness.extensionPage, "https://www.youtube.com/*");
+    await expect(page.locator("[data-despoilerze-hidden='true']")).toHaveCount(0);
+  } finally {
+    await harness.context.close();
+  }
+});
+
+test("YouTube reveal controls follow resizing, scrolling and feed changes without leaving orphaned controls", async ({ playwright }) => {
+  const harness = await launchExtension(playwright);
+
+  try {
+    await writeSettings(harness.extensionPage, {
+      catchUpMode: { enabled: true, sensitivity: "lockdown" },
+      enabledPacks: ["f1"],
+      customTerms: [],
+      trustedSites: []
+    });
+    const page = await harness.context.newPage();
+    await page.setViewportSize({ width: 1600, height: 1000 });
+    const fixture = await readFile("tests/fixtures/sites/youtube/home-grid-layout.html", "utf8");
+    await page.route("https://www.youtube.com/", route => route.fulfill({ contentType: "text/html", body: fixture }));
+    await page.goto("https://www.youtube.com/", { waitUntil: "domcontentloaded" });
+    await expect(page.locator("[data-despoilerze-hidden='true']")).toHaveCount(2);
+    await expectYouTubeOverlayAligned(page, "fp2-card");
+
+    for (const width of [1100, 420, 1600]) {
+      await page.setViewportSize({ width, height: 1000 });
+      await expectYouTubeOverlayAligned(page, "fp2-card");
+    }
+    await page.evaluate(() => window.scrollTo(0, 260));
+    await expectYouTubeOverlayAligned(page, "fp2-card");
+
+    // Move the card without changing its size, as when content arrives above the feed.
+    await page.evaluate(() => {
+      const spacer = document.createElement("div");
+      spacer.style.height = "120px";
+      document.getElementById("feed-spacer")!.appendChild(spacer);
+    });
+    await expectYouTubeOverlayAligned(page, "fp2-card");
+
+    // YouTube can scroll a feed within a container, independently of the document.
+    await page.evaluate(() => {
+      const main = document.querySelector("main")!;
+      main.style.height = "500px";
+      main.style.overflow = "auto";
+      main.scrollTop = 180;
+    });
+    await expectYouTubeOverlayAligned(page, "fp2-card");
+    await page.evaluate(() => document.querySelector("main")!.removeAttribute("style"));
+    await expectYouTubeOverlayAligned(page, "fp2-card");
+
+    // Retain the detached node to exercise a virtualised feed reusing a card.
+    await page.evaluate(() => {
+      const card = document.getElementById("fp2-card")!;
+      const template = document.createElement("template");
+      template.id = "removed-card";
+      document.body.appendChild(template);
+      template.content.appendChild(card);
+    });
+    await expect(page.locator(".despoilerze-overlay")).toHaveCount(1);
+    await page.evaluate(() => {
+      const template = document.querySelector<HTMLTemplateElement>("#removed-card")!;
+      document.getElementById("contents")!.appendChild(template.content);
+      template.remove();
+    });
+    await expect(page.locator("#fp2-card[data-despoilerze-hidden='true']")).toHaveCount(1);
+    await expect(page.locator(".despoilerze-overlay")).toHaveCount(2);
+    await expectYouTubeOverlayAligned(page, "fp2-card");
+
+    await page.getByRole("button", { name: "Reveal all on page", exact: true }).first().click();
+    await expect(page.locator("[data-despoilerze-hidden='true'], .despoilerze-overlay")).toHaveCount(0);
+    await page.setViewportSize({ width: 1100, height: 1000 });
+    await sendSettingsChanged(harness.extensionPage, "https://www.youtube.com/*");
+    await expect(page.locator(".despoilerze-overlay")).toHaveCount(0);
+  } finally {
+    await harness.context.close();
+  }
+});
+
+async function expectYouTubeOverlayAligned(page: Page, cardId: string): Promise<void> {
+  await expect.poll(() => page.evaluate(id => {
+    const card = document.getElementById(id)!;
+    const targetId = card.getAttribute("data-despoilerze-target-id");
+    const overlay = document.querySelector(`.despoilerze-overlay[data-despoilerze-target-id='${targetId}']`);
+    if (!overlay) return false;
+    const cardRect = card.getBoundingClientRect();
+    const overlayRect = overlay.getBoundingClientRect();
+    return Math.abs(overlayRect.left - cardRect.left - 8) < 1
+      && Math.abs(overlayRect.top - cardRect.top - 8) < 1
+      && overlayRect.right <= cardRect.right
+      && overlayRect.bottom <= cardRect.bottom
+      && Array.from(overlay.querySelectorAll("button")).every(button => button.getBoundingClientRect().right <= cardRect.right);
+  }, cardId)).toBe(true);
+}
+
+async function youtubeCardGeometry(page: Page) {
+  return page.locator("ytd-rich-item-renderer, .thumbnail").evaluateAll(elements => elements.map(element => {
+    const { x, y, width, height } = element.getBoundingClientRect();
+    return { x, y, width, height };
+  }));
+}
+
 async function launchExtension(playwright: PlaywrightApi): Promise<ExtensionHarness> {
   const userDataDir = await mkdtemp(join(tmpdir(), "despoilerize-e2e-"));
   const context = await playwright.chromium.launchPersistentContext(userDataDir, {

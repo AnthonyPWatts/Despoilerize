@@ -70,7 +70,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-The e2e smoke suite builds the extension and checks schedule/sensitivity settings, options-page auto-save behaviour, popup state summaries, and content-script hide/reveal/settings refresh behaviour in Chromium.
+The e2e smoke suite builds the extension and checks schedule/sensitivity settings, options-page auto-save behaviour, popup state summaries, and content-script hide/reveal/settings refresh behaviour in Chromium. YouTube checks include delayed card hydration, unchanged card/thumbnail geometry when hiding and revealing, and reveal controls following responsive layouts, scrolling and feed changes.
 
 ## Chrome Web Store package
 
@@ -108,6 +108,19 @@ This builds and loads the unpacked extension in Playwright Chromium, then captur
 6. Search or browse for protected topics such as F1, World Cup 2026, or Reality TV.
 7. Confirm likely spoiler cards are blurred while safe preview/how-to-watch pages remain usable in Balanced mode.
 8. Use Reveal once or Reveal all on page.
+
+### YouTube home grid regression
+
+For [issue #4](https://github.com/AnthonyPWatts/Despoilerize/issues/4), test in the browser used for normal YouTube browsing after rebuilding and reloading the unpacked extension:
+
+1. Enable Formula 1 protection, choose Lockdown, and ensure protection is active.
+2. Refresh the YouTube home page with a matching highlights card in the feed. Check that its thumbnail and metadata are blurred within one normal tile, with neighbouring cards still beside it.
+3. Resize the window, expand/collapse YouTube's sidebar, and scroll the feed. Confirm reveal controls remain on their card, fit within it, and are clickable.
+4. Select **Reveal once**. Confirm the card and its neighbours keep their sizes and positions, and other matching cards remain hidden.
+5. Refresh, then select **Reveal all on page**. Confirm the grid stays in place, all currently hidden cards are revealed, and their controls disappear. Also check the popup's page-reveal control.
+6. Browse to another YouTube page and load more recommendations. Confirm controls do not remain where removed cards used to be.
+
+The automated layout fixture uses synthetic content and parent-dependent tile widths to reproduce the original expansion. It is not a capture of YouTube's live DOM. Check embedded thumbnail text at normal size during the live smoke test; blur reduces readability but cannot guarantee that every large word or recognisable image is concealed.
 
 ## Supported Sites
 

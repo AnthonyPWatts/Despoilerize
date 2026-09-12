@@ -3,7 +3,7 @@ import type { Settings } from "../shared/types";
 import { getSettings, isCatchUpModeActive } from "../shared/storage";
 import { getProtectionState } from "../shared/protectionState";
 import { scanDocument } from "./scanner";
-import { clearProcessed, revealAll } from "./obfuscator";
+import { clearProcessed, queueDetachedOverlayUpdate, revealAll } from "./obfuscator";
 
 let settings: Settings | null = null;
 let scanQueued = false;
@@ -24,6 +24,8 @@ async function initialise(): Promise<void> {
 
 function observeDocumentChanges(): void {
   const observer = new MutationObserver(mutations => {
+    // Feed changes can move or remove hidden cards without resizing them.
+    queueDetachedOverlayUpdate();
     if (!settings || !isCatchUpModeActive(settings)) return;
 
     const changedRoots = new Set<ParentNode>();

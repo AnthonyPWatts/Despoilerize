@@ -1,4 +1,5 @@
 import type { RiskResult } from "../shared/types";
+import { isGoogleSearchPage, isYouTubePage } from "./containerSelection";
 
 const SHELL_CLASS = "despoilerze-shell";
 const WRAPPER_CLASS = "despoilerze-wrapper";
@@ -11,6 +12,9 @@ const TARGET_ID_ATTR = "data-despoilerze-target-id";
 const DETACHED_OVERLAY_ATTR = "data-despoilerze-detached-overlay";
 const REVEALED_ATTR = "data-despoilerze-revealed";
 let nextTargetId = 1;
+const detachedOverlays = new Map<HTMLElement, HTMLElement>();
+let overlayResizeObserver: ResizeObserver | null = null;
+let overlayUpdateFrame: number | null = null;
 
 export function injectStyles(): void {
   if (document.getElementById("despoilerze-style")) return;
@@ -150,7 +154,8 @@ export function obfuscate(container: HTMLElement, risk: RiskResult): void {
 
   injectStyles();
 
-  if (shouldUseDetachedOverlay()) {
+  // Preserve the host's grid/flex children and parent-dependent sizing rules.
+  if (isGoogleSearchPage() || isYouTubePage()) {
     obfuscateWithDetachedOverlay(container, risk);
     return;
   }
@@ -175,10 +180,20 @@ function obfuscateWithDetachedOverlay(container: HTMLElement, risk: RiskResult):
   overlay.setAttribute(DETACHED_OVERLAY_ATTR, "true");
   overlay.setAttribute(TARGET_ID_ATTR, targetId);
 
+  hideContainer(container, risk);
   positionDetachedOverlay(overlay, container);
   document.body.appendChild(overlay);
+  detachedOverlays.set(container, overlay);
 
-  hideContainer(container, risk);
+  if (detachedOverlays.size === 1) {
+    window.addEventListener("resize", queueDetachedOverlayUpdate);
+    document.addEventListener("scroll", queueDetachedOverlayUpdate, true);
+    if (typeof ResizeObserver !== "undefined") {
+      overlayResizeObserver = new ResizeObserver(queueDetachedOverlayUpdate);
+      overlayResizeObserver.observe(document.body);
+    }
+  }
+  overlayResizeObserver?.observe(container);
 }
 
 function createOverlay(container: HTMLElement, risk: RiskResult): HTMLElement {
@@ -229,11 +244,45 @@ function positionDetachedOverlay(overlay: HTMLElement, container: HTMLElement): 
 
   overlay.style.top = `${top}px`;
   overlay.style.left = `${left}px`;
-  overlay.style.maxWidth = `${Math.max(220, Math.min(360, rect.width - 16))}px`;
+  overlay.style.maxWidth = `${Math.max(0, Math.min(360, rect.width - 16))}px`;
+  overlay.style.visibility = rect.width > 0 && rect.height > 0 ? "visible" : "hidden";
 }
 
-function shouldUseDetachedOverlay(): boolean {
-  return /(^|\.)google\./i.test(window.location.hostname) && window.location.pathname === "/search";
+export function queueDetachedOverlayUpdate(): void {
+  if (detachedOverlays.size === 0 || overlayUpdateFrame !== null) return;
+
+  overlayUpdateFrame = window.requestAnimationFrame(() => {
+    overlayUpdateFrame = null;
+    for (const [container, overlay] of detachedOverlays) {
+      if (!container.isConnected) {
+        removeDetachedOverlay(container);
+        container.classList.remove(WRAPPER_CLASS, BLUR_CLASS);
+        container.removeAttribute(HIDDEN_ATTR);
+        // A virtualised feed may insert the same card again later.
+        clearProcessed(container);
+        continue;
+      }
+      positionDetachedOverlay(overlay, container);
+    }
+  });
+}
+
+function removeDetachedOverlay(container: HTMLElement): void {
+  detachedOverlays.get(container)?.remove();
+  detachedOverlays.delete(container);
+  container.removeAttribute(TARGET_ID_ATTR);
+  overlayResizeObserver?.unobserve(container);
+
+  if (detachedOverlays.size === 0) {
+    window.removeEventListener("resize", queueDetachedOverlayUpdate);
+    document.removeEventListener("scroll", queueDetachedOverlayUpdate, true);
+    overlayResizeObserver?.disconnect();
+    overlayResizeObserver = null;
+    if (overlayUpdateFrame !== null) {
+      window.cancelAnimationFrame(overlayUpdateFrame);
+      overlayUpdateFrame = null;
+    }
+  }
 }
 
 function getOrCreateTargetId(container: HTMLElement): string {
@@ -247,7 +296,6 @@ function getOrCreateTargetId(container: HTMLElement): string {
 
 export function reveal(container: HTMLElement): void {
   const shell = container.closest(`[${SHELL_ATTR}="true"]`);
-  const targetId = container.getAttribute(TARGET_ID_ATTR);
 
   /*
    * Mark this item as deliberately revealed for the lifetime of the page.
@@ -258,12 +306,7 @@ export function reveal(container: HTMLElement): void {
   container.classList.remove(WRAPPER_CLASS, BLUR_CLASS);
   container.removeAttribute(HIDDEN_ATTR);
 
-  if (targetId) {
-    for (const overlay of Array.from(document.querySelectorAll(`[${DETACHED_OVERLAY_ATTR}="true"][${TARGET_ID_ATTR}="${targetId}"]`))) {
-      overlay.remove();
-    }
-    container.removeAttribute(TARGET_ID_ATTR);
-  }
+  removeDetachedOverlay(container);
 
   if (shell?.parentElement) {
     shell.parentElement.insertBefore(container, shell);

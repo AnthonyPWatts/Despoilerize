@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>YouTube home grid layout regression fixture</title>
+    <style>
+      * { box-sizing: border-box; }
+      body { margin: 0; background: #111; color: #eee; font: 16px system-ui, sans-serif; }
+      header { padding: 24px 32px; }
+      main { margin: 0 32px; }
+      #contents { display: flex; flex-wrap: wrap; gap: 24px 16px; }
+      /* Model parent-dependent tile sizing, which an inserted shell must not break. */
+      ytd-rich-item-renderer { display: block; width: 100%; }
+      #contents > ytd-rich-item-renderer { width: calc((100% - 32px) / 3); }
+      @media (max-width: 1200px) {
+        #contents > ytd-rich-item-renderer { width: calc((100% - 16px) / 2); }
+      }
+      @media (max-width: 600px) {
+        #contents > ytd-rich-item-renderer { width: 100%; }
+      }
+      yt-lockup-view-model, a { display: block; }
+      a { color: inherit; text-decoration: none; }
+      .thumbnail {
+        aspect-ratio: 16 / 9; border-radius: 12px; padding: 20px;
+        background: linear-gradient(135deg, #35546b, #141d29);
+        display: flex; align-items: end; font-size: clamp(24px, 3vw, 48px); font-weight: 900;
+      }
+      .f1 { background: linear-gradient(145deg, #d53520, #312a29 55%, #111); }
+      h3 { font-size: 16px; margin: 12px 0 4px; }
+      p { margin: 0; color: #aaa; }
+      footer { height: 900px; padding: 32px; }
+    </style>
+  </head>
+  <body>
+    <header>Synthetic YouTube card layout fixture — no live recommendations</header>
+    <main>
+      <div id="feed-spacer"></div>
+      <div id="contents">
+        <ytd-rich-item-renderer id="music-card">
+          <yt-lockup-view-model><a href="/watch?v=music">
+            <div class="thumbnail">MUSIC</div><h3>Discovering a new album</h3><p>Music channel</p>
+          </a></yt-lockup-view-model>
+        </ytd-rich-item-renderer>
+        <ytd-rich-item-renderer id="cooking-card">
+          <yt-lockup-view-model><a href="/watch?v=cooking">
+            <div class="thumbnail">COOKING</div><h3>Making fresh pasta at home</h3><p>Food channel</p>
+          </a></yt-lockup-view-model>
+        </ytd-rich-item-renderer>
+        <ytd-rich-item-renderer id="science-card">
+          <yt-lockup-view-model><a href="/watch?v=science">
+            <div class="thumbnail">SCIENCE</div><h3>Exploring the night sky</h3><p>Science channel</p>
+          </a></yt-lockup-view-model>
+        </ytd-rich-item-renderer>
+        <ytd-rich-item-renderer id="fp2-card">
+          <yt-lockup-view-model><a href="/watch?v=fp2">
+            <div class="thumbnail f1">FP2 HIGHLIGHTS</div><h3>FP2 Highlights | 2026 Spanish Grand Prix</h3><p>FORMULA 1</p>
+          </a></yt-lockup-view-model>
+        </ytd-rich-item-renderer>
+        <ytd-rich-item-renderer id="gaming-card">
+          <yt-lockup-view-model><a href="/watch?v=gaming">
+            <div class="thumbnail">GAMING</div><h3>Exploring the next side quest</h3><p>Gaming channel</p>
+          </a></yt-lockup-view-model>
+        </ytd-rich-item-renderer>
+        <ytd-rich-item-renderer id="qualifying-card">
+          <yt-lockup-view-model><a href="/watch?v=qualifying">
+            <div class="thumbnail f1">QUALIFYING</div><h3>Qualifying Highlights | 2026 Spanish Grand Prix</h3><p>FORMULA 1</p>
+          </a></yt-lockup-view-model>
+        </ytd-rich-item-renderer>
+      </div>
+    </main>
+    <footer>End of synthetic recommendations</footer>
+  </body>
+</html>
