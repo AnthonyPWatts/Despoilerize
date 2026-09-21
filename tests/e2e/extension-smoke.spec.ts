@@ -404,6 +404,156 @@ test("YouTube reveal controls follow resizing, scrolling and feed changes withou
   }
 });
 
+test("YouTube Shorts reassesses reused players and remembers reveals by video", async ({ playwright }) => {
+  const harness = await launchExtension(playwright);
+
+  try {
+    const page = await openShortsFixture(harness);
+    const player = page.locator("ytd-reel-video-renderer");
+    await expect(player).toHaveCSS("filter", "blur(10px)");
+
+    await changeShort(page, "safe", "A walk along the coast");
+    await expect(player).toHaveCSS("filter", "none");
+    await expect(page.locator(".despoilerze-overlay")).toHaveCount(0);
+    await changeShort(page, "another-safe", "Making chocolate at home");
+    await expect(player).toHaveCSS("filter", "none");
+
+    await changeShort(page, "second-spoiler", shortsSpoilerTitle);
+    await expect(player).toHaveCSS("filter", "blur(10px)");
+    await expect(page.locator(".despoilerze-overlay")).toHaveCount(1);
+    await page.getByRole("button", { name: "Reveal once", exact: true }).click();
+    await expect(player).toHaveCSS("filter", "none");
+    await page.locator("#likes").evaluate(element => element.textContent = "11 likes");
+    await sendSettingsChanged(harness.extensionPage, "https://www.youtube.com/*");
+    await expect(player).toHaveCSS("filter", "none");
+
+    // A different video can have the same title. Only its ID distinguishes it.
+    await page.evaluate(() => {
+      history.pushState({}, "", "/shorts/third-spoiler");
+      document.querySelector<HTMLAnchorElement>(".ytp-title-link")!.href = "/shorts/third-spoiler";
+    });
+    await expect(player).toHaveCSS("filter", "blur(10px)");
+    await changeShort(page, "second-spoiler", shortsSpoilerTitle);
+    await expect(player).toHaveCSS("filter", "none");
+
+    // Updating the title of an explicitly revealed video must preserve that choice.
+    await changeShort(page, "second-spoiler", "Hamilton wins dramatic Grand Prix");
+    await expect(player).toHaveCSS("filter", "none");
+    await changeShort(page, "third-spoiler", shortsSpoilerTitle);
+    await expect(player).toHaveCSS("filter", "blur(10px)");
+    expect(await page.evaluate(() => document.querySelector("ytd-reel-video-renderer")
+      === (window as Window & { originalShort?: Element }).originalShort)).toBe(true);
+
+    await page.getByRole("button", { name: "Reveal all on page", exact: true }).click();
+    await changeShort(page, "fourth-spoiler", shortsSpoilerTitle);
+    await expect(player).toHaveCSS("filter", "blur(10px)");
+    await changeShort(page, "third-spoiler", shortsSpoilerTitle);
+    await expect(player).toHaveCSS("filter", "none");
+    // Remember the video even if YouTube replaces the renderer entirely.
+    await player.evaluate(element => element.replaceWith(element.cloneNode(true)));
+    await sendSettingsChanged(harness.extensionPage, "https://www.youtube.com/*");
+    await expect(player).toHaveCSS("filter", "none");
+  } finally {
+    await harness.context.close();
+  }
+});
+
+test("YouTube Shorts waits for matching metadata and handles adverts and rapid changes", async ({ playwright }) => {
+  const harness = await launchExtension(playwright);
+
+  try {
+    const page = await openShortsFixture(harness);
+    const player = page.locator("ytd-reel-video-renderer");
+    await expect(player).toHaveCSS("filter", "blur(10px)");
+
+    await page.evaluate(() => {
+      history.pushState({}, "", "/shorts/delayed-safe");
+      document.querySelector("h1")!.textContent = "A walk along the coast";
+    });
+    // The player link still describes the previous spoiler. A scan must keep it hidden.
+    await sendSettingsChanged(harness.extensionPage, "https://www.youtube.com/*");
+    await expect(player).toHaveCSS("filter", "blur(10px)");
+    await changeShort(page, "delayed-safe", "A walk along the coast");
+    await expect(player).toHaveCSS("filter", "none");
+
+    await changeShort(page, "delayed-spoiler", "");
+    await changeShort(page, "delayed-spoiler", shortsSpoilerTitle);
+    await expect(player).toHaveCSS("filter", "blur(10px)");
+    const frames = await page.evaluate(async () => {
+      history.pushState({}, "", "/shorts/another-spoiler");
+      document.querySelector("h1")!.textContent = "Hamilton wins dramatic Grand Prix";
+      const link = document.querySelector<HTMLAnchorElement>(".ytp-title-link")!;
+      link.href = "/shorts/another-spoiler";
+      link.textContent = "Hamilton wins dramatic Grand Prix";
+      const filters: string[] = [];
+      for (let frame = 0; frame < 6; frame += 1) {
+        await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+        filters.push(getComputedStyle(document.querySelector("ytd-reel-video-renderer")!).filter);
+      }
+      return filters;
+    });
+    expect(frames).toEqual(Array(6).fill("blur(10px)"));
+    await expect(page.locator(".despoilerze-overlay")).toHaveCount(1);
+
+    // Adverts can omit the ordinary Shorts heading; the player link supplies the title.
+    await page.locator("h1").evaluate(element => element.remove());
+    await changeShort(page, "advert", "Sponsored chocolate advert");
+    await expect(player).toHaveCSS("filter", "none");
+    await expect(page.locator(".despoilerze-overlay")).toHaveCount(0);
+    await changeShort(page, "advert-spoiler", shortsSpoilerTitle);
+    await expect(player).toHaveCSS("filter", "blur(10px)");
+
+    for (const [id, title] of [["fast-one", "Making chocolate"], ["fast-two", shortsSpoilerTitle], ["fast-three", "A walk along the coast"]]) {
+      await changeShort(page, id, title);
+    }
+    await expect(player).toHaveCSS("filter", "none");
+    await expect(page.locator(".despoilerze-overlay")).toHaveCount(0);
+    // A malformed temporary link must not break subsequent observer callbacks.
+    await page.locator(".ytp-title-link").evaluate(element => element.setAttribute("href", "https://["));
+    await changeShort(page, "final-spoiler", shortsSpoilerTitle);
+    await expect(player).toHaveCSS("filter", "blur(10px)");
+  } finally {
+    await harness.context.close();
+  }
+});
+
+const shortsSpoilerTitle = "Norris wins chaotic Monaco GP after late safety car";
+
+async function openShortsFixture(harness: ExtensionHarness): Promise<Page> {
+  await writeSettings(harness.extensionPage, {
+    catchUpMode: { enabled: true, sensitivity: "balanced" },
+    enabledPacks: ["f1"], customTerms: [], trustedSites: []
+  });
+  const page = await harness.context.newPage();
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.route("https://www.youtube.com/shorts/**", route => route.fulfill({
+    contentType: "text/html",
+    body: `<!doctype html><title>Shorts player reuse fixture</title>
+      <style>ytd-reel-video-renderer { display: block; width: 600px; height: 700px; margin: 40px; }</style>
+      <ytd-reel-video-renderer id="reel-video-renderer">
+        <h1>${shortsSpoilerTitle}</h1>
+        <a class="ytp-title-link" href="/shorts/first-spoiler">${shortsSpoilerTitle}</a>
+        <span id="likes">10 likes</span>
+      </ytd-reel-video-renderer>`
+  }));
+  await page.goto("https://www.youtube.com/shorts/first-spoiler");
+  await page.evaluate(() => {
+    (window as Window & { originalShort?: Element }).originalShort = document.querySelector("ytd-reel-video-renderer")!;
+  });
+  return page;
+}
+
+async function changeShort(page: Page, id: string, title: string): Promise<void> {
+  await page.evaluate(({ id, title }) => {
+    history.pushState({}, "", `/shorts/${id}`);
+    const heading = document.querySelector("h1");
+    if (heading) heading.textContent = title;
+    const link = document.querySelector<HTMLAnchorElement>(".ytp-title-link")!;
+    link.href = `/shorts/${id}`;
+    link.textContent = title;
+  }, { id, title });
+}
+
 async function expectYouTubeOverlayAligned(page: Page, cardId: string): Promise<void> {
   await expect.poll(() => page.evaluate(id => {
     const card = document.getElementById(id)!;

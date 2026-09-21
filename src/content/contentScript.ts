@@ -4,10 +4,13 @@ import { getSettings, isCatchUpModeActive } from "../shared/storage";
 import { getProtectionState } from "../shared/protectionState";
 import { scanDocument } from "./scanner";
 import { clearProcessed, queueDetachedOverlayUpdate, revealAll } from "./obfuscator";
+import { isYouTubePage } from "./containerSelection";
+import { YouTubeShortsTracker } from "./youtubeShorts";
 
 let settings: Settings | null = null;
 let scanQueued = false;
 const pendingScanRoots = new Set<ParentNode>();
+const shortsTracker = new YouTubeShortsTracker();
 
 async function initialise(): Promise<void> {
   settings = await getSettings();
@@ -27,6 +30,11 @@ function observeDocumentChanges(): void {
     // Feed changes can move or remove hidden cards without resizing them.
     queueDetachedOverlayUpdate();
     if (!settings || !isCatchUpModeActive(settings)) return;
+
+    // Reassess a reused Shorts player before painting the replacement video.
+    // Ordinary feed scans retain their existing debounce.
+    const changedShorts = shortsTracker.update();
+    if (changedShorts.length > 0) runScan(changedShorts);
 
     const changedRoots = new Set<ParentNode>();
 
@@ -52,15 +60,20 @@ function observeDocumentChanges(): void {
   observer.observe(document.body, {
     childList: true,
     characterData: true,
-    subtree: true
+    subtree: true,
+    ...(isYouTubePage() ? { attributes: true, attributeFilter: ["href"] } : {})
   });
+
+  if (isYouTubePage()) {
+    window.addEventListener("popstate", () => runScan());
+  }
 }
 
 function runScan(roots: ParentNode[] = [document]): void {
-  if (!settings) return;
+  if (!settings || !isCatchUpModeActive(settings)) return;
 
   const rulePacks = getRulePacks(settings.enabledPacks);
-  for (const root of roots) {
+  for (const root of new Set([...shortsTracker.update(), ...roots])) {
     scanDocument(settings, rulePacks, root);
   }
 }

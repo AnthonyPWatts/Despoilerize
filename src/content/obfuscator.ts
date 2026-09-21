@@ -295,14 +295,25 @@ function getOrCreateTargetId(container: HTMLElement): string {
 }
 
 export function reveal(container: HTMLElement): void {
-  const shell = container.closest(`[${SHELL_ATTR}="true"]`);
-
   /*
    * Mark this item as deliberately revealed for the lifetime of the page.
    * Without this, the MutationObserver can immediately re-scan and re-hide
    * the same result after the overlay/shell DOM changes.
    */
   container.setAttribute(REVEALED_ATTR, "true");
+  restoreContainer(container);
+}
+
+export function resetProtection(container: HTMLElement): void {
+  restoreContainer(container);
+  container.removeAttribute(REVEALED_ATTR);
+  container.removeAttribute("data-despoilerze-score");
+  container.removeAttribute("data-despoilerze-reasons");
+  clearProcessed(container);
+}
+
+function restoreContainer(container: HTMLElement): void {
+  const shell = container.closest(`[${SHELL_ATTR}="true"]`);
   container.classList.remove(WRAPPER_CLASS, BLUR_CLASS);
   container.removeAttribute(HIDDEN_ATTR);
 

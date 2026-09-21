@@ -122,6 +122,19 @@ For [issue #4](https://github.com/AnthonyPWatts/Despoilerize/issues/4), test in 
 
 The automated layout fixture uses synthetic content and parent-dependent tile widths to reproduce the original expansion. It is not a capture of YouTube's live DOM. Check embedded thumbnail text at normal size during the live smoke test; blur reduces readability but cannot guarantee that every large word or recognisable image is concealed.
 
+### YouTube Shorts regression
+
+After rebuilding and reloading the unpacked extension, reload the YouTube tab:
+
+1. Choose **Always on** and **Lockdown**, then add one distinctive Short title as a custom protected term.
+2. Open that Short and confirm it is blurred. Scroll to unrelated Shorts and confirm their blur and warning controls clear.
+3. Return to the protected Short and select **Reveal once**. Visit another video, then return; the deliberate reveal should be remembered until the page is reloaded.
+4. Visit a different protected Short. Confirm it is still hidden, including when it has the same title as a revealed video.
+5. Repeat using **Reveal all on page**. Later protected videos should still be hidden.
+6. Check several quick scrolls and, when available, an advert between videos. Confirm warning controls do not carry over to unrelated content.
+
+The browser regressions also cover metadata arriving in stages, player replacement and like-count changes. Live checks cover the current YouTube layout; the synthetic fixtures do not represent every layout or network condition.
+
 ## Supported Sites
 
 This version only runs on sites covered by the extension's host permissions:

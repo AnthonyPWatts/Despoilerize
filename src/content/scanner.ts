@@ -41,6 +41,7 @@ export function scanDocument(settings: Settings, rulePacks: RulePack[], root: Pa
 
   for (const candidate of candidates) {
     if (!(candidate instanceof HTMLElement)) continue;
+    if (candidate.closest("[data-despoilerze-shorts-pending='true']")) continue;
     if (isProcessed(candidate) || isAlreadyHidden(candidate)) continue;
     if (isSiteChrome(candidate)) {
       markProcessed(candidate);
