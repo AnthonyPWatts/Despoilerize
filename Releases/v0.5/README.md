@@ -2,6 +2,27 @@
 
 Chrome Web Store release assets for DeSpoilerize v0.5.x.
 
+## v0.5.4 bug fix
+
+- Fixed spoiler blur carrying over to unrelated YouTube Shorts when scrolling between videos.
+- Kept later spoilers protected after using **Reveal once** or **Reveal all on page**, while remembering deliberate reveals when revisiting the same video during that page session.
+- Kept existing protection in place while YouTube updates the next video's metadata, and removed stale warning controls once a safe video is ready.
+- Added browser regressions for reused players, delayed metadata, identical titles with different video IDs, adverts, rapid changes and reveal behaviour.
+
+### Preparation status — 21 September 2026
+
+v0.5.4 is prepared for upload to the existing Chrome Web Store item. It has not been uploaded or submitted for review. There are no new permissions, dependencies or data collection. Existing screenshots and promotional assets remain applicable to this bug-fix release.
+
+The source change was verified on live YouTube in an isolated Brave profile: scrolling to an unrelated Short cleared its blur, a subsequent protected video remained hidden, and revisiting an explicitly revealed video preserved that choice. Live advert transitions were not observed; adverts and rapid metadata changes are covered by synthetic browser fixtures. See [the Shorts smoke test](../../README.md#youtube-shorts-regression).
+
+Release verification completed using the locked dependencies, including Vite 8.0.16:
+
+- `vitest run`: 80 tests passed.
+- `tsc --noEmit`: passed.
+- `playwright test`: all ten Chromium extension tests passed against the v0.5.4 build.
+- `npm run package:chrome`: built and packaged successfully. The archive has a root v0.5.4 manifest, all referenced extension assets are present, and all 44 archived files match the tested build byte for byte.
+- Package size: 120,052 bytes. SHA-256: `9cfc0669bf6b359fb7394cf1182782b439ea11f2f08438afff49c0b921c0f447`.
+
 ## v0.5.3 bug fix
 
 - Fixed hidden YouTube home cards expanding to the full feed width. Cards and thumbnails now retain their original sizes and grid positions when hidden or revealed.
@@ -38,6 +59,7 @@ Browser regression tests use synthetic fixtures. Live YouTube behaviour and thum
 
 ## Package
 
+- [despoilerize-v0.5.4-chrome-web-store.zip](./despoilerize-v0.5.4-chrome-web-store.zip)
 - [despoilerize-v0.5.3-chrome-web-store.zip](./despoilerize-v0.5.3-chrome-web-store.zip)
 - [despoilerize-v0.5.2-chrome-web-store.zip](./despoilerize-v0.5.2-chrome-web-store.zip)
 - [despoilerize-v0.5.1-chrome-web-store.zip](./despoilerize-v0.5.1-chrome-web-store.zip)
