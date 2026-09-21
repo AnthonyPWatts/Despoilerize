@@ -4,7 +4,7 @@ Release assets for store submission and archive use.
 
 ## v0.5
 
-- [v0.5.4 release notes and preparation status](./v0.5/README.md)
+- [v0.5.4 release notes and submission status](./v0.5/README.md)
 - [Chrome Web Store package](./v0.5/despoilerize-v0.5.4-chrome-web-store.zip)
 - [Chrome Web Store screenshots](./v0.5/screenshots/)
 - [Chrome Web Store promo tiles](./v0.5/promo/)

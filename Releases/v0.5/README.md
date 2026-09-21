@@ -9,9 +9,13 @@ Chrome Web Store release assets for DeSpoilerize v0.5.x.
 - Kept existing protection in place while YouTube updates the next video's metadata, and removed stale warning controls once a safe video is ready.
 - Added browser regressions for reused players, delayed metadata, identical titles with different video IDs, adverts, rapid changes and reveal behaviour.
 
-### Preparation status — 21 September 2026
+### Submission status — 21 September 2026
 
-v0.5.4 is prepared for upload to the existing Chrome Web Store item. It has not been uploaded or submitted for review. There are no new permissions, dependencies or data collection. Existing screenshots and promotional assets remain applicable to this bug-fix release.
+v0.5.4 was uploaded to the existing [Chrome Web Store item](https://chromewebstore.google.com/detail/ekckhdeeoilbnocmcpnhbcocbapjpmof) and submitted for review. The dashboard confirmed **Pending review**, with automatic publication enabled after approval. v0.5.3 was confirmed as the published version at submission; v0.5.4 is not yet confirmed live.
+
+The fix and release package are on `main` in commits `7125e6e` and `ee6d6fc`. The [v0.5.4 GitHub release](https://github.com/AnthonyPWatts/Despoilerize/releases) remains a draft pending store approval. Its uploaded ZIP has the same size and SHA-256 as the verified local package. Once Google confirms publication, check that the store lists v0.5.4 and publish that existing GitHub draft.
+
+There are no new permissions, dependencies or data collection. Existing screenshots and promotional assets remain applicable to this bug-fix release.
 
 The source change was verified on live YouTube in an isolated Brave profile: scrolling to an unrelated Short cleared its blur, a subsequent protected video remained hidden, and revisiting an explicitly revealed video preserved that choice. Live advert transitions were not observed; adverts and rapid metadata changes are covered by synthetic browser fixtures. See [the Shorts smoke test](../../README.md#youtube-shorts-regression).
 
@@ -33,9 +37,9 @@ See [issue #4](https://github.com/AnthonyPWatts/Despoilerize/issues/4) for the i
 
 ### Submission status — 12 September 2026
 
-v0.5.3 was uploaded to the existing [Chrome Web Store item](https://chromewebstore.google.com/detail/ekckhdeeoilbnocmcpnhbcocbapjpmof) and submitted for review. The dashboard confirmed **Pending review**, with automatic publication enabled after approval. v0.5.2 was the published version at submission; v0.5.3 has not yet been confirmed live.
+v0.5.3 was uploaded to the existing [Chrome Web Store item](https://chromewebstore.google.com/detail/ekckhdeeoilbnocmcpnhbcocbapjpmof) and submitted for review. The dashboard confirmed **Pending review**, with automatic publication enabled after approval. v0.5.2 was the published version at submission. On 21 September 2026, the dashboard confirmed v0.5.3 as published.
 
-The fix and release package are on `main` in commits `13d2fb4` and `ae9bf79`. Issue #4 is closed. The prepared [GitHub release](https://github.com/AnthonyPWatts/Despoilerize/releases) remains a draft pending store approval. Once Google confirms publication, check that the store lists v0.5.3 and publish that existing GitHub draft.
+The fix and release package are on `main` in commits `13d2fb4` and `ae9bf79`. Issue #4 is closed. The prepared [GitHub release](https://github.com/AnthonyPWatts/Despoilerize/releases) remains a draft; store publication has now been confirmed.
 
 Release verification completed:
 
