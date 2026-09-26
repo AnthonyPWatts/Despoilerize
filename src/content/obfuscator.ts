@@ -13,6 +13,7 @@ const DETACHED_OVERLAY_ATTR = "data-despoilerze-detached-overlay";
 const REVEALED_ATTR = "data-despoilerze-revealed";
 let nextTargetId = 1;
 const detachedOverlays = new Map<HTMLElement, HTMLElement>();
+const youtubeProtection = new WeakMap<HTMLElement, { identity: string; signature: string }>();
 let overlayResizeObserver: ResizeObserver | null = null;
 let overlayUpdateFrame: number | null = null;
 
@@ -144,6 +145,68 @@ export function clearProcessed(root: ParentNode = document): void {
   });
 }
 
+export function refreshYouTubeProtection(root: ParentNode): void {
+  if (!isYouTubePage()) return;
+
+  const selector = `[${HIDDEN_ATTR}='true'], [${REVEALED_ATTR}='true']`;
+  const targets = new Set<HTMLElement>(root.querySelectorAll<HTMLElement>(selector));
+  if (root instanceof HTMLElement) {
+    const ancestor = root.closest<HTMLElement>(selector);
+    if (ancestor) targets.add(ancestor);
+  }
+
+  for (const target of targets) {
+    // The Shorts tracker handles its separately hydrated player and heading.
+    if (target.closest("ytd-reel-video-renderer")) continue;
+    const previous = youtubeProtection.get(target);
+    if (!previous) continue;
+
+    const identity = youtubeCardIdentity(target);
+    const changedContent = target.hasAttribute(HIDDEN_ATTR)
+      && previous.signature !== contentSignature(target, true);
+    if (identity !== previous.identity || changedContent) {
+      resetProtection(target);
+    }
+  }
+}
+
+export function resetHiddenProtection(preservePendingShorts = false): void {
+  for (const target of document.querySelectorAll<HTMLElement>(`[${HIDDEN_ATTR}='true']`)) {
+    // Keep existing cover until the Shorts tracker can assess complete metadata.
+    if (preservePendingShorts && target.closest("[data-despoilerze-shorts-pending='true']")) continue;
+    resetProtection(target);
+  }
+}
+
+function rememberYouTubeProtection(container: HTMLElement): void {
+  if (!isYouTubePage() || container.closest("ytd-reel-video-renderer")) return;
+  youtubeProtection.set(container, {
+    identity: youtubeCardIdentity(container),
+    signature: contentSignature(container, true)
+  });
+}
+
+function youtubeCardIdentity(container: HTMLElement): string {
+  const links = container.matches("a[href]")
+    ? [container as HTMLAnchorElement]
+    : Array.from(container.querySelectorAll<HTMLAnchorElement>("a[href]"));
+  for (const link of links) {
+    let url: URL;
+    try {
+      url = new URL(link.href, window.location.origin);
+    } catch {
+      continue;
+    }
+    if (!/(^|\.)youtube\.com$/i.test(url.hostname)) continue;
+    const videoId = url.pathname === "/watch" ? url.searchParams.get("v")
+      : /^\/shorts\/([^/]+)/.exec(url.pathname)?.[1];
+    if (videoId) return `video:${videoId}`;
+    const playlistId = url.pathname === "/playlist" ? url.searchParams.get("list") : null;
+    if (playlistId) return `playlist:${playlistId}`;
+  }
+  return contentSignature(container);
+}
+
 export function isAlreadyHidden(element: HTMLElement): boolean {
   return element.getAttribute(HIDDEN_ATTR) === "true" || !!element.closest(`[${SHELL_ATTR}="true"]`);
 }
@@ -235,6 +298,7 @@ function hideContainer(container: HTMLElement, risk: RiskResult): void {
   container.setAttribute(HIDDEN_ATTR, "true");
   container.setAttribute("data-despoilerze-score", String(risk.score));
   container.setAttribute("data-despoilerze-reasons", risk.reasons.join(" | "));
+  rememberYouTubeProtection(container);
 }
 
 function positionDetachedOverlay(overlay: HTMLElement, container: HTMLElement): void {
@@ -302,6 +366,7 @@ export function reveal(container: HTMLElement): void {
    */
   container.setAttribute(REVEALED_ATTR, "true");
   restoreContainer(container);
+  rememberYouTubeProtection(container);
 }
 
 export function resetProtection(container: HTMLElement): void {
@@ -310,6 +375,7 @@ export function resetProtection(container: HTMLElement): void {
   container.removeAttribute("data-despoilerze-score");
   container.removeAttribute("data-despoilerze-reasons");
   clearProcessed(container);
+  youtubeProtection.delete(container);
 }
 
 function restoreContainer(container: HTMLElement): void {
@@ -349,12 +415,18 @@ function escapeHtml(input: string): string {
   });
 }
 
-function contentSignature(element: HTMLElement): string {
-  const content = [
+function contentSignature(element: HTMLElement, includeDescendantLabels = false): string {
+  const parts = [
     element.getAttribute("aria-label") ?? "",
     element.getAttribute("title") ?? "",
     element.innerText ?? element.textContent ?? ""
-  ].join("\u0000");
+  ];
+  if (includeDescendantLabels) {
+    for (const child of element.querySelectorAll("[aria-label], [title]")) {
+      parts.push(child.getAttribute("aria-label") ?? "", child.getAttribute("title") ?? "");
+    }
+  }
+  const content = parts.join("\u0000");
   let hash = 2166136261;
 
   for (let index = 0; index < content.length; index += 1) {

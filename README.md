@@ -128,6 +128,17 @@ For [issue #4](https://github.com/AnthonyPWatts/Despoilerize/issues/4), test in 
 
 The automated layout fixture uses synthetic content and parent-dependent tile widths to reproduce the original expansion. It is not a capture of YouTube's live DOM. Check embedded thumbnail text at normal size during the live smoke test; blur reduces readability but cannot guarantee that every large word or recognisable image is concealed.
 
+### YouTube home feed updates and sensitivity regression
+
+For [issue #5](https://github.com/AnthonyPWatts/Despoilerize/issues/5), use the current development build and reload the YouTube tab once after reloading the extension:
+
+1. Enable Formula 1 protection and choose Balanced. Browse and scroll the home feed. Unrelated athletics and music recommendations should remain visible beside protected F1 result cards.
+2. Without refreshing the page, switch between Lockdown, Balanced and Gentle. Topic-only F1 cards should clear when leaving Lockdown; clear result cards should remain protected in Balanced. Re-enable Lockdown and confirm protection returns.
+3. Disable and re-enable Formula 1, YouTube filtering, and protection itself. Existing cards should respond without a page refresh.
+4. Reveal a protected card and continue browsing. The reveal should survive metadata updates for the same video, but a different video reusing its card must be assessed independently.
+
+Synthetic browser regressions reproduce card reuse, accessible-label updates and settings changes. A page refresh cleared the original reported false positives, but their exact live DOM update sequence was not captured.
+
 ### YouTube Shorts regression
 
 After rebuilding and reloading the unpacked extension, reload the YouTube tab:

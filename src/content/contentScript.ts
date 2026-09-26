@@ -3,7 +3,7 @@ import type { Settings } from "../shared/types";
 import { getSettings, isCatchUpModeActive } from "../shared/storage";
 import { getProtectionState } from "../shared/protectionState";
 import { scanDocument } from "./scanner";
-import { clearProcessed, queueDetachedOverlayUpdate, revealAll } from "./obfuscator";
+import { clearProcessed, queueDetachedOverlayUpdate, resetHiddenProtection, revealAll } from "./obfuscator";
 import { isYouTubePage } from "./containerSelection";
 import { YouTubeShortsTracker } from "./youtubeShorts";
 
@@ -61,7 +61,7 @@ function observeDocumentChanges(): void {
     childList: true,
     characterData: true,
     subtree: true,
-    ...(isYouTubePage() ? { attributes: true, attributeFilter: ["href"] } : {})
+    ...(isYouTubePage() ? { attributes: true, attributeFilter: ["href", "aria-label", "title"] } : {})
   });
 
   if (isYouTubePage()) {
@@ -114,9 +114,11 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     if (message?.type === "DESPOILERZE_SETTINGS_CHANGED") {
       settings = await getSettings();
       void updateActionIcon();
+      // Re-evaluate automatic hides under the new policy without treating a
+      // settings change as a deliberate reveal for the rest of the page session.
+      resetHiddenProtection(getProtectionState(settings, window.location.hostname) === "enabled");
       clearProcessed();
       if (!isCatchUpModeActive(settings)) {
-        revealAll();
         sendResponse({ ok: true });
         return;
       }

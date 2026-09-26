@@ -3,7 +3,7 @@ import { scoreText } from "../rules/scoring";
 import { isCatchUpModeActive } from "../shared/storage";
 import { isTrustedHostname } from "../shared/protectionState";
 import { findBestContainer, isGoogleSearchPage, isGuardianPage, isSiteChrome } from "./containerSelection";
-import { isAlreadyHidden, isProcessed, markProcessed, obfuscate } from "./obfuscator";
+import { isAlreadyHidden, isProcessed, markProcessed, obfuscate, refreshYouTubeProtection } from "./obfuscator";
 
 const candidateSelectors = [
   "article",
@@ -32,6 +32,8 @@ const candidateSelectors = [
 export function scanDocument(settings: Settings, rulePacks: RulePack[], root: ParentNode = document): void {
   if (!isCatchUpModeActive(settings)) return;
   if (isTrustedSite(settings)) return;
+
+  refreshYouTubeProtection(root);
 
   scanGoogleSportsModules(settings, rulePacks, root);
   scanGoogleSpoilerLinks(settings, rulePacks, root);

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Synthetic YouTube home feed updates</title>
+    <style>
+      body { margin: 24px; font: 16px system-ui, sans-serif; }
+      main { padding-top: 800px; display: flex; gap: 24px; }
+      ytd-rich-item-renderer { display: block; width: 360px; min-height: 280px; }
+      yt-lockup-view-model, a { display: block; }
+      .thumbnail { height: 180px; background: #667788; }
+      footer { height: 800px; }
+    </style>
+  </head>
+  <body>
+    <header>Synthetic recommendations for card reuse and settings checks</header>
+    <main>
+      <ytd-rich-item-renderer id="reused-card">
+        <yt-lockup-view-model>
+          <div class="thumbnail"></div>
+          <h3><a id="video-title-link" href="/watch?v=first-spoiler">Norris wins chaotic Monaco GP</a></h3>
+          <span class="views">1,000 views</span>
+        </yt-lockup-view-model>
+      </ytd-rich-item-renderer>
+      <ytd-rich-item-renderer id="topic-card">
+        <yt-lockup-view-model>
+          <div class="thumbnail"></div>
+          <h3><a href="/watch?v=f1-feature">Inside the Formula 1 paddock</a></h3>
+        </yt-lockup-view-model>
+      </ytd-rich-item-renderer>
+      <ytd-rich-item-renderer id="safe-card">
+        <yt-lockup-view-model>
+          <div class="thumbnail"></div>
+          <h3><a href="/watch?v=music">Mix – Electronic music</a></h3>
+        </yt-lockup-view-model>
+      </ytd-rich-item-renderer>
+    </main>
+    <footer>End of synthetic recommendations</footer>
+  </body>
+</html>

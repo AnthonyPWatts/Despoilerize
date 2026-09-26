@@ -5,6 +5,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { scanDocument } from "../src/content/scanner";
+import { reveal } from "../src/content/obfuscator";
 import { f1RulePack } from "../src/rules/f1";
 import type { Settings } from "../src/shared/types";
 
@@ -92,6 +93,82 @@ describe("scanDocument YouTube fixtures", () => {
 
     expect(document.getElementById("spoiler-compact-video")?.getAttribute("data-despoilerze-hidden")).toBe("true");
     expect(document.getElementById("safe-compact-video")?.getAttribute("data-despoilerze-hidden")).toBeNull();
+  });
+
+  it.each([
+    "Why This Triple Jump Made Erika Saraceni Go Viral",
+    "Mix – Electronic music"
+  ])("clears stale F1 protection when a hidden home card changes to %s", title => {
+    loadFixture("youtube/home-grid-f1.html");
+    scanDocument(settings("balanced"), [f1RulePack]);
+    const card = document.getElementById("spoiler-rich-item")!;
+    const link = card.querySelector<HTMLAnchorElement>("a")!;
+    expect(card.getAttribute("data-despoilerze-hidden")).toBe("true");
+
+    link.href = "/watch?v=unrelated";
+    link.textContent = title;
+    scanDocument(settings("balanced"), [f1RulePack], link);
+
+    expect(card.hasAttribute("data-despoilerze-hidden")).toBe(false);
+    expect(card.classList.contains("despoilerze-blurred")).toBe(false);
+    expect(card.hasAttribute("data-despoilerze-revealed")).toBe(false);
+    expect(document.querySelector(".despoilerze-overlay")).toBeNull();
+  });
+
+  it("reassesses corrected card metadata even when the video link is unchanged", () => {
+    loadFixture("youtube/home-grid-f1.html");
+    scanDocument(settings("balanced"), [f1RulePack]);
+    const card = document.getElementById("spoiler-rich-item")!;
+    const link = card.querySelector("a")!;
+    link.textContent = "Mix – Electronic music";
+
+    scanDocument(settings("balanced"), [f1RulePack], link);
+
+    expect(card.hasAttribute("data-despoilerze-hidden")).toBe(false);
+  });
+
+  it("clears stale protection when only a descendant's accessible label changes", () => {
+    loadFixture("youtube/home-grid-f1.html");
+    const card = document.getElementById("spoiler-rich-item")!;
+    const link = card.querySelector("a")!;
+    link.setAttribute("aria-label", link.textContent!);
+    link.textContent = "Mix – Electronic music";
+    scanDocument(settings("balanced"), [f1RulePack]);
+    expect(card.getAttribute("data-despoilerze-hidden")).toBe("true");
+
+    link.setAttribute("aria-label", "Mix – Electronic music");
+    scanDocument(settings("balanced"), [f1RulePack], link);
+
+    expect(card.hasAttribute("data-despoilerze-hidden")).toBe(false);
+  });
+
+  it("protects a different video reusing a revealed card with an identical title", () => {
+    loadFixture("youtube/home-grid-f1.html");
+    scanDocument(settings("balanced"), [f1RulePack]);
+    const card = document.getElementById("spoiler-rich-item")!;
+    const link = card.querySelector<HTMLAnchorElement>("a")!;
+    reveal(card);
+    link.href = "/watch?v=different-spoiler";
+
+    scanDocument(settings("balanced"), [f1RulePack], link);
+
+    expect(card.getAttribute("data-despoilerze-hidden")).toBe("true");
+    expect(card.hasAttribute("data-despoilerze-revealed")).toBe(false);
+  });
+
+  it("preserves a deliberate reveal when the same video's metadata or URL parameters change", () => {
+    loadFixture("youtube/home-grid-f1.html");
+    scanDocument(settings("balanced"), [f1RulePack]);
+    const card = document.getElementById("spoiler-rich-item")!;
+    const link = card.querySelector<HTMLAnchorElement>("a")!;
+    reveal(card);
+    link.href = "/watch?v=spoiler&t=30";
+    card.appendChild(document.createElement("span")).textContent = "1,001 views";
+
+    scanDocument(settings("balanced"), [f1RulePack], card);
+
+    expect(card.hasAttribute("data-despoilerze-hidden")).toBe(false);
+    expect(card.getAttribute("data-despoilerze-revealed")).toBe("true");
   });
 
   it("hides a spoilery YouTube Shorts result at the reel item", () => {

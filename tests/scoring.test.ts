@@ -15,6 +15,17 @@ import { nflRulePack } from "../src/rules/usSports";
 import { realityTvRulePack } from "../src/rules/entertainment";
 
 describe("scoreText", () => {
+  it.each([
+    "Why This Triple Jump Made Erika Saraceni Go Viral Resilient Glamour",
+    "Mix – Electronic music DJ Snikks Game On Personalised mix for you"
+  ])("does not match the reported unrelated YouTube recommendation: %s", headline => {
+    for (const sensitivity of ["balanced", "lockdown"] as const) {
+      const result = scoreText(headline, [f1RulePack], sensitivity);
+      expect(result.shouldHide).toBe(false);
+      expect(result.packIds).toEqual([]);
+    }
+  });
+
   it("flags a clear F1 winner headline", () => {
     const result = scoreText(
       "Norris wins chaotic Monaco GP after late safety car",

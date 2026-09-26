@@ -473,6 +473,13 @@ test("YouTube Shorts waits for matching metadata and handles adverts and rapid c
     // The player link still describes the previous spoiler. A scan must keep it hidden.
     await sendSettingsChanged(harness.extensionPage, "https://www.youtube.com/*");
     await expect(player).toHaveCSS("filter", "blur(10px)");
+    const settings = await readSettings(harness.extensionPage);
+    for (const sensitivity of ["lockdown", "balanced"] as const) {
+      settings.catchUpMode.sensitivity = sensitivity;
+      await writeSettings(harness.extensionPage, settings);
+      await sendSettingsChanged(harness.extensionPage, "https://www.youtube.com/*");
+      await expect(player).toHaveCSS("filter", "blur(10px)");
+    }
     await changeShort(page, "delayed-safe", "A walk along the coast");
     await expect(player).toHaveCSS("filter", "none");
 
@@ -516,6 +523,122 @@ test("YouTube Shorts waits for matching metadata and handles adverts and rapid c
     await harness.context.close();
   }
 });
+
+test("YouTube home cards discard stale protection after scrolling and reuse", async ({ playwright }) => {
+  const harness = await launchExtension(playwright);
+  try {
+    const page = await openHomeFeedUpdatesFixture(harness);
+    const card = page.locator("#reused-card");
+    await card.scrollIntoViewIfNeeded();
+    await expect(card).toHaveCSS("filter", "blur(10px)");
+    await expect(page.locator("#safe-card")).toHaveCSS("filter", "none");
+
+    for (const [index, title] of ["Why This Triple Jump Made Erika Saraceni Go Viral", "Mix – Electronic music"].entries()) {
+      await card.locator("a").evaluate((link, { index, title }) => {
+        link.setAttribute("href", `/watch?v=unrelated-${index}`);
+        link.textContent = title;
+      }, { index, title });
+      await expect(card).toHaveCSS("filter", "none");
+      await expect(page.locator(".despoilerze-overlay")).toHaveCount(0);
+
+      await card.locator("a").evaluate(link => {
+        link.setAttribute("href", "/watch?v=next-spoiler");
+        link.textContent = "Hamilton wins dramatic Grand Prix";
+      });
+      await expect(card).toHaveCSS("filter", "blur(10px)");
+    }
+
+    await page.getByRole("button", { name: "Reveal once" }).click();
+    await card.locator(".views").evaluate(element => { element.textContent = "1,001 views"; });
+    await card.locator("a").evaluate(link => { link.setAttribute("href", "/watch?v=next-spoiler&t=30"); });
+    // An unchanged-settings rescan must also preserve the deliberate reveal.
+    await sendSettingsChanged(harness.extensionPage, "https://www.youtube.com/*");
+    await expect(card).toHaveCSS("filter", "none");
+
+    // Same title, different video: reveal state belongs to the previous video.
+    await card.locator("a").evaluate(link => { link.setAttribute("href", "/watch?v=another-spoiler"); });
+    await expect(card).toHaveCSS("filter", "blur(10px)");
+    await page.getByRole("button", { name: "Reveal all on page" }).click();
+    await expect(card).toHaveCSS("filter", "none");
+    await card.locator("a").evaluate(link => { link.setAttribute("href", "/watch?v=final-spoiler"); });
+    await expect(card).toHaveCSS("filter", "blur(10px)");
+
+    // YouTube can update accessible metadata separately from visible text.
+    await card.locator("a").evaluate(link => {
+      link.setAttribute("aria-label", link.textContent!);
+      link.textContent = "Mix – Electronic music";
+    });
+    await expect(card).toHaveCSS("filter", "blur(10px)");
+    await card.locator("a").evaluate(link => { link.setAttribute("aria-label", "Mix – Electronic music"); });
+    await expect(card).toHaveCSS("filter", "none");
+    await expect(page.locator(".despoilerze-overlay")).toHaveCount(0);
+  } finally {
+    await harness.context.close();
+  }
+});
+
+test("YouTube protection is reassessed when sensitivity, topics or site settings change", async ({ playwright }) => {
+  const harness = await launchExtension(playwright);
+  try {
+    const page = await openHomeFeedUpdatesFixture(harness);
+    const settings = await readSettings(harness.extensionPage);
+    const spoiler = page.locator("#reused-card");
+    const topic = page.locator("#topic-card");
+    await expect(spoiler).toHaveCSS("filter", "blur(10px)");
+    await expect(topic).toHaveCSS("filter", "none");
+
+    for (const sensitivity of ["lockdown", "balanced", "gentle", "lockdown"] as const) {
+      settings.catchUpMode.sensitivity = sensitivity;
+      await writeSettings(harness.extensionPage, settings);
+      await sendSettingsChanged(harness.extensionPage, "https://www.youtube.com/*");
+      await expect(topic).toHaveCSS("filter", sensitivity === "lockdown" ? "blur(10px)" : "none");
+      await expect(spoiler).toHaveCSS("filter", sensitivity === "gentle" ? "none" : "blur(10px)");
+      await expect(page.locator("#safe-card")).toHaveCSS("filter", "none");
+    }
+
+    settings.enabledPacks = [];
+    await writeSettings(harness.extensionPage, settings);
+    await sendSettingsChanged(harness.extensionPage, "https://www.youtube.com/*");
+    await expect(page.locator("[data-despoilerze-hidden]")).toHaveCount(0);
+    settings.enabledPacks = ["f1"];
+    await writeSettings(harness.extensionPage, settings);
+    await sendSettingsChanged(harness.extensionPage, "https://www.youtube.com/*");
+    await expect(spoiler).toHaveCSS("filter", "blur(10px)");
+
+    settings.trustedSites = ["youtube.com"];
+    await writeSettings(harness.extensionPage, settings);
+    await sendSettingsChanged(harness.extensionPage, "https://www.youtube.com/*");
+    await expect(page.locator("[data-despoilerze-hidden]")).toHaveCount(0);
+    settings.trustedSites = [];
+    await writeSettings(harness.extensionPage, settings);
+    await sendSettingsChanged(harness.extensionPage, "https://www.youtube.com/*");
+    await expect(spoiler).toHaveCSS("filter", "blur(10px)");
+
+    settings.catchUpMode.enabled = false;
+    await writeSettings(harness.extensionPage, settings);
+    await sendSettingsChanged(harness.extensionPage, "https://www.youtube.com/*");
+    await expect(page.locator("[data-despoilerze-hidden]")).toHaveCount(0);
+    settings.catchUpMode.enabled = true;
+    await writeSettings(harness.extensionPage, settings);
+    await sendSettingsChanged(harness.extensionPage, "https://www.youtube.com/*");
+    await expect(spoiler).toHaveCSS("filter", "blur(10px)");
+  } finally {
+    await harness.context.close();
+  }
+});
+
+async function openHomeFeedUpdatesFixture(harness: ExtensionHarness): Promise<Page> {
+  await writeSettings(harness.extensionPage, {
+    catchUpMode: { enabled: true, sensitivity: "balanced" },
+    enabledPacks: ["f1"], customTerms: [], trustedSites: []
+  });
+  const page = await harness.context.newPage();
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  const fixture = await readFile("tests/fixtures/sites/youtube/home-feed-updates.html", "utf8");
+  await page.route("https://www.youtube.com/", route => route.fulfill({ contentType: "text/html", body: fixture }));
+  await page.goto("https://www.youtube.com/", { waitUntil: "domcontentloaded" });
+  return page;
+}
 
 const shortsSpoilerTitle = "Norris wins chaotic Monaco GP after late safety car";
 
