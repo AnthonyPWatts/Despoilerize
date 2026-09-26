@@ -6,6 +6,12 @@ The project began with my own highest-risk use case:
 
 > Wake up, plan to watch F1 highlights later, scroll headlines, and accidentally see the result.
 
+## Current release
+
+**v0.5.4** is the current published extension, confirmed in the [Chrome Web Store](https://chromewebstore.google.com/detail/despoilerize/ekckhdeeoilbnocmcpnhbcocbapjpmof) on 26 September 2026. See the [release notes and publication status](./Releases/v0.5/README.md) for the corresponding GitHub release status and archived packages.
+
+Install from the store to receive automatic updates. Unpacked development installations use the local `dist` folder and require a rebuild and extension reload to pick up changes.
+
 ## What this version does
 
 - Chrome/Edge Manifest V3 extension

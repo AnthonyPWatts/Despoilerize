@@ -9,11 +9,13 @@ Chrome Web Store release assets for DeSpoilerize v0.5.x.
 - Kept existing protection in place while YouTube updates the next video's metadata, and removed stale warning controls once a safe video is ready.
 - Added browser regressions for reused players, delayed metadata, identical titles with different video IDs, adverts, rapid changes and reveal behaviour.
 
-### Submission status — 21 September 2026
+### Publication status — 26 September 2026
 
-v0.5.4 was uploaded to the existing [Chrome Web Store item](https://chromewebstore.google.com/detail/ekckhdeeoilbnocmcpnhbcocbapjpmof) and submitted for review. The dashboard confirmed **Pending review**, with automatic publication enabled after approval. v0.5.3 was confirmed as the published version at submission; v0.5.4 is not yet confirmed live.
+v0.5.4 is **published in the [Chrome Web Store](https://chromewebstore.google.com/detail/despoilerize/ekckhdeeoilbnocmcpnhbcocbapjpmof)**. The live listing was checked on 26 September 2026 and reports version 0.5.4, with an updated date of 21 September 2026.
 
-The fix and release package are on `main` in commits `7125e6e` and `ee6d6fc`. The [v0.5.4 GitHub release](https://github.com/AnthonyPWatts/Despoilerize/releases) remains a draft pending store approval. Its uploaded ZIP has the same size and SHA-256 as the verified local package. Once Google confirms publication, check that the store lists v0.5.4 and publish that existing GitHub draft.
+It was submitted for review on 21 September 2026 with automatic publication enabled after approval. v0.5.3 was the published version at submission.
+
+The fix and release package are on `main` in commits `7125e6e` and `ee6d6fc`. The [v0.5.4 GitHub release](https://github.com/AnthonyPWatts/Despoilerize/releases/tag/v0.5.4) was published on 26 September 2026 and is marked as the latest release. Its tag points to release commit `ee6d6fc`. The uploaded asset's SHA-256 and size were checked against the archived package on the same date and matched.
 
 There are no new permissions, dependencies or data collection. Existing screenshots and promotional assets remain applicable to this bug-fix release.
 
@@ -35,11 +37,11 @@ Release verification completed using the locked dependencies, including Vite 8.0
 
 See [issue #4](https://github.com/AnthonyPWatts/Despoilerize/issues/4) for the investigation and [the YouTube smoke test](../../README.md#youtube-home-grid-regression) for live browser checks. The blur strength is unchanged; this fix corrects the unintended enlargement.
 
-### Submission status — 12 September 2026
+### Publication status — 26 September 2026
 
-v0.5.3 was uploaded to the existing [Chrome Web Store item](https://chromewebstore.google.com/detail/ekckhdeeoilbnocmcpnhbcocbapjpmof) and submitted for review. The dashboard confirmed **Pending review**, with automatic publication enabled after approval. v0.5.2 was the published version at submission. On 21 September 2026, the dashboard confirmed v0.5.3 as published.
+v0.5.3 was submitted to the [Chrome Web Store](https://chromewebstore.google.com/detail/despoilerize/ekckhdeeoilbnocmcpnhbcocbapjpmof) on 12 September 2026 with automatic publication enabled after approval. The dashboard confirmed it as published on 21 September 2026. It has since been superseded by v0.5.4.
 
-The fix and release package are on `main` in commits `13d2fb4` and `ae9bf79`. Issue #4 is closed. The prepared [GitHub release](https://github.com/AnthonyPWatts/Despoilerize/releases) remains a draft; store publication has now been confirmed.
+The fix and release package are on `main` in commits `13d2fb4` and `ae9bf79`. Issue #4 is closed. The [v0.5.3 GitHub release](https://github.com/AnthonyPWatts/Despoilerize/releases/tag/v0.5.3) was published on 26 September 2026 as a historical release. Its tag points to release commit `ae9bf79`. The uploaded asset's SHA-256 and size were checked against the archived package on the same date and matched.
 
 Release verification completed:
 
