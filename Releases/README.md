@@ -6,8 +6,10 @@ The current published extension is **v0.5.4**, confirmed in the [Chrome Web Stor
 
 ## v0.5
 
-- [v0.5.4 release notes and publication status](./v0.5/README.md)
-- [Chrome Web Store package](./v0.5/despoilerize-v0.5.4-chrome-web-store.zip)
+- [v0.5.5 release preparation and verification](./v0.5/README.md#v055-bug-fix) — prepared, not submitted or published
+- [v0.5.5 Chrome Web Store package](./v0.5/despoilerize-v0.5.5-chrome-web-store.zip)
+- [v0.5.4 release notes and publication status](./v0.5/README.md#v054-bug-fix)
+- [v0.5.4 Chrome Web Store package (published)](./v0.5/despoilerize-v0.5.4-chrome-web-store.zip)
 - [Chrome Web Store screenshots](./v0.5/screenshots/)
 - [Chrome Web Store promo tiles](./v0.5/promo/)
 

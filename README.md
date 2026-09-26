@@ -10,6 +10,8 @@ The project began with my own highest-risk use case:
 
 **v0.5.4** is the current published extension, confirmed in the [Chrome Web Store](https://chromewebstore.google.com/detail/despoilerize/ekckhdeeoilbnocmcpnhbcocbapjpmof) on 26 September 2026. See the [release notes and publication status](./Releases/v0.5/README.md) for the corresponding GitHub release status and archived packages.
 
+**v0.5.5** is prepared for release but has not been submitted or published. The source and local builds use v0.5.5; the [release notes and package](./Releases/v0.5/README.md#v055-bug-fix) describe the YouTube home-feed and settings fixes.
+
 Install from the store to receive automatic updates. Unpacked development installations use the local `dist` folder and require a rebuild and extension reload to pick up changes.
 
 ## What this version does

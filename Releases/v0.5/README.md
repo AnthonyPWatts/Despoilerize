@@ -2,6 +2,33 @@
 
 Chrome Web Store release assets for DeSpoilerize v0.5.x.
 
+## v0.5.5 bug fix
+
+- Fixed stale spoiler blur when YouTube home-feed cards are reused for unrelated videos or their text and accessibility metadata change.
+- Kept deliberate reveals for the same video during metadata updates, while assessing a different video independently even if its title is identical.
+- Reassessed existing automatic hides when sensitivity, protected topics, site filtering or protection settings change, without requiring a page refresh.
+- Preserved the previous Shorts fix while video metadata is incomplete.
+- Added regression coverage for the reported athletics and music titles, card reuse, accessible-label updates and settings changes.
+
+### Preparation status — 26 September 2026
+
+**Prepared for release; not submitted or published.** v0.5.4 remains the published Chrome Web Store and latest GitHub release. No v0.5.5 Git tag or GitHub release has been created.
+
+The fix is on `main` in commit `9c6c894`. [Issue #5](https://github.com/AnthonyPWatts/Despoilerize/issues/5) remains open pending release and verification during normal YouTube browsing. A page refresh cleared the original reported false positives, but the exact live DOM update sequence was not captured. Automated checks use synthetic fixtures; see the [home-feed and sensitivity smoke test](../../README.md#youtube-home-feed-updates-and-sensitivity-regression).
+
+There are no changes to permissions, dependencies, data collection, topic vocabulary or sensitivity thresholds. Existing store screenshots and promotional assets remain applicable.
+
+Release preparation verification completed against v0.5.5 using the locked dependencies:
+
+- `npm test`: all 88 unit tests passed.
+- `npm run typecheck`: passed.
+- `npm run package:chrome`: built and packaged successfully.
+- `npx playwright test`: all 12 Chromium extension tests passed against the packaged build, including the existing grid and Shorts regressions.
+- The ZIP has a root v0.5.5 manifest, all referenced extension assets are present, and all 44 archived files match the tested build byte for byte.
+- Package size: 120,325 bytes. SHA-256: `e9142e14f818dffacf4e15d1ba9800462790081d6be210a0fcdebe31979155b0`.
+
+When release is authorised, upload the verified [v0.5.5 ZIP](./despoilerize-v0.5.5-chrome-web-store.zip) to the existing Chrome Web Store item and record its actual review status. Confirm store publication before publishing the corresponding GitHub release, then update the current-release documentation. Preparation alone does not indicate store submission or approval.
+
 ## v0.5.4 bug fix
 
 - Fixed spoiler blur carrying over to unrelated YouTube Shorts when scrolling between videos.
@@ -65,6 +92,7 @@ Browser regression tests use synthetic fixtures. Live YouTube behaviour and thum
 
 ## Package
 
+- [despoilerize-v0.5.5-chrome-web-store.zip](./despoilerize-v0.5.5-chrome-web-store.zip) — prepared, not published
 - [despoilerize-v0.5.4-chrome-web-store.zip](./despoilerize-v0.5.4-chrome-web-store.zip)
 - [despoilerize-v0.5.3-chrome-web-store.zip](./despoilerize-v0.5.3-chrome-web-store.zip)
 - [despoilerize-v0.5.2-chrome-web-store.zip](./despoilerize-v0.5.2-chrome-web-store.zip)
