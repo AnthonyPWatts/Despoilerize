@@ -14,6 +14,14 @@ The project began with my own highest-risk use case:
 
 Install from the store to receive automatic updates. Unpacked development installations use the local `dist` folder and require a rebuild and extension reload to pick up changes.
 
+## See it in use
+
+Real YouTube results in a fresh, signed-out Chrome profile. Here, **Reveal once** has restored the first video while the other Formula 1 cards remain protected in Lockdown mode.
+
+![A real YouTube thumbnail revealed while the remaining Formula 1 results stay blurred](./Releases/v1.0/screenshots/live/03-youtube-reveal-once.png)
+
+See the [before-and-after screenshots, toolbar popup and settings](./Releases/v1.0/screenshots/live/README.md). These are direct browser captures with real thumbnails, captured on 27 September 2026.
+
 ## What this version does
 
 - Chrome/Edge Manifest V3 extension
@@ -105,7 +113,11 @@ Release packages and store listing assets are kept under [`Releases`](./Releases
 npm run screenshots:store
 ```
 
-This builds and loads the unpacked extension in Playwright Chromium, then captures the real popup, options page, injected spoiler overlay, and reveal controls at 1280 × 800. The on-page images use a clearly labelled deterministic fixture from [`tests/fixtures/store/capture-page.html`](./tests/fixtures/store/capture-page.html); they do not imitate a third-party site or browser chrome.
+This builds and loads the extension in a new, signed-out Chrome for Testing profile, then captures a public YouTube search with protection off, protection on, and one result revealed. It also captures the settings and actual toolbar popup. Personal profiles, cookies and browsing history are never reused.
+
+The five store images are 1280 × 800 page captures; the toolbar popup details retain their native size. The browser's tab strip and address bar are outside these captures. See the [screenshot gallery and capture record](./Releases/v1.0/screenshots/live/README.md) for sources and verification.
+
+The command requires internet access and fails if the required thumbnails, signed-out state or protection behaviour cannot be verified. YouTube results and layouts can change, so inspect each new capture before submission. The older [`generate-store-screenshots.mjs`](./scripts/generate-store-screenshots.mjs) remains available to reproduce the historical synthetic examples; it is no longer the store screenshot command.
 
 ## Current limitations
 
