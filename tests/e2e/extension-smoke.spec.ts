@@ -107,6 +107,111 @@ test("popup protects now without replacing the saved schedule", async ({ browser
   }
 });
 
+for (const surface of ["popup", "options"] as const) {
+  test(`${surface} ends the current session when I'm caught up`, async ({ browserName, playwright }, testInfo) => {
+    test.skip(browserName !== "chromium", "Chrome extensions can only be loaded in Chromium.");
+    const harness = await launchExtension(playwright);
+
+    try {
+      const saved: Settings = {
+        catchUpMode: {
+          enabled: true,
+          schedule: { mode: "daily", days: [0, 1, 2, 3, 4, 5, 6], startTime: "00:00", endTime: "23:59" },
+          sensitivity: "balanced"
+        },
+        enabledPacks: ["world-cup-2026"],
+        customTerms: [],
+        trustedSites: []
+      };
+      await writeSettings(harness.extensionPage, saved);
+      const page = await harness.context.newPage();
+      await page.route("https://www.bbc.co.uk/sport", route => route.fulfill({
+        contentType: "text/html",
+        body: bbcFixtureHtml()
+      }));
+      await page.goto("https://www.bbc.co.uk/sport", { waitUntil: "domcontentloaded" });
+      await expect(page.locator("[data-despoilerze-hidden='true']")).toHaveCount(1);
+
+      const options = await harness.context.newPage();
+      await options.goto(extensionUrl(harness.extensionId, "src/options/index.html"));
+      const popup = await harness.context.newPage();
+      await popup.setViewportSize({ width: 380, height: 600 });
+      await popup.goto(extensionUrl(harness.extensionId, "src/popup/index.html"));
+      const control = surface === "popup" ? popup : options;
+      await control.getByRole("button", { name: "I'm caught up", exact: true }).click();
+
+      await expect(popup.locator("#status-text")).toHaveText("Protection: OFF");
+      await expect(popup.locator("#next-protection")).toHaveText("Tomorrow at 00:00");
+      await expect(popup.locator("#protection-ends")).toHaveText("Tomorrow at 23:59");
+      await expect(options.locator("#protection-ends")).toHaveText("Tomorrow at 23:59");
+      await expect(options.locator("#next-protection")).toHaveText("Tomorrow at 00:00");
+      await expect(options.getByRole("radio", { name: /Daily/ })).toHaveAttribute("aria-checked", "true");
+      await expect(page.locator("[data-despoilerze-hidden='true']")).toHaveCount(0);
+
+      const ended = await readSettings(harness.extensionPage);
+      expect(ended.catchUpMode.schedule).toEqual(saved.catchUpMode.schedule);
+      expect(ended.catchUpMode.enabled).toBe(true);
+      expect(ended.catchUpMode.override?.reason).toBe("caught-up");
+      await expect.poll(() => harness.extensionPage.evaluate(async () => {
+        return (await chrome.alarms.get("despoilerze-expiry-check"))?.scheduledTime;
+      })).toBe(new Date(ended.catchUpMode.override!.untilUtc!).getTime());
+
+      // An options page already open during a popup action must retain that action on autosave.
+      await options.locator("#sensitivity").selectOption("gentle");
+      await expect(options.locator("#autosave-status")).toHaveText("Saved.");
+      expect((await readSettings(harness.extensionPage)).catchUpMode.override).toEqual(ended.catchUpMode.override);
+      await popup.reload();
+      await expect(popup.locator("#status-text")).toHaveText("Protection: OFF");
+      await expect(popup.locator("#session-status")).toContainText("You're caught up");
+      await popup.screenshot({ path: testInfo.outputPath("caught-up-popup.png"), fullPage: true });
+      await options.locator(".schedule-panel").screenshot({ path: testInfo.outputPath("caught-up-settings.png") });
+
+      await control.getByRole("button", { name: "Return to schedule", exact: true }).click();
+      await expect(popup.locator("#status-text")).toHaveText("Protection: ON");
+      await expect(options.getByRole("button", { name: "I'm caught up", exact: true })).toBeEnabled();
+      await expect(page.locator("[data-despoilerze-hidden='true']")).toHaveCount(1);
+      expect((await readSettings(harness.extensionPage)).catchUpMode.override).toBeUndefined();
+    } finally {
+      await harness.context.close();
+    }
+  });
+}
+
+test("caught-up weekend summary shows the upcoming session's end", async ({ browserName, playwright }, testInfo) => {
+  test.skip(browserName !== "chromium", "Chrome extensions can only be loaded in Chromium.");
+  const harness = await launchExtension(playwright);
+
+  try {
+    const nextSaturday = new Date();
+    nextSaturday.setDate(nextSaturday.getDate() + ((6 - nextSaturday.getDay() + 7) % 7 || 7));
+    nextSaturday.setHours(0, 0, 0, 0);
+    const saved = await readSettings(harness.extensionPage);
+    saved.catchUpMode.override = { state: "off", reason: "caught-up", untilUtc: nextSaturday.toISOString() };
+    await writeSettings(harness.extensionPage, saved);
+
+    for (const surface of ["popup", "options"]) {
+      const page = await harness.context.newPage();
+      await page.goto(extensionUrl(harness.extensionId, `src/${surface}/index.html`));
+      await expect(page.locator("#next-protection")).toHaveText(/Saturday at 00:00$/);
+      await expect(page.locator("#protection-ends")).toHaveText("Next Sunday at 23:59");
+      await expect(page.locator("#session-status")).toContainText("This session has ended");
+      await page.locator(".schedule-panel").screenshot({ path: testInfo.outputPath(`weekend-${surface}.png`) });
+    }
+
+    saved.catchUpMode.schedule = { mode: "always", days: [], startTime: "00:00", endTime: "23:59" };
+    saved.catchUpMode.override = { state: "off", reason: "caught-up" };
+    await writeSettings(harness.extensionPage, saved);
+    for (const surface of ["popup", "options"]) {
+      const page = await harness.context.newPage();
+      await page.goto(extensionUrl(harness.extensionId, `src/${surface}/index.html`));
+      await expect(page.locator("#next-protection")).toHaveText("Not scheduled");
+      await expect(page.locator("#protection-ends")).toHaveText("Not scheduled");
+    }
+  } finally {
+    await harness.context.close();
+  }
+});
+
 test("auto-saves pack, custom term, and supported site filtering changes from options", async ({ browserName, playwright }) => {
   test.skip(browserName !== "chromium", "Chrome extensions can only be loaded in Chromium.");
 

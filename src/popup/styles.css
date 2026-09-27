@@ -237,6 +237,21 @@ button {
   font-size: 11px;
 }
 
+.session-actions {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.session-actions p {
+  color: var(--muted);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 @media (max-width: 400px) {
   body {
     min-width: 360px;

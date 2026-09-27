@@ -329,6 +329,24 @@ button {
   color: var(--purple);
 }
 
+.session-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.session-actions p {
+  flex: 1 1 240px;
+  color: var(--muted);
+}
+
+.session-actions button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 .topic-card {
   min-height: 92px;
   border: 1px solid var(--line);

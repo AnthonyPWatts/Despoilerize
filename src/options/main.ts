@@ -1,9 +1,9 @@
 import type { ProtectionSchedule, ProtectionScheduleMode, RulePackGroup, Settings, Sensitivity } from "../shared/types";
 import { defaultSettings } from "../shared/defaultSettings";
 import { getRulePackGroups } from "../rules";
-import { getSettings, saveSettings } from "../shared/storage";
+import { getSettings, saveSettings, SETTINGS_KEY } from "../shared/storage";
 import { supportedSites } from "../shared/supportedSites";
-import { syncExpiryAlarm } from "../shared/expiry";
+import { endProtectionSession, getActiveProtectionOverride, getProtectionOverrideTransition, isCatchUpModeActive, syncExpiryAlarm } from "../shared/expiry";
 import {
   describeSchedule,
   formatScheduleDateTime,
@@ -63,6 +63,8 @@ const importFileInput = mustGet<HTMLInputElement>("import-file");
 const sensitivitySelect = mustGet<HTMLSelectElement>("sensitivity");
 const nextProtectionElement = mustGet<HTMLElement>("next-protection");
 const protectionEndsElement = mustGet<HTMLElement>("protection-ends");
+const caughtUpButton = mustGet<HTMLButtonElement>("caught-up");
+const sessionStatusElement = mustGet<HTMLElement>("session-status");
 const scheduleStartInput = mustGet<HTMLInputElement>("schedule-start");
 const scheduleEndInput = mustGet<HTMLInputElement>("schedule-end");
 const timeControls = mustGet<HTMLElement>("time-controls");
@@ -79,6 +81,25 @@ async function initialise(): Promise<void> {
   renderSchedule();
   updateTextCounts();
   sensitivitySelect.value = settings.catchUpMode.sensitivity;
+
+  caughtUpButton.addEventListener("click", () => {
+    if (getActiveProtectionOverride(settings)?.reason === "caught-up") {
+      delete settings.catchUpMode.override;
+    } else {
+      endProtectionSession(settings);
+    }
+    void saveNow();
+  });
+
+  chrome.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName !== "sync" || !changes[SETTINGS_KEY]) return;
+    const change = changes[SETTINGS_KEY];
+    if (JSON.stringify(change.oldValue?.catchUpMode?.override) === JSON.stringify(change.newValue?.catchUpMode?.override)) return;
+
+    // Keep popup session actions in sync without replacing unsaved preferences.
+    settings.catchUpMode.override = change.newValue?.catchUpMode?.override;
+    renderSchedule();
+  });
 
   expandAllButton.addEventListener("click", () => {
     allExpanded = !allExpanded;
@@ -312,6 +333,18 @@ function disabledSupportedSites(): typeof supportedSites {
 function renderSchedule(): void {
   const schedule = currentSchedule();
   const nextWindow = getNextProtectionWindow(settings);
+  const override = getActiveProtectionOverride(settings);
+  const overrideTransition = getProtectionOverrideTransition(settings);
+  const caughtUp = override?.reason === "caught-up";
+  const active = isCatchUpModeActive(settings);
+
+  caughtUpButton.textContent = caughtUp ? "Return to schedule" : "I'm caught up";
+  caughtUpButton.disabled = !active && !caughtUp;
+  sessionStatusElement.textContent = caughtUp
+    ? "You're caught up. This session has ended; your saved schedule is unchanged."
+    : active
+      ? "End this session when you've finished watching. Your saved schedule stays ready."
+      : "There is no active protection session to end.";
 
   for (const card of scheduleCards) {
     const mode = card.dataset.scheduleMode as ProtectionScheduleMode;
@@ -335,7 +368,18 @@ function renderSchedule(): void {
   scheduleStartInput.value = schedule.startTime;
   scheduleEndInput.value = schedule.endTime;
 
-  if (nextWindow && schedule.mode !== "always") {
+  if (caughtUp) {
+    const upcomingWindow = overrideTransition ? getNextProtectionWindow(settings, overrideTransition) : null;
+    nextProtectionElement.textContent = overrideTransition
+      ? formatScheduleDateTime(overrideTransition)
+      : "Not scheduled";
+    protectionEndsElement.textContent = upcomingWindow
+      ? formatScheduleDateTime(upcomingWindow.end)
+      : "Not scheduled";
+    if (!overrideTransition) {
+      sessionStatusElement.textContent += " Turn protection back on when you need it.";
+    }
+  } else if (nextWindow && schedule.mode !== "always") {
     nextProtectionElement.textContent = formatScheduleDateTime(nextWindow.start);
     protectionEndsElement.textContent = formatScheduleDateTime(nextWindow.end);
   } else if (schedule.mode === "always") {

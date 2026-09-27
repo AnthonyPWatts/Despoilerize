@@ -12,6 +12,7 @@ export type ProtectionSchedule = {
 export type ProtectionOverride = {
   state: "on" | "off";
   untilUtc?: string;
+  reason?: "caught-up";
 };
 
 export type CatchUpMode = {

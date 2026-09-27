@@ -71,6 +71,22 @@ export function getNextProtectionTransition(settings: Settings, now = new Date()
   return getNextProtectionWindow(settings, now)?.start ?? null;
 }
 
+export function getNextProtectionStart(settings: Settings, now = new Date()): Date | null {
+  const schedule = settings.catchUpMode.schedule;
+  if (!schedule || !settings.catchUpMode.enabled) return null;
+  if (schedule.mode === "paused" || schedule.mode === "always") return null;
+
+  for (let offset = 0; offset <= 14; offset += 1) {
+    const date = addLocalDays(startOfLocalDay(now), offset);
+    if (!isScheduledDay(schedule, date.getDay())) continue;
+
+    const window = buildWindow(date, schedule);
+    if (window.start > now) return window.start;
+  }
+
+  return null;
+}
+
 export function describeSchedule(schedule?: ProtectionSchedule): string {
   if (!schedule) return "Manual protection";
 

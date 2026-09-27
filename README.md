@@ -10,7 +10,7 @@ The project began with my own highest-risk use case:
 
 **v0.5.4** is the current published extension, confirmed in the [Chrome Web Store](https://chromewebstore.google.com/detail/despoilerize/ekckhdeeoilbnocmcpnhbcocbapjpmof) on 26 September 2026. See the [release notes and publication status](./Releases/v0.5/README.md) for the corresponding GitHub release status and archived packages.
 
-**v0.5.5** is prepared for release but has not been submitted or published. The source and local builds use v0.5.5; the [release notes and package](./Releases/v0.5/README.md#v055-bug-fix) describe the YouTube home-feed and settings fixes.
+**v1.0.0** is prepared for release but has not been submitted or published. The source and local builds use v1.0.0; the [release notes and package](./Releases/v1.0/README.md) include **I'm caught up**, the corrected upcoming-session summary, and the YouTube home-feed and settings fixes previously prepared as v0.5.5.
 
 Install from the store to receive automatic updates. Unpacked development installations use the local `dist` folder and require a rebuild and extension reload to pick up changes.
 
@@ -19,6 +19,7 @@ Install from the store to receive automatic updates. Unpacked development instal
 - Chrome/Edge Manifest V3 extension
 - Compact popup for current protection state, quick toggle, page reveal, and settings navigation
 - Temporary popup overrides that return to the saved schedule without replacing it
+- **I'm caught up** ends the current protection session and automatically resumes at the next scheduled start
 - Settings page for schedule, sensitivity, topic, custom term, supported-site filtering, export/import, and reset configuration
 - Browser alarm support for scheduled protection transitions
 - Sensitivity modes: Gentle, Balanced, Lockdown
@@ -31,6 +32,14 @@ Install from the store to receive automatic updates. Unpacked development instal
 - Reveal all on current page
 - MutationObserver support for dynamic feeds
 - Friendlier hidden-card reason text
+
+## Ending a protection session
+
+Select **I'm caught up** in the popup or beside the protection schedule in settings when you have finished watching. Protection ends immediately, including on pages already open. Your topics, sensitivity and schedule stay unchanged.
+
+For **Every weekend**, protection stays off for the rest of this weekend and resumes next Saturday. Daily and custom schedules resume at their next scheduled start. The popup and settings show when protection will return. **Return to schedule** cancels the ended-session state if you change your mind; choosing a different schedule also clears it.
+
+With **Always on** or manual protection, there is no next scheduled session. Protection stays off until you turn it back on. The button is disabled when there is no active session to end.
 
 ## Privacy stance
 
@@ -86,7 +95,7 @@ The e2e smoke suite builds the extension and checks schedule/sensitivity setting
 npm run package:chrome
 ```
 
-This builds the extension and creates a Chrome Web Store zip under `Releases/v0.5` with `manifest.json` at the archive root.
+This builds the extension and creates a Chrome Web Store zip under `Releases/v1.0` with `manifest.json` at the archive root.
 
 Release packages and store listing assets are kept under [`Releases`](./Releases/).
 
@@ -102,7 +111,7 @@ This builds and loads the unpacked extension in Playwright Chromium, then captur
 
 - Host permissions are currently scoped to Google Search, Google News, BBC, YouTube, and The Guardian.
 - The scanner is intentionally aggressive in Lockdown mode.
-- Site reliability is improving through fixtures and e2e smoke tests, but YouTube/BBC/Guardian/Google still need broader real browsing checks before v1.0.
+- Automated site checks use synthetic fixtures; broader real browsing checks remain useful as supported sites change their layouts.
 - It does not yet use official race calendars or event windows.
 - It does not yet provide a dedicated "safe route to highlights" workflow.
 
@@ -116,6 +125,7 @@ This builds and loads the unpacked extension in Playwright Chromium, then captur
 6. Search or browse for protected topics such as F1, World Cup 2026, or Reality TV.
 7. Confirm likely spoiler cards are blurred while safe preview/how-to-watch pages remain usable in Balanced mode.
 8. Use Reveal once or Reveal all on page.
+9. During an active session, select **I'm caught up**. Confirm open pages reveal, the saved schedule stays selected, and the next protection time moves to the next session. Reopen the popup to confirm the choice persists, then use **Return to schedule** to restore the schedule.
 
 ### YouTube home grid regression
 

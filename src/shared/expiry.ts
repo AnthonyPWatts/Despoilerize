@@ -1,5 +1,5 @@
 import type { ProtectionOverride, Settings } from "./types";
-import { getNextProtectionTransition, isScheduledProtectionActive } from "./schedule";
+import { getNextProtectionStart, getNextProtectionTransition, isScheduledProtectionActive } from "./schedule";
 
 export const EXPIRY_ALARM_NAME = "despoilerze-expiry-check";
 
@@ -50,6 +50,17 @@ export function getActiveProtectionOverride(settings: Settings, now = new Date()
   if (!until || until <= now) return undefined;
 
   return override;
+}
+
+export function endProtectionSession(settings: Settings, now = new Date()): void {
+  if (!isCatchUpModeActive(settings, now)) return;
+
+  const nextStart = getNextProtectionStart(settings, now);
+  settings.catchUpMode.override = {
+    state: "off",
+    reason: "caught-up",
+    ...(nextStart ? { untilUtc: nextStart.toISOString() } : {})
+  };
 }
 
 export function getProtectionOverrideTransition(settings: Settings, now = new Date()): Date | null {

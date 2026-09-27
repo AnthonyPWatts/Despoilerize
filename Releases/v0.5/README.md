@@ -4,6 +4,8 @@ Chrome Web Store release assets for DeSpoilerize v0.5.x.
 
 ## v0.5.5 bug fix
 
+The unpublished v0.5.5 preparation below is retained for reference. Its changes are included in [v1.0.0](../v1.0/README.md), which supersedes this package for submission.
+
 - Fixed stale spoiler blur when YouTube home-feed cards are reused for unrelated videos or their text and accessibility metadata change.
 - Kept deliberate reveals for the same video during metadata updates, while assessing a different video independently even if its title is identical.
 - Reassessed existing automatic hides when sensitivity, protected topics, site filtering or protection settings change, without requiring a page refresh.

@@ -2,6 +2,7 @@ import type { ProtectionOverride, ProtectionScheduleMode, Settings } from "../sh
 import { getAllRulePacks } from "../rules";
 import { getSettings, saveSettings, SETTINGS_KEY } from "../shared/storage";
 import {
+  endProtectionSession,
   getActiveProtectionOverride,
   getProtectionOverrideTransition,
   isCatchUpModeActive,
@@ -21,6 +22,8 @@ const statusElement = mustGet<HTMLElement>("status");
 const statusTextElement = mustGet<HTMLElement>("status-text");
 const titleElement = mustGet<HTMLHeadingElement>("popup-title");
 const toggleButton = mustGet<HTMLButtonElement>("toggle");
+const caughtUpButton = mustGet<HTMLButtonElement>("caught-up");
+const sessionStatusElement = mustGet<HTMLElement>("session-status");
 const scheduleDescriptionElement = mustGet<HTMLElement>("schedule-description");
 const sensitivitySummaryElement = mustGet<HTMLElement>("sensitivity-summary");
 const packSummaryElement = mustGet<HTMLElement>("enabled-packs-summary");
@@ -38,6 +41,10 @@ async function initialise(): Promise<void> {
 
   toggleButton.addEventListener("click", () => {
     void update(toggleProtectionOverride);
+  });
+
+  caughtUpButton.addEventListener("click", () => {
+    void update(endProtectionSession);
   });
 
   revealAllButton.addEventListener("click", () => {
@@ -70,15 +77,33 @@ function render(): void {
   const override = getActiveProtectionOverride(settings);
   const overrideTransition = getProtectionOverrideTransition(settings);
   const nextWindow = getNextProtectionWindow(settings);
+  const caughtUp = override?.reason === "caught-up";
 
   statusTextElement.textContent = `Protection: ${active ? "ON" : "OFF"}`;
   statusElement.classList.toggle("on", active);
   statusElement.classList.toggle("off", !active);
 
   toggleButton.querySelector("span:last-child")!.textContent = buttonText(active, override);
+  caughtUpButton.disabled = !active;
+  sessionStatusElement.textContent = caughtUp
+    ? "You're caught up. This session has ended."
+    : active
+      ? "End this session when you've finished watching."
+      : "There is no active protection session to end.";
   scheduleDescriptionElement.textContent = scheduleDescription(schedule.mode, schedule, override);
 
-  if (override?.state === "on") {
+  if (caughtUp) {
+    const upcomingWindow = overrideTransition ? getNextProtectionWindow(settings, overrideTransition) : null;
+    nextProtectionElement.textContent = overrideTransition
+      ? formatScheduleDateTime(overrideTransition)
+      : "Not scheduled";
+    protectionEndsElement.textContent = upcomingWindow
+      ? formatScheduleDateTime(upcomingWindow.end)
+      : "Not scheduled";
+    if (!overrideTransition) {
+      sessionStatusElement.textContent += " Turn protection back on when you need it.";
+    }
+  } else if (override?.state === "on") {
     nextProtectionElement.textContent = "Active now";
     protectionEndsElement.textContent = overrideTransition
       ? formatScheduleDateTime(overrideTransition)
@@ -169,6 +194,7 @@ function scheduleDescription(
   schedule: ReturnType<typeof currentSchedule>,
   override?: ProtectionOverride
 ): string {
+  if (override?.reason === "caught-up") return "Caught up: saved schedule unchanged";
   if (override?.state === "on") return `Temporary override: ${formatScheduleMode(mode)} schedule unchanged`;
   if (override?.state === "off") return `Temporary pause: ${formatScheduleMode(mode)} schedule unchanged`;
 
