@@ -17,12 +17,15 @@ Page content is not sent to any server.
 DeSpoilerize stores extension settings using the browser's extension storage. These settings may include:
 
 - whether Catch-up Mode is enabled
+- protection schedules, temporary overrides and the current session's caught-up state
 - selected protection packs
 - sensitivity level
 - custom protected terms
-- trusted sites
+- supported sites where filtering is disabled
 
-These settings remain within your browser/browser account storage.
+These settings use the browser's extension sync storage. Your browser may sync them between devices through your browser account, according to its settings. DeSpoilerize does not operate a server or receive a copy of these settings.
+
+The extension does not record browsing history, watched episodes or programme results. Revealing an item is handled locally on the page. Exporting settings creates a file on your device at your request; DeSpoilerize does not upload that file.
 
 ## Network access
 

@@ -1,5 +1,5 @@
 import type { RulePack } from "../shared/types";
-import { tennisRegexes, tennisSafeTerms, tennisSpoilerTerms } from "./vocab/tennis";
+import { tennisCatchUpPlayers, tennisPlayersSeptember2026, tennisRegexes, tennisSafeTerms, tennisSpoilerTerms } from "./vocab/tennis";
 
 export const tennisRulePack: RulePack = {
   id: "tennis",
@@ -10,16 +10,8 @@ export const tennisRulePack: RulePack = {
     "tennis",
     "atp",
     "wta",
-    "djokovic",
-    "alcaraz",
-    "sinner",
-    "nadal",
-    "federer",
-    "swiatek",
-    "sabalenka",
-    "gauff",
-    "raducanu",
-    "murray",
+    ...tennisPlayersSeptember2026,
+    ...tennisCatchUpPlayers,
     "british number one"
   ],
   spoilerTerms: tennisSpoilerTerms,
@@ -55,6 +47,7 @@ export const grandSlamsRulePack: RulePack = {
     "australian open",
     "french open",
     "roland garros",
+    "roland-garros",
     "wimbledon",
     "us open"
   ],

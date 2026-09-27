@@ -14,6 +14,7 @@ const outputDir = join(root, "Releases", `v${releaseVersion}`, "screenshots", "l
 const detailsDir = join(outputDir, "details");
 const settingsKey = "despoilerze.settings";
 const youtubeUrl = "https://www.youtube.com/results?search_query=formula+1+2024+race+highlights&sp=EgIQAQ%253D%253D";
+const bigBrotherUrl = "https://www.youtube.com/results?search_query=Big+Brother+2026+Ep.11+Ep.12&sp=EgIQAQ%253D%253D";
 
 // Always create a new profile. Never reuse a personal browser's cookies or history.
 const userDataDir = await mkdtemp(join(tmpdir(), "despoilerize-public-screenshots-"));
@@ -112,17 +113,73 @@ try {
   await expect(options.locator("#autosave-status")).toHaveText("Saved.");
   await options.locator(".topic-card").filter({ has: traitorsPack }).screenshot({ path: join(detailsDir, "traitors-pack.png"), animations: "disabled" });
 
+  await traitorsPack.uncheck();
+  const bigBrotherPack = options.locator("input[data-pack-id='big-brother']");
+  await bigBrotherPack.check();
+  await expect(options.locator("#autosave-status")).toHaveText("Saved.");
+  await options.locator(".topic-card").filter({ has: bigBrotherPack }).screenshot({ path: join(detailsDir, "big-brother-pack.png"), animations: "disabled" });
+
+  settings.enabledPacks = ["big-brother"];
+  settings.catchUpMode.override = { state: "off" };
+  await saveSettings(setup, settings);
+  await page.bringToFront();
+  await page.goto(bigBrotherUrl, { waitUntil: "domcontentloaded" });
+  await cards.first().waitFor();
+  await expect(page.getByText("Before you continue to YouTube", { exact: true })).toBeHidden();
+  await expect(page.locator("#masthead").getByText("Sign in", { exact: true })).toBeVisible();
+  const latestCard = cards.filter({ has: page.locator("#video-title[href*='kfwKvIHhE7w']") });
+  const watchedCard = cards.filter({ has: page.locator("#video-title[href*='onvI3kDcpww']") });
+  await expect(latestCard).toHaveCount(1);
+  await expect(watchedCard).toHaveCount(1);
+  await expect(latestCard.locator("#video-title")).toContainText("Big Brother 2026 Ep.12");
+  await expect(watchedCard.locator("#video-title")).toContainText("Big Brother 2026 Ep.11");
+  for (const card of [latestCard, watchedCard]) {
+    await expect(card.locator("#channel-name").first()).toContainText("ITV Reality");
+  }
+  // Fail if ranking changes move either official clip out of the scene.
+  // Never rearrange results to manufacture a comparison.
+  const latestIndex = await latestCard.evaluate(element => [...document.querySelectorAll("ytd-video-renderer")].indexOf(element));
+  const watchedIndex = await watchedCard.evaluate(element => [...document.querySelectorAll("ytd-video-renderer")].indexOf(element));
+  expect([latestIndex, watchedIndex].sort()).toEqual([0, 1]);
+  await page.waitForFunction(() => {
+    const cards = [...document.querySelectorAll("ytd-video-renderer")].slice(0, 3);
+    return cards.length === 3 && cards.every(card => [...card.querySelectorAll("img")].some(image => image.complete && image.naturalWidth > 100));
+  });
+  const bigBrotherTitles = (await cards.locator("#video-title").allTextContents()).slice(0, 3).map(text => text.trim());
+  await expect(page.locator("[data-despoilerze-hidden='true']")).toHaveCount(0);
+  await capture(page, "06-big-brother-protection-off.png");
+
+  settings.catchUpMode.override = { state: "on" };
+  await saveSettings(setup, settings);
+  for (const card of [latestCard, watchedCard, cards.nth(2)]) {
+    await expect(card).toHaveAttribute("data-despoilerze-hidden", "true");
+  }
+  await capture(page, "07-big-brother-protection-on.png");
+
+  const targetId = await watchedCard.getAttribute("data-despoilerze-target-id");
+  await page.locator(`.despoilerze-overlay[data-despoilerze-target-id='${targetId}']`).getByRole("button", { name: "Reveal once", exact: true }).click();
+  await expect(watchedCard).not.toHaveAttribute("data-despoilerze-hidden", "true");
+  await expect(latestCard).toHaveAttribute("data-despoilerze-hidden", "true");
+  await expect(cards.nth(2)).toHaveAttribute("data-despoilerze-hidden", "true");
+  await capture(page, "08-big-brother-reveal-once.png");
+
   const provenance = {
     capturedAtUtc: new Date().toISOString(), extensionVersion: manifest.version,
     browser: `Chrome for Testing ${context.browser()?.version() ?? ""}`.trim(),
     viewport: { width: 1280, height: 800 }, sourceUrl: youtubeUrl, signedOut: true,
     profile: "New temporary profile; no personal cookies, history or extensions reused",
     protection: "Formula 1 pack, Lockdown sensitivity", visibleTitles,
+    bigBrother: {
+      sourceUrl: bigBrotherUrl, protection: "Big Brother pack only, Lockdown sensitivity",
+      visibleTitles: bigBrotherTitles, latestResultIndex: latestIndex, revealedResultIndex: watchedIndex,
+      revealedExample: "ITV Reality episode 11 deliberately revealed by the viewer; episode 12 remains protected. Both from the 2026 UK series. No automatic episode or upload-date filtering.",
+      verified: ["Thumbnails loaded", "Sign in visible", "Both clips from ITV Reality and the same 2026 series", "Protection off", "First three cards protected", "Reveal once restores episode 11 and leaves episode 12 and the third card protected"]
+    },
     processing: "Direct browser page and toolbar-popup captures. No replacement thumbnails, text, blur, browser frame or compositing.",
-    verified: ["Thumbnails loaded", "Sign in visible", "Protection off", "Protection on", "Reveal once leaves the next card protected", "I'm caught up ends the session", "The Traitors pack can be selected and saved"]
+    verified: ["Thumbnails loaded", "Sign in visible", "Protection off", "Protection on", "Reveal once leaves the next card protected", "I'm caught up ends the session", "The Traitors and Big Brother packs can be selected and saved"]
   };
   await writeFile(join(outputDir, "capture.json"), `${JSON.stringify(provenance, null, 2)}\n`);
-  console.log(`Captured 5 store images, 2 actual popup details and The Traitors settings in ${outputDir}`);
+  console.log(`Captured 8 page images, 2 actual popup details and 2 Entertainment settings details in ${outputDir}`);
   console.log(JSON.stringify(provenance, null, 2));
 } finally {
   await context.close();

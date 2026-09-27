@@ -15,6 +15,7 @@ import { rugbyLeagueRulePack, rugbyUnionRulePack, sixNationsRulePack } from "./r
 import { nbaRulePack, nflRulePack } from "./usSports";
 import { realityTvRulePack } from "./entertainment";
 import { traitorsRulePack } from "./traitors";
+import { bigBrotherRulePack } from "./bigBrother";
 
 const allPacks: RulePack[] = [
   f1RulePack,
@@ -37,7 +38,8 @@ const allPacks: RulePack[] = [
   nflRulePack,
   nbaRulePack,
   realityTvRulePack,
-  traitorsRulePack
+  traitorsRulePack,
+  bigBrotherRulePack
 ];
 
 const packs: Record<string, RulePack> = Object.fromEntries(

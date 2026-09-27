@@ -1,5 +1,5 @@
 import type { RulePack } from "../shared/types";
-import { cricketRegexes, cricketSafeTerms, cricketSpoilerTerms } from "./vocab/cricket";
+import { cricketRegexes, cricketSafeTerms, cricketSpoilerTerms, englandMenSeptember2026, englandWomenSeptember2026 } from "./vocab/cricket";
 
 export const cricketRulePack: RulePack = {
   id: "cricket",
@@ -29,13 +29,13 @@ export const englandCricketRulePack: RulePack = {
   entities: [
     "england cricket",
     "england",
+    ...englandMenSeptember2026,
+    ...englandWomenSeptember2026,
+    // Retain established players absent from these September selections.
     "ben stokes",
-    "joe root",
-    "jos buttler",
-    "jofra archer",
-    "harry brook",
-    "ollie pope",
-    "mark wood"
+    "mark wood",
+    "phil salt",
+    "jacob bethell"
   ],
   spoilerTerms: cricketSpoilerTerms,
   safeTerms: cricketSafeTerms,

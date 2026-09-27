@@ -1,5 +1,5 @@
 {
-  "capturedAtUtc": "2026-09-27T16:36:04.102Z",
+  "capturedAtUtc": "2026-09-27T18:03:06.784Z",
   "extensionVersion": "1.1.0",
   "browser": "Chrome for Testing 148.0.7778.96",
   "viewport": {
@@ -15,6 +15,26 @@
     "Race Highlights | 2024 Sao Paulo Grand Prix",
     "Race Highlights | 2024 Monaco Grand Prix"
   ],
+  "bigBrother": {
+    "sourceUrl": "https://www.youtube.com/results?search_query=Big+Brother+2026+Ep.11+Ep.12&sp=EgIQAQ%253D%253D",
+    "protection": "Big Brother pack only, Lockdown sensitivity",
+    "visibleTitles": [
+      "It's eviction time! One housemates LEAVES! | Big Brother 2026 Ep.12",
+      "Noah's Ark brings out everyone's animal personas! | Big Brother 2026 Ep.11",
+      "Big Brother UK 2026 | Episode 12 | Live Eviction (inc. Day 12)"
+    ],
+    "latestResultIndex": 0,
+    "revealedResultIndex": 1,
+    "revealedExample": "ITV Reality episode 11 deliberately revealed by the viewer; episode 12 remains protected. Both from the 2026 UK series. No automatic episode or upload-date filtering.",
+    "verified": [
+      "Thumbnails loaded",
+      "Sign in visible",
+      "Both clips from ITV Reality and the same 2026 series",
+      "Protection off",
+      "First three cards protected",
+      "Reveal once restores episode 11 and leaves episode 12 and the third card protected"
+    ]
+  },
   "processing": "Direct browser page and toolbar-popup captures. No replacement thumbnails, text, blur, browser frame or compositing.",
   "verified": [
     "Thumbnails loaded",
@@ -23,6 +43,6 @@
     "Protection on",
     "Reveal once leaves the next card protected",
     "I'm caught up ends the session",
-    "The Traitors pack can be selected and saved"
+    "The Traitors and Big Brother packs can be selected and saved"
   ]
 }

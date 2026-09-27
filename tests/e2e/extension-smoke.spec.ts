@@ -61,6 +61,51 @@ test("sets protection schedules and sensitivity from options", async ({ browserN
   }
 });
 
+// This shape matches the published v0.5.4 settings, before override.reason existed.
+for (const state of ["on", "off"] as const) {
+  test(`preserves v0.5.4 settings and an existing ${state} override when selecting a new pack`, async ({ playwright }) => {
+    const harness = await launchExtension(playwright);
+    try {
+      const saved: Settings = {
+        catchUpMode: {
+          enabled: true,
+          schedule: { mode: "custom", days: [1, 3, 5], startTime: "19:00", endTime: "23:00" },
+          sensitivity: "balanced",
+          override: { state, untilUtc: new Date(Date.now() + 3_600_000).toISOString() }
+        },
+        enabledPacks: ["f1", "world-cup-2026"],
+        customTerms: ["My local team"],
+        trustedSites: ["www.youtube.com"]
+      };
+      await writeSettings(harness.extensionPage, saved);
+      const options = await harness.context.newPage();
+      await options.goto(extensionUrl(harness.extensionId, "src/options/index.html"));
+      await expect(options.locator("#sensitivity")).toHaveValue("balanced");
+      await expect(options.locator("#custom-terms")).toHaveValue("My local team");
+      await expect(options.locator("input[data-pack-id='f1']")).toBeChecked();
+      await expect(options.locator("input[data-pack-id='world-cup-2026']")).toBeChecked();
+      await expect(options.locator("input[data-pack-id='big-brother']")).not.toBeChecked();
+      await expect(options.locator("input[data-pack-id='the-traitors']")).not.toBeChecked();
+      await expect(options.locator("#trusted-sites-count")).toHaveText("1 disabled");
+      expect(await readSettings(harness.extensionPage)).toEqual(saved);
+
+      const popup = await harness.context.newPage();
+      await popup.goto(extensionUrl(harness.extensionId, "src/popup/index.html"));
+      await expect(popup.locator("#status-text")).toHaveText(`Protection: ${state.toUpperCase()}`);
+      await options.getByRole("button", { name: "Expand all" }).click();
+      await options.locator("input[data-pack-id='big-brother']").check();
+      const expected = { ...saved, enabledPacks: [...saved.enabledPacks, "big-brother"] };
+      await expect.poll(() => readSettings(harness.extensionPage)).toEqual(expected);
+      await options.reload();
+      await expect(options.locator("input[data-pack-id='big-brother']")).toBeChecked();
+      await expect(popup.locator("#status-text")).toHaveText(`Protection: ${state.toUpperCase()}`);
+      expect(await readSettings(harness.extensionPage)).toEqual(expected);
+    } finally {
+      await harness.context.close();
+    }
+  });
+}
+
 test("popup protects now without replacing the saved schedule", async ({ browserName, playwright }) => {
   test.skip(browserName !== "chromium", "Chrome extensions can only be loaded in Chromium.");
 
@@ -241,58 +286,63 @@ test("auto-saves pack, custom term, and supported site filtering changes from op
   }
 });
 
-test("The Traitors selection persists, protects page cards and can be turned off", async ({ browserName, playwright }, testInfo) => {
-  test.skip(browserName !== "chromium", "Chrome extensions can only be loaded in Chromium.");
-  const harness = await launchExtension(playwright);
+for (const { id, label, castSpoiler, showSpoiler, safe } of [
+  { id: "the-traitors", label: "The Traitors", castSpoiler: "Bella Ramsey was banished", showSpoiler: "The Celebrity Traitors winner revealed", safe: "James Acaster announces a comedy tour" },
+  { id: "big-brother", label: "Big Brother", castSpoiler: "Philip Regan was evicted", showSpoiler: "Big Brother nominations revealed", safe: "Harry wins a charity raffle" }
+]) {
+  test(`${label} selection persists, protects page cards and can be turned off`, async ({ browserName, playwright }, testInfo) => {
+    test.skip(browserName !== "chromium", "Chrome extensions can only be loaded in Chromium.");
+    const harness = await launchExtension(playwright);
 
-  try {
-    await writeSettings(harness.extensionPage, {
-      catchUpMode: { enabled: true, sensitivity: "balanced" },
-      enabledPacks: [], customTerms: [], trustedSites: []
-    });
-    const options = await harness.context.newPage();
-    await options.goto(extensionUrl(harness.extensionId, "src/options/index.html"));
-    await options.getByRole("button", { name: /Entertainment/ }).click();
-    const pack = options.locator("input[data-pack-id='the-traitors']");
-    await pack.check();
-    await expect(options.locator("#autosave-status")).toHaveText("Saved.");
-    expect((await readSettings(harness.extensionPage)).enabledPacks).toEqual(["the-traitors"]);
-    await options.reload();
-    await expect(pack).toBeChecked();
-    await expect(options.locator("input[data-pack-id='reality-tv']")).not.toBeChecked();
-    await options.locator(".topic-card").filter({ has: pack }).screenshot({ path: testInfo.outputPath("traitors-pack.png") });
+    try {
+      await writeSettings(harness.extensionPage, {
+        catchUpMode: { enabled: true, sensitivity: "balanced" },
+        enabledPacks: [], customTerms: [], trustedSites: []
+      });
+      const options = await harness.context.newPage();
+      await options.goto(extensionUrl(harness.extensionId, "src/options/index.html"));
+      await options.getByRole("button", { name: /Entertainment/ }).click();
+      const pack = options.locator(`input[data-pack-id='${id}']`);
+      await pack.check();
+      await expect(options.locator("#autosave-status")).toHaveText("Saved.");
+      expect((await readSettings(harness.extensionPage)).enabledPacks).toEqual([id]);
+      await options.reload();
+      await expect(pack).toBeChecked();
+      await expect(options.locator("input[data-pack-id='reality-tv']")).not.toBeChecked();
+      await options.locator(".topic-card").filter({ has: pack }).screenshot({ path: testInfo.outputPath(`${id}-pack.png`) });
 
-    const popup = await harness.context.newPage();
-    await popup.goto(extensionUrl(harness.extensionId, "src/popup/index.html"));
-    await expect(popup.locator("#enabled-packs-summary")).toHaveText("The Traitors");
+      const popup = await harness.context.newPage();
+      await popup.goto(extensionUrl(harness.extensionId, "src/popup/index.html"));
+      await expect(popup.locator("#enabled-packs-summary")).toHaveText(label);
 
-    const page = await harness.context.newPage();
-    // Synthetic examples, not actual contestant outcomes.
-    await page.route("https://www.bbc.co.uk/culture", route => route.fulfill({
-      contentType: "text/html",
-      body: `<!doctype html><title>Traitors protection fixture</title>
-        <style>article { width: 520px; min-height: 120px; margin: 16px; }</style>
-        <main>
-          <article id="cast-spoiler"><h2>Bella Ramsey was banished</h2></article>
-          <article id="show-spoiler"><h2>The Celebrity Traitors winner revealed</h2></article>
-          <article id="safe"><h2>James Acaster announces a comedy tour</h2></article>
-          <article id="other-show"><h2>Love Island couple dumped after recoupling</h2></article>
-        </main>`
-    }));
-    await page.goto("https://www.bbc.co.uk/culture");
-    await expect(page.locator("[data-despoilerze-hidden='true']")).toHaveCount(2);
-    await expect(page.locator("#cast-spoiler")).toHaveAttribute("data-despoilerze-hidden", "true");
-    await expect(page.locator("#safe")).not.toHaveAttribute("data-despoilerze-hidden", "true");
-    await expect(page.locator("#other-show")).not.toHaveAttribute("data-despoilerze-hidden", "true");
-    await page.getByRole("button", { name: "Reveal once", exact: true }).first().click();
-    await expect(page.locator("[data-despoilerze-hidden='true']")).toHaveCount(1);
-    await pack.uncheck();
-    await expect(options.locator("#autosave-status")).toHaveText("Saved.");
-    await expect(page.locator("[data-despoilerze-hidden='true']")).toHaveCount(0);
-  } finally {
-    await harness.context.close();
-  }
-});
+      const page = await harness.context.newPage();
+      // Synthetic examples, not actual contestant outcomes.
+      await page.route("https://www.bbc.co.uk/culture", route => route.fulfill({
+        contentType: "text/html",
+        body: `<!doctype html><title>${label} protection fixture</title>
+          <style>article { width: 520px; min-height: 120px; margin: 16px; }</style>
+          <main>
+            <article id="cast-spoiler"><h2>${castSpoiler}</h2></article>
+            <article id="show-spoiler"><h2>${showSpoiler}</h2></article>
+            <article id="safe"><h2>${safe}</h2></article>
+            <article id="other-show"><h2>Love Island couple dumped after recoupling</h2></article>
+          </main>`
+      }));
+      await page.goto("https://www.bbc.co.uk/culture");
+      await expect(page.locator("[data-despoilerze-hidden='true']")).toHaveCount(2);
+      await expect(page.locator("#cast-spoiler")).toHaveAttribute("data-despoilerze-hidden", "true");
+      await expect(page.locator("#safe")).not.toHaveAttribute("data-despoilerze-hidden", "true");
+      await expect(page.locator("#other-show")).not.toHaveAttribute("data-despoilerze-hidden", "true");
+      await page.getByRole("button", { name: "Reveal once", exact: true }).first().click();
+      await expect(page.locator("[data-despoilerze-hidden='true']")).toHaveCount(1);
+      await pack.uncheck();
+      await expect(options.locator("#autosave-status")).toHaveText("Saved.");
+      await expect(page.locator("[data-despoilerze-hidden='true']")).toHaveCount(0);
+    } finally {
+      await harness.context.close();
+    }
+  });
+}
 
 test("content script hides, reveals, and responds to settings changes", async ({ browserName, playwright }) => {
   test.skip(browserName !== "chromium", "Chrome extensions can only be loaded in Chromium.");

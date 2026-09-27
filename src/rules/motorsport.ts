@@ -1,5 +1,5 @@
 import type { RulePack } from "../shared/types";
-import { motorsportRegexes, motorsportSafeTerms, motorsportSpoilerTerms } from "./vocab/motorsport";
+import { motoGpRiders2026, motoGpTeams2026, motorsportRegexes, motorsportSafeTerms, motorsportSpoilerTerms } from "./vocab/motorsport";
 
 export const motoGpRulePack: RulePack = {
   id: "motogp",
@@ -10,6 +10,8 @@ export const motoGpRulePack: RulePack = {
     "motogp",
     "moto gp",
     "motorcycle grand prix",
+    ...motoGpRiders2026,
+    ...motoGpTeams2026,
     "marquez",
     "bagnaia",
     "martin",
@@ -18,11 +20,16 @@ export const motoGpRulePack: RulePack = {
     "binder",
     "bastianini",
     "zarco",
-    "ducati",
-    "yamaha",
-    "honda",
-    "ktm",
-    "aprilia"
+    "razgatlioglu",
+    "razgatlıoğlu",
+    "moreira",
+    "vinales",
+    "morbidelli",
+    "di giannantonio",
+    "aldeguer",
+    "bezzecchi",
+    "ogura",
+    "rins"
   ],
   spoilerTerms: motorsportSpoilerTerms,
   safeTerms: motorsportSafeTerms,

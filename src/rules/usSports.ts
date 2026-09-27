@@ -1,5 +1,5 @@
 import type { RulePack } from "../shared/types";
-import { usSportsRegexes, usSportsSafeTerms, usSportsSpoilerTerms } from "./vocab/usSports";
+import { nbaTeams2026, nflTeams2026, usSportsRegexes, usSportsSafeTerms, usSportsSpoilerTerms } from "./vocab/usSports";
 
 export const nflRulePack: RulePack = {
   id: "nfl",
@@ -10,6 +10,7 @@ export const nflRulePack: RulePack = {
     "nfl",
     "super bowl",
     "american football",
+    ...nflTeams2026,
     "chiefs",
     "eagles",
     "cowboys",
@@ -36,6 +37,8 @@ export const nbaRulePack: RulePack = {
     "nba",
     "basketball",
     "nba finals",
+    ...nbaTeams2026,
+    "los angeles clippers",
     "lakers",
     "celtics",
     "warriors",

@@ -5,6 +5,7 @@ const realityTvEntities = [
   "reality television",
   "love island",
   "the traitors",
+  "celebrity traitors",
   "big brother",
   "celebrity big brother",
   "i'm a celebrity",

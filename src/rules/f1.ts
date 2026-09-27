@@ -1,5 +1,5 @@
 import type { RulePack } from "../shared/types";
-import { motorsportRegexes, motorsportSafeTerms, motorsportSpoilerTerms } from "./vocab/motorsport";
+import { f1CatchUpNames, f1Drivers2026, f1Teams2026, motorsportRegexes, motorsportSafeTerms, motorsportSpoilerTerms } from "./vocab/motorsport";
 
 export const f1RulePack: RulePack = {
   id: "f1",
@@ -19,35 +19,9 @@ export const f1RulePack: RulePack = {
     "paddock",
     "grid",
     "fia",
-    "verstappen",
-    "norris",
-    "hamilton",
-    "piastri",
-    "leclerc",
-    "russell",
-    "alonso",
-    "sainz",
-    "tsunoda",
-    "bearman",
-    "antonelli",
-    "lawson",
-    "hadjar",
-    "hulkenberg",
-    "ocon",
-    "gasly",
-    "stroll",
-    "albon",
-    "bortoleto",
-    "red bull",
-    "mclaren",
-    "ferrari",
-    "mercedes",
-    "aston martin",
-    "williams",
-    "haas",
-    "sauber",
-    "racing bulls",
-    "alpine"
+    ...f1Drivers2026,
+    ...f1Teams2026,
+    ...f1CatchUpNames
   ],
   spoilerTerms: motorsportSpoilerTerms,
   safeTerms: motorsportSafeTerms,

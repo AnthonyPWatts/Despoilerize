@@ -1,5 +1,6 @@
 import type { RulePack } from "../shared/types";
 import { footballRegexes } from "./vocab/football";
+import { superLeagueClubs2026 } from "./vocab/rugby";
 
 const rugbySpoilerTerms = [
   "wins",
@@ -46,6 +47,8 @@ export const rugbyUnionRulePack: RulePack = {
     "rugby union",
     "rugby",
     "premiership rugby",
+    "prem rugby",
+    "gallagher prem",
     "urc",
     "united rugby championship",
     "champions cup",
@@ -87,12 +90,9 @@ export const rugbyLeagueRulePack: RulePack = {
     "rugby league",
     "super league",
     "challenge cup",
-    "wigan warriors",
-    "st helens",
-    "leeds rhinos",
-    "warrington wolves",
-    "hull kr",
-    "catalans dragons"
+    ...superLeagueClubs2026,
+    "st. helens",
+    "hull kingston rovers"
   ],
   spoilerTerms: rugbySpoilerTerms,
   safeTerms: rugbySafeTerms,

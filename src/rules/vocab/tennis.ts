@@ -1,3 +1,37 @@
+// Checked 27 September 2026. Sources and retention policy: docs/pack-data.md.
+
+// Leading singles players checked against the 21 September rankings; not a full tour roster.
+export const tennisPlayersSeptember2026 = [
+  "djokovic",
+  "alcaraz",
+  "sinner",
+  "zverev",
+  "ben shelton",
+  "auger-aliassime",
+  "medvedev",
+  "cobolli",
+  "tiafoe",
+  "de minaur",
+  "taylor fritz",
+  "rybakina",
+  "sabalenka",
+  "pegula",
+  "gauff",
+  "mirra andreeva",
+  "noskova",
+  "svitolina",
+  "muchova",
+  "swiatek",
+  "kostyuk",
+  "raducanu"
+];
+
+export const tennisCatchUpPlayers = [
+  "nadal",
+  "federer",
+  "murray"
+];
+
 export const tennisSpoilerTerms = [
   "wins",
   "won",

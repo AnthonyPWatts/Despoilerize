@@ -2,10 +2,12 @@
 
 ## Preparation status — 27 September 2026
 
-**Prepared for Chrome Web Store submission; not submitted or published.** This package supersedes the unpublished v1.0.0 preparation. The minor version was increased before publication; functionality is unchanged from that preparation. The last verified published store version is v0.5.4. No v1.1.0 Git tag or GitHub release has been created.
+**Prepared for Chrome Web Store submission; not submitted or published.** This package supersedes the unpublished v1.0.0 preparation. The minor version was increased before publication; this preparation now also includes a dedicated Big Brother pack. The last verified published store version is v0.5.4. No v1.1.0 Git tag or GitHub release has been created.
 
 ## Changes since v0.5.4
 
+- Audited all 22 packs and refreshed sports data for September 2026: F1 and MotoGP grids, 2026/27 football leagues, England cricket, leading tennis players, Super League and complete NFL/NBA team names. Current and retained catch-up lists are separate. [Audit, sources and limitations](../../docs/pack-data.md).
+- Added a dedicated **Big Brother** UK pack with all 16 published 2026 launch names, verified full names and aliases, companion-show wording, nominations, evictions, departures and twist reveals. Short names require programme context. [Coverage, sources and maintenance](../../docs/big-brother-pack.md).
 - Added a dedicated **The Traitors** pack under Entertainment, with all 21 announced 2026 UK celebrities, the 2025 celebrity cast and all 22 UK series-four contestants. It covers banishments, murders, recruitment, role reveals and finale wording; common first names require programme context. [Coverage and cast sources](../../docs/traitors-pack.md).
 - Added **I'm caught up** to the popup and settings. It ends the current protection session immediately, reveals protected content on open pages, and preserves the saved schedule, topics and sensitivity.
 - Resumed protection automatically at the next scheduled start. Finishing a weekend session keeps protection off until next Saturday; daily and custom schedules resume at their next start. Always-on and manual protection require deliberate reactivation.
@@ -19,19 +21,24 @@ There are no new permissions, dependencies or data collection.
 
 - [despoilerize-v1.1.0-chrome-web-store.zip](./despoilerize-v1.1.0-chrome-web-store.zip)
 
-Package size: 124,594 bytes. SHA-256: `e45d7e978187402e97dae02518ad33ee9c39ce635dd153c39629e625d237d0c0`.
+The [submission copy and reviewer instructions](./STORE-LISTING.md) include the final screenshot order, permissions text and public links. The [checksum file](./SHA256SUMS.txt) identifies the tested upload.
+
+Package size: 130,401 bytes. SHA-256: `907ee94ac0592500af9a223afd72cdc9d8c3a996f5bb03315235932abc926b07`.
 
 ## Store assets
 
-The current screenshots were captured on 27 September 2026 from the running v1.1.0 extension in a fresh, signed-out Chrome for Testing profile. They show real YouTube results and thumbnails. The [gallery and capture record](./screenshots/live/README.md) include the actual toolbar popup and explain how the captures were verified. Promotional tiles were regenerated using the existing design.
+The current screenshots were captured on 27 September 2026 from the running v1.1.0 extension in a fresh, signed-out Chrome for Testing profile. They show real YouTube results and thumbnails. The captures preceded the sports vocabulary refresh; the subsequent data update does not change these screens. The [gallery and capture record](./screenshots/live/README.md) include the actual toolbar popup and explain how the captures were verified. Promotional tiles were regenerated using the existing design.
 
-Use these five 1280 × 800 images for the store, starting with the reveal example so both clear and protected content are visible:
+Use these five 1280 × 800 images for the store to show both reality TV and sport, with clear and protected content visible in each reveal example:
 
-- [Reveal one video while others stay protected](./screenshots/live/03-youtube-reveal-once.png)
-- [The same results with protection off](./screenshots/live/01-youtube-protection-off.png)
-- [The same results with protection on](./screenshots/live/02-youtube-protection-on.png)
+- [Big Brother: episode 11 deliberately revealed while episode 12 stays protected](./screenshots/live/08-big-brother-reveal-once.png)
+- [Formula 1: reveal one highlights video while others stay protected](./screenshots/live/03-youtube-reveal-once.png)
+- [Big Brother: protection on](./screenshots/live/07-big-brother-protection-on.png)
 - [Protection schedule](./screenshots/live/04-protection-schedule.png)
 - [Protected topics and custom terms](./screenshots/live/05-protected-topics.png)
+
+Promotional images:
+
 - [Small promo tile](./promo/small-promo-tile.png)
 - [Marquee promo tile](./promo/marquee-promo-tile.png)
 
@@ -41,19 +48,21 @@ The earlier staged screenshots remain archived under [v1.0](../v1.0/screenshots/
 
 Release verification completed on 27 September 2026 against v1.1.0 using the locked dependencies:
 
-- `npm test`: all 213 unit tests passed, including cast coverage, aliases, role and result wording, sensitivity settings and unrelated-news regressions for The Traitors.
+- `npm test`: all 652 unit tests passed, including 350 sports-data and alias regressions and 89 Big Brother cases covering every launch name, published aliases, spoiler wording, sensitivity settings and unrelated-news regressions.
 - `npm run typecheck`: passed.
-- `npm run screenshots:store`: built the extension and captured five page images, two actual toolbar-popup details and the new Traitors settings card. Verified loaded photographs, the visible **Sign in** control, protection off/on, **Reveal once** leaving the next card protected, **I'm caught up** ending the session and the Traitors selection saving.
+- `npm run build`: passed after the sports vocabulary refresh. Earlier in this preparation, `node scripts/generate-live-store-screenshots.mjs` captured eight page images, two actual toolbar-popup details and two Entertainment settings details. Verified loaded photographs, visible **Sign in**, protection off/on, selective reveals, **I'm caught up**, and saved dedicated pack selections.
 - `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-chrome.ps1`: packaged the freshly built extension successfully.
-- `npx playwright test`: all 16 Chromium extension tests passed against the packaged build, including Traitors selection and persistence, popup summary, hiding/revealing page cards, disabling the pack, session completion, upcoming-session dates and the existing YouTube regressions.
-- `npm run promo:store`: regenerated both promotional tiles, byte-identical to the previously inspected images.
+- `npx playwright test`: all 19 Chromium extension tests passed against the packaged build, including independent Traitors and Big Brother selection and persistence, popup summary, hiding/revealing page cards, disabling the pack, session completion, upcoming-session dates and the existing YouTube regressions. Two additional checks load the v0.5.4 settings shape with on/off overrides, verify old preferences and new-pack opt-in behaviour, and preserve those preferences through selection and reload.
+- Promotional tiles are unchanged from the previously verified v1.1.0 preparation; no new promotional rendering was needed.
 - The ZIP contains a root v1.1.0 manifest and all referenced extension assets. All 44 archived files match the tested build byte for byte; source manifest, package metadata and lockfile versions agree.
 - `node --check scripts/generate-live-store-screenshots.mjs`: passed.
-- All eight captures were visually inspected, the five store images were confirmed as 1280 × 800, and local documentation links were checked. Live captures supplement the synthetic browser tests; they do not establish complete coverage of YouTube layouts. Traitors page filtering was checked with synthetic examples, not live episode results.
+- All twelve captures were visually inspected, the eight page images were confirmed as 1280 × 800, and local documentation links were checked. The live Big Brother capture deliberately reveals an ITV Reality episode 11 clip while episode 12 and the third result remain protected. The captions explain that this is a viewer action, not automatic filtering by episode or upload date. These checks supplement the synthetic browser tests; they do not establish complete coverage of YouTube layouts or episode spoilers.
+- Final preparation re-ran all unit and browser tests and type-checking, checked the five selected screenshot dimensions, both promotional tiles and the store icon, and confirmed all manifest-referenced files exist. The manifest differs from v0.5.4 only in version; permissions are unchanged.
+- Added ready-to-use store copy, reviewer steps and a SHA-256 checksum file. Clarified browser-managed settings sync in the privacy policy. No extension source changed in this final pass, so the tested ZIP and screenshot captures were retained.
 - `git diff --check`: passed.
 
-Browser automation uses synthetic fixtures. The popup's caught-up state and upcoming-session dates were also checked during local use. Broader live-site checks remain covered by the [manual smoke-test instructions](../../README.md#suggested-manual-test).
+The local settings-compatibility checks do not simulate a store-managed automatic upgrade; that remains a post-publication check. The refreshed sports vocabulary was checked through the matching tests and rebuilt extension. Live screenshots were not recaptured for this data-only update, and each sport was not separately tested on live sites. Browser regression tests use synthetic fixtures. The popup's caught-up state and upcoming-session dates were also checked during local use. Broader live-site checks remain covered by the [manual smoke-test instructions](../../README.md#suggested-manual-test).
 
 ## Submission
 
-Upload the ZIP to the existing Chrome Web Store item and use the included store assets as needed. Record the actual review and publication status after submission. Confirm store publication before publishing the corresponding GitHub release, following the existing release process.
+Commit and push the prepared source, documentation and assets before submission. Upload the ZIP to the existing Chrome Web Store item using the [prepared listing copy and asset order](./STORE-LISTING.md). Record the actual review and publication status after submission. Confirm store publication before publishing the corresponding GitHub release, following the existing release process.

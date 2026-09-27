@@ -2,21 +2,25 @@
 
 **DeSpoilerize** is a local-first browser extension that hides likely catch-up spoilers while spoiler protection is active.
 
-The project began with my own highest-risk use case:
-
-> Wake up, plan to watch F1 highlights later, scroll headlines, and accidentally see the result.
+Choose the shows and sports you're catching up on: Big Brother, The Traitors, other reality TV, Formula 1, football and more.
 
 ## Current release
 
 **v0.5.4** is the current published extension, confirmed in the [Chrome Web Store](https://chromewebstore.google.com/detail/despoilerize/ekckhdeeoilbnocmcpnhbcocbapjpmof) on 26 September 2026. See the [release notes and publication status](./Releases/v0.5/README.md) for the corresponding GitHub release status and archived packages.
 
-**v1.1.0** is prepared for release but has not been submitted or published. The source and local builds use v1.1.0; the [release notes and package](./Releases/v1.1/README.md) include **The Traitors** pack, **I'm caught up**, the corrected upcoming-session summary, and the YouTube home-feed and settings fixes previously prepared as v0.5.5.
+**v1.1.0** is prepared for release but has not been submitted or published. The source and local builds use v1.1.0; the [release notes and package](./Releases/v1.1/README.md) include dedicated **Big Brother** and **The Traitors** packs, **I'm caught up**, the corrected upcoming-session summary, and the YouTube home-feed and settings fixes previously prepared as v0.5.5.
 
 Install from the store to receive automatic updates. Unpacked development installations use the local `dist` folder and require a rebuild and extension reload to pick up changes.
 
 ## See it in use
 
-Real YouTube results in a fresh, signed-out Chrome profile. Here, **Reveal once** has restored the first video while the other Formula 1 cards remain protected in Lockdown mode.
+Real YouTube results in a fresh, signed-out Chrome profile. Both examples use **Lockdown**, which hides matching topics as well as explicit spoilers. **Reveal once** restores one item while the others stay protected.
+
+**Reality TV — Big Brother:** the viewer has chosen to reveal an episode 11 clip; episode 12 stays protected. Both are from the same 2026 UK series. DeSpoilerize does not track watched episodes or filter by upload date.
+
+![A Big Brother episode 11 clip deliberately revealed while episode 12 stays protected](./Releases/v1.1/screenshots/live/08-big-brother-reveal-once.png)
+
+**Sport — Formula 1:** one highlights video is revealed while the other race clips remain hidden.
 
 ![A real YouTube thumbnail revealed while the remaining Formula 1 results stay blurred](./Releases/v1.1/screenshots/live/03-youtube-reveal-once.png)
 
@@ -113,9 +117,9 @@ Release packages and store listing assets are kept under [`Releases`](./Releases
 npm run screenshots:store
 ```
 
-This builds and loads the extension in a new, signed-out Chrome for Testing profile, then captures a public YouTube search with protection off, protection on, and one result revealed. It also captures the settings and actual toolbar popup. Personal profiles, cookies and browsing history are never reused.
+This builds and loads the extension in a new, signed-out Chrome for Testing profile, then captures public YouTube searches for Formula 1 and Big Brother with protection off, protection on, and one result revealed. It also captures the settings and actual toolbar popup. Personal profiles, cookies and browsing history are never reused.
 
-The five store images are 1280 × 800 page captures; the toolbar popup details retain their native size. The browser's tab strip and address bar are outside these captures. See the [screenshot gallery and capture record](./Releases/v1.1/screenshots/live/README.md) for sources and verification.
+The eight page images are 1280 × 800 captures; the toolbar popup details retain their native size. The browser's tab strip and address bar are outside these captures. See the [screenshot gallery and capture record](./Releases/v1.1/screenshots/live/README.md) for sources, verification and a suggested store selection covering both reality TV and sport.
 
 The command requires internet access and fails if the required thumbnails, signed-out state or protection behaviour cannot be verified. YouTube results and layouts can change, so inspect each new capture before submission. The older [`generate-store-screenshots.mjs`](./scripts/generate-store-screenshots.mjs) remains available to reproduce the historical synthetic examples; it is no longer the store screenshot command.
 
@@ -188,6 +192,8 @@ This version only runs on sites covered by the extension's host permissions:
 
 ## Protection Packs
 
+Pack data was audited on **27 September 2026**, including current motorsport grids, 2026/27 football membership, England cricket selections and US sports teams. See the [all-pack audit, sources and coverage limits](./docs/pack-data.md). Older names are retained for catch-up viewing; packs do not filter by season or publication date.
+
 The options page now supports grouped protection packs, including:
 
 - Motorsport: Formula 1, MotoGP
@@ -196,9 +202,11 @@ The options page now supports grouped protection packs, including:
 - Cricket: cricket, England cricket, The Ashes
 - Tennis: tennis, Wimbledon, Grand Slams
 - US sports: NFL, NBA
-- Entertainment: Reality TV, The Traitors
+- Entertainment: Reality TV, The Traitors, Big Brother
 
 **The Traitors** has a dedicated pack covering UK and Celebrity Traitors, including all 21 announced celebrities for 2026, the 2025 celebrity cast and the UK series-four contestants. It recognises cast names, banishments, murders, recruitment, role reveals and finale spoilers. Select **Entertainment → The Traitors** in settings; changes save automatically. See [coverage, sources and sensitivity guidance](./docs/traitors-pack.md).
+
+**Big Brother** has a dedicated UK pack with all 16 published 2026 launch names, verified full names and aliases, nominations, evictions, departures and twist wording. Select **Entertainment → Big Brother** independently of the broader Reality TV pack. Common first names require programme context. See [coverage, sources and sensitivity guidance](./docs/big-brother-pack.md).
 
 ## Custom protected terms
 
