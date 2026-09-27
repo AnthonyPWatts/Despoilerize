@@ -6,9 +6,9 @@ The current published extension is **v0.5.4**, confirmed in the [Chrome Web Stor
 
 ## v1.1
 
-- [v1.1.0 release notes and verification](./v1.1/README.md) — prepared, not submitted or published
+- [v1.1.0 release notes and verification](./v1.1/README.md) — submitted on 27 September 2026; pending review, with automatic publication after approval
 - [v1.1.0 Chrome Web Store package](./v1.1/despoilerize-v1.1.0-chrome-web-store.zip)
-- [Prepared store listing and submission instructions](./v1.1/STORE-LISTING.md)
+- [Submitted store listing and reviewer instructions](./v1.1/STORE-LISTING.md)
 - [Package checksum](./v1.1/SHA256SUMS.txt)
 - [Chrome Web Store screenshots and live examples](./v1.1/screenshots/live/README.md)
 - [Chrome Web Store promo tiles](./v1.1/promo/)

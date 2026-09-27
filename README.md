@@ -8,7 +8,7 @@ Choose the shows and sports you're catching up on: Big Brother, The Traitors, ot
 
 **v0.5.4** is the current published extension, confirmed in the [Chrome Web Store](https://chromewebstore.google.com/detail/despoilerize/ekckhdeeoilbnocmcpnhbcocbapjpmof) on 26 September 2026. See the [release notes and publication status](./Releases/v0.5/README.md) for the corresponding GitHub release status and archived packages.
 
-**v1.1.0** is prepared for release but has not been submitted or published. The source and local builds use v1.1.0; the [release notes and package](./Releases/v1.1/README.md) include dedicated **Big Brother** and **The Traitors** packs, **I'm caught up**, the corrected upcoming-session summary, and the YouTube home-feed and settings fixes previously prepared as v0.5.5.
+**v1.1.0** was submitted to the Chrome Web Store on 27 September 2026 and is **pending review**, with automatic publication after approval enabled. The source and local builds use v1.1.0; the [release notes and package](./Releases/v1.1/README.md) include dedicated **Big Brother** and **The Traitors** packs, **I'm caught up**, the corrected upcoming-session summary, and the YouTube home-feed and settings fixes previously prepared as v0.5.5.
 
 Install from the store to receive automatic updates. Unpacked development installations use the local `dist` folder and require a rebuild and extension reload to pick up changes.
 

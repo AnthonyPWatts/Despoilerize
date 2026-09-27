@@ -1,6 +1,6 @@
 # Chrome Web Store submission copy — v1.1.0
 
-Prepared on 27 September 2026. This is local submission material; the dashboard has not been changed and the release has not been submitted. Keep the existing item, category, language and distribution settings.
+Submitted on 27 September 2026. The dashboard confirmed **Pending review**, with automatic publication after approval enabled. The existing item, category, language and distribution settings were preserved. This file records the submitted copy and assets; store publication remains outstanding.
 
 ## Short description
 
@@ -60,13 +60,13 @@ The privacy declarations should continue to reflect local page processing and no
 - Support: <https://github.com/AnthonyPWatts/Despoilerize/issues>
 - Privacy policy: <https://github.com/AnthonyPWatts/Despoilerize/blob/main/PRIVACY.md>
 
-Commit and push the prepared source and documentation before submission so the public privacy and feature documentation match the candidate.
+The prepared source and documentation were committed and pushed before submission so the public privacy and feature documentation match the candidate.
 
 ## Upload assets
 
-Upload [the v1.1.0 ZIP](despoilerize-v1.1.0-chrome-web-store.zip). Its digest is recorded in [SHA256SUMS.txt](SHA256SUMS.txt). Use the existing [128 × 128 icon](../../public/icon-128.png).
+Uploaded [the v1.1.0 ZIP](despoilerize-v1.1.0-chrome-web-store.zip). Its digest is recorded in [SHA256SUMS.txt](SHA256SUMS.txt). The existing [128 × 128 icon](../../public/icon-128.png) was retained.
 
-Use these five screenshots in this order:
+Uploaded these five screenshots in this order:
 
 1. [Big Brother — reveal an episode 11 clip](screenshots/live/08-big-brother-reveal-once.png).
 2. [Formula 1 — reveal one highlights video](screenshots/live/03-youtube-reveal-once.png).
@@ -90,4 +90,8 @@ No login or account is required.
 
 ## Publication hand-off
 
-After uploading the candidate and listing assets, review the dashboard's validation results before submitting. Following approval, verify that the public store listing and an installed copy both report v1.1.0. Then update publication status in the repository and create the corresponding Git tag and GitHub release when authorised. Store-managed automatic upgrades have not been exercised by the local fixture tests.
+The dashboard's 500-character reviewer field contains this condensed version of the steps above:
+
+> No account needed. In settings choose Always on, Big Brother and Lockdown; deselect Formula 1. Search signed-out YouTube for "Big Brother 2026". Matching cards and thumbnails blur. Test Reveal once and Reveal all on page. In the popup, "I'm caught up" turns protection off without changing saved settings. With Always on, use Return to schedule to reactivate. Select Every weekend in settings to inspect the next-session summary.
+
+The dashboard accepted the submission and confirmed **Pending review**. Following approval, verify that the public store listing and an installed copy both report v1.1.0. Then update publication status in the repository and create the corresponding Git tag and GitHub release when authorised. Store-managed automatic upgrades have not been exercised by the local fixture tests.

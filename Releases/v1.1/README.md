@@ -1,8 +1,8 @@
 # DeSpoilerize v1.1.0
 
-## Preparation status — 27 September 2026
+## Submission status — 27 September 2026
 
-**Prepared for Chrome Web Store submission; not submitted or published.** This package supersedes the unpublished v1.0.0 preparation. The minor version was increased before publication; this preparation now also includes a dedicated Big Brother pack. The last verified published store version is v0.5.4. No v1.1.0 Git tag or GitHub release has been created.
+**Submitted to the Chrome Web Store; pending review.** Automatic publication after approval is enabled. This package supersedes the unpublished v1.0.0 preparation and includes the dedicated Big Brother pack. The dashboard confirmed draft v1.1.0 and published v0.5.4 before submission. No v1.1.0 Git tag or GitHub release has been created; store approval and publication remain outstanding.
 
 ## Changes since v0.5.4
 
@@ -29,7 +29,7 @@ Package size: 130,401 bytes. SHA-256: `907ee94ac0592500af9a223afd72cdc9d8c3a996f
 
 The current screenshots were captured on 27 September 2026 from the running v1.1.0 extension in a fresh, signed-out Chrome for Testing profile. They show real YouTube results and thumbnails. The captures preceded the sports vocabulary refresh; the subsequent data update does not change these screens. The [gallery and capture record](./screenshots/live/README.md) include the actual toolbar popup and explain how the captures were verified. Promotional tiles were regenerated using the existing design.
 
-Use these five 1280 × 800 images for the store to show both reality TV and sport, with clear and protected content visible in each reveal example:
+These five 1280 × 800 images were uploaded to the store in this order to show both reality TV and sport, with clear and protected content visible in each reveal example:
 
 - [Big Brother: episode 11 deliberately revealed while episode 12 stays protected](./screenshots/live/08-big-brother-reveal-once.png)
 - [Formula 1: reveal one highlights video while others stay protected](./screenshots/live/03-youtube-reveal-once.png)
@@ -65,4 +65,6 @@ The local settings-compatibility checks do not simulate a store-managed automati
 
 ## Submission
 
-Commit and push the prepared source, documentation and assets before submission. Upload the ZIP to the existing Chrome Web Store item using the [prepared listing copy and asset order](./STORE-LISTING.md). Record the actual review and publication status after submission. Confirm store publication before publishing the corresponding GitHub release, following the existing release process.
+Source, documentation and assets were committed and pushed as `211bc455852f62b3df150b12550d3d3ccf98fa5f` before submission. The verified ZIP was uploaded to the existing store item. The description, five screenshots, homepage and support links, single-purpose statement and permission explanations were updated, and reviewer instructions were saved. The existing icon and promotional tiles were retained; the promotional files match the v0.5 assets byte for byte. Category, language, distribution and data-collection declarations were preserved.
+
+The dashboard confirmed successful submission and **Pending review** on 27 September 2026. **Publish automatically after review** was checked when submitting. Confirm store publication and an installed copy's version before publishing the corresponding GitHub release, following the existing release process. Store-managed upgrades remain unverified.
