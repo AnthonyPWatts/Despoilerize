@@ -1,8 +1,8 @@
-# DeSpoilerize v1.0.0
+# DeSpoilerize v1.1.0
 
 ## Preparation status — 27 September 2026
 
-**Archived unpublished preparation; superseded by [v1.1.0](../v1.1/README.md).** This package supersedes the unpublished v0.5.5 preparation. The last verified published store version is v0.5.4. No v1.0.0 Git tag or GitHub release has been created.
+**Prepared for Chrome Web Store submission; not submitted or published.** This package supersedes the unpublished v1.0.0 preparation. The minor version was increased before publication; functionality is unchanged from that preparation. The last verified published store version is v0.5.4. No v1.1.0 Git tag or GitHub release has been created.
 
 ## Changes since v0.5.4
 
@@ -17,13 +17,13 @@ There are no new permissions, dependencies or data collection.
 
 ## Package
 
-- [despoilerize-v1.0.0-chrome-web-store.zip](./despoilerize-v1.0.0-chrome-web-store.zip)
+- [despoilerize-v1.1.0-chrome-web-store.zip](./despoilerize-v1.1.0-chrome-web-store.zip)
 
-Package size: 124,594 bytes. SHA-256: `6ef0bd8e177ed2cfc2f3c6d061ded7358b4976d928a684585fb802a80fa5a20e`.
+Package size: 124,594 bytes. SHA-256: `e45d7e978187402e97dae02518ad33ee9c39ce635dd153c39629e625d237d0c0`.
 
 ## Store assets
 
-The current screenshots were captured on 27 September 2026 from the running v1.0.0 extension in a fresh, signed-out Chrome for Testing profile. They show real YouTube results and thumbnails. The [gallery and capture record](./screenshots/live/README.md) include the actual toolbar popup and explain how the captures were verified. Promotional tiles were regenerated using the existing design.
+The current screenshots were captured on 27 September 2026 from the running v1.1.0 extension in a fresh, signed-out Chrome for Testing profile. They show real YouTube results and thumbnails. The [gallery and capture record](./screenshots/live/README.md) include the actual toolbar popup and explain how the captures were verified. Promotional tiles were regenerated using the existing design.
 
 Use these five 1280 × 800 images for the store, starting with the reveal example so both clear and protected content are visible:
 
@@ -35,11 +35,11 @@ Use these five 1280 × 800 images for the store, starting with the reveal exampl
 - [Small promo tile](./promo/small-promo-tile.png)
 - [Marquee promo tile](./promo/marquee-promo-tile.png)
 
-The earlier staged screenshots remain archived in the parent screenshots directory; they are superseded for documentation and store submission.
+The earlier staged screenshots remain archived under [v1.0](../v1.0/screenshots/); they are superseded for documentation and store submission.
 
 ## Verification
 
-Release verification completed on 27 September 2026 against v1.0.0 using the locked dependencies:
+Release verification completed on 27 September 2026 against v1.1.0 using the locked dependencies:
 
 - `npm test`: all 213 unit tests passed, including cast coverage, aliases, role and result wording, sensitivity settings and unrelated-news regressions for The Traitors.
 - `npm run typecheck`: passed.
@@ -47,7 +47,7 @@ Release verification completed on 27 September 2026 against v1.0.0 using the loc
 - `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-chrome.ps1`: packaged the freshly built extension successfully.
 - `npx playwright test`: all 16 Chromium extension tests passed against the packaged build, including Traitors selection and persistence, popup summary, hiding/revealing page cards, disabling the pack, session completion, upcoming-session dates and the existing YouTube regressions.
 - `npm run promo:store`: regenerated both promotional tiles, byte-identical to the previously inspected images.
-- The ZIP contains a root v1.0.0 manifest and all referenced extension assets. All 44 archived files match the tested build byte for byte; source manifest, package metadata and lockfile versions agree.
+- The ZIP contains a root v1.1.0 manifest and all referenced extension assets. All 44 archived files match the tested build byte for byte; source manifest, package metadata and lockfile versions agree.
 - `node --check scripts/generate-live-store-screenshots.mjs`: passed.
 - All eight captures were visually inspected, the five store images were confirmed as 1280 × 800, and local documentation links were checked. Live captures supplement the synthetic browser tests; they do not establish complete coverage of YouTube layouts. Traitors page filtering was checked with synthetic examples, not live episode results.
 - `git diff --check`: passed.
@@ -56,4 +56,4 @@ Browser automation uses synthetic fixtures. The popup's caught-up state and upco
 
 ## Submission
 
-Use the [v1.1.0 package and assets](../v1.1/README.md) for submission. This preparation remains archived for reference.
+Upload the ZIP to the existing Chrome Web Store item and use the included store assets as needed. Record the actual review and publication status after submission. Confirm store publication before publishing the corresponding GitHub release, following the existing release process.

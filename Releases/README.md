@@ -4,9 +4,16 @@ Release assets for store submission and archive use.
 
 The current published extension is **v0.5.4**, confirmed in the [Chrome Web Store](https://chromewebstore.google.com/detail/despoilerize/ekckhdeeoilbnocmcpnhbcocbapjpmof) on 26 September 2026. [v0.5.4 is also the latest GitHub release](https://github.com/AnthonyPWatts/Despoilerize/releases/tag/v0.5.4); [v0.5.3](https://github.com/AnthonyPWatts/Despoilerize/releases/tag/v0.5.3) is available as a historical release. Both GitHub releases were published on 26 September 2026.
 
+## v1.1
+
+- [v1.1.0 release notes and verification](./v1.1/README.md) — prepared, not submitted or published
+- [v1.1.0 Chrome Web Store package](./v1.1/despoilerize-v1.1.0-chrome-web-store.zip)
+- [Chrome Web Store screenshots and live examples](./v1.1/screenshots/live/README.md)
+- [Chrome Web Store promo tiles](./v1.1/promo/)
+
 ## v1.0
 
-- [v1.0.0 release notes and verification](./v1.0/README.md) — prepared, not submitted or published
+- [v1.0.0 release notes and verification](./v1.0/README.md) — unpublished preparation, superseded by v1.1.0
 - [v1.0.0 Chrome Web Store package](./v1.0/despoilerize-v1.0.0-chrome-web-store.zip)
 - [Chrome Web Store screenshots and live examples](./v1.0/screenshots/live/README.md)
 - [Chrome Web Store promo tiles](./v1.0/promo/)

@@ -10,7 +10,7 @@ The project began with my own highest-risk use case:
 
 **v0.5.4** is the current published extension, confirmed in the [Chrome Web Store](https://chromewebstore.google.com/detail/despoilerize/ekckhdeeoilbnocmcpnhbcocbapjpmof) on 26 September 2026. See the [release notes and publication status](./Releases/v0.5/README.md) for the corresponding GitHub release status and archived packages.
 
-**v1.0.0** is prepared for release but has not been submitted or published. The source and local builds use v1.0.0; the [release notes and package](./Releases/v1.0/README.md) include **I'm caught up**, the corrected upcoming-session summary, and the YouTube home-feed and settings fixes previously prepared as v0.5.5.
+**v1.1.0** is prepared for release but has not been submitted or published. The source and local builds use v1.1.0; the [release notes and package](./Releases/v1.1/README.md) include **The Traitors** pack, **I'm caught up**, the corrected upcoming-session summary, and the YouTube home-feed and settings fixes previously prepared as v0.5.5.
 
 Install from the store to receive automatic updates. Unpacked development installations use the local `dist` folder and require a rebuild and extension reload to pick up changes.
 
@@ -18,9 +18,9 @@ Install from the store to receive automatic updates. Unpacked development instal
 
 Real YouTube results in a fresh, signed-out Chrome profile. Here, **Reveal once** has restored the first video while the other Formula 1 cards remain protected in Lockdown mode.
 
-![A real YouTube thumbnail revealed while the remaining Formula 1 results stay blurred](./Releases/v1.0/screenshots/live/03-youtube-reveal-once.png)
+![A real YouTube thumbnail revealed while the remaining Formula 1 results stay blurred](./Releases/v1.1/screenshots/live/03-youtube-reveal-once.png)
 
-See the [before-and-after screenshots, toolbar popup and settings](./Releases/v1.0/screenshots/live/README.md). These are direct browser captures with real thumbnails, captured on 27 September 2026.
+See the [before-and-after screenshots, toolbar popup and settings](./Releases/v1.1/screenshots/live/README.md). These are direct browser captures with real thumbnails, captured on 27 September 2026.
 
 ## What this version does
 
@@ -103,7 +103,7 @@ The e2e smoke suite builds the extension and checks schedule/sensitivity setting
 npm run package:chrome
 ```
 
-This builds the extension and creates a Chrome Web Store zip under `Releases/v1.0` with `manifest.json` at the archive root.
+This builds the extension and creates a Chrome Web Store zip under `Releases/v1.1` with `manifest.json` at the archive root.
 
 Release packages and store listing assets are kept under [`Releases`](./Releases/).
 
@@ -115,7 +115,7 @@ npm run screenshots:store
 
 This builds and loads the extension in a new, signed-out Chrome for Testing profile, then captures a public YouTube search with protection off, protection on, and one result revealed. It also captures the settings and actual toolbar popup. Personal profiles, cookies and browsing history are never reused.
 
-The five store images are 1280 × 800 page captures; the toolbar popup details retain their native size. The browser's tab strip and address bar are outside these captures. See the [screenshot gallery and capture record](./Releases/v1.0/screenshots/live/README.md) for sources and verification.
+The five store images are 1280 × 800 page captures; the toolbar popup details retain their native size. The browser's tab strip and address bar are outside these captures. See the [screenshot gallery and capture record](./Releases/v1.1/screenshots/live/README.md) for sources and verification.
 
 The command requires internet access and fails if the required thumbnails, signed-out state or protection behaviour cannot be verified. YouTube results and layouts can change, so inspect each new capture before submission. The older [`generate-store-screenshots.mjs`](./scripts/generate-store-screenshots.mjs) remains available to reproduce the historical synthetic examples; it is no longer the store screenshot command.
 
