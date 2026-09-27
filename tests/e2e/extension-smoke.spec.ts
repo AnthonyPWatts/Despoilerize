@@ -241,6 +241,59 @@ test("auto-saves pack, custom term, and supported site filtering changes from op
   }
 });
 
+test("The Traitors selection persists, protects page cards and can be turned off", async ({ browserName, playwright }, testInfo) => {
+  test.skip(browserName !== "chromium", "Chrome extensions can only be loaded in Chromium.");
+  const harness = await launchExtension(playwright);
+
+  try {
+    await writeSettings(harness.extensionPage, {
+      catchUpMode: { enabled: true, sensitivity: "balanced" },
+      enabledPacks: [], customTerms: [], trustedSites: []
+    });
+    const options = await harness.context.newPage();
+    await options.goto(extensionUrl(harness.extensionId, "src/options/index.html"));
+    await options.getByRole("button", { name: /Entertainment/ }).click();
+    const pack = options.locator("input[data-pack-id='the-traitors']");
+    await pack.check();
+    await expect(options.locator("#autosave-status")).toHaveText("Saved.");
+    expect((await readSettings(harness.extensionPage)).enabledPacks).toEqual(["the-traitors"]);
+    await options.reload();
+    await expect(pack).toBeChecked();
+    await expect(options.locator("input[data-pack-id='reality-tv']")).not.toBeChecked();
+    await options.locator(".topic-card").filter({ has: pack }).screenshot({ path: testInfo.outputPath("traitors-pack.png") });
+
+    const popup = await harness.context.newPage();
+    await popup.goto(extensionUrl(harness.extensionId, "src/popup/index.html"));
+    await expect(popup.locator("#enabled-packs-summary")).toHaveText("The Traitors");
+
+    const page = await harness.context.newPage();
+    // Synthetic examples, not actual contestant outcomes.
+    await page.route("https://www.bbc.co.uk/culture", route => route.fulfill({
+      contentType: "text/html",
+      body: `<!doctype html><title>Traitors protection fixture</title>
+        <style>article { width: 520px; min-height: 120px; margin: 16px; }</style>
+        <main>
+          <article id="cast-spoiler"><h2>Bella Ramsey was banished</h2></article>
+          <article id="show-spoiler"><h2>The Celebrity Traitors winner revealed</h2></article>
+          <article id="safe"><h2>James Acaster announces a comedy tour</h2></article>
+          <article id="other-show"><h2>Love Island couple dumped after recoupling</h2></article>
+        </main>`
+    }));
+    await page.goto("https://www.bbc.co.uk/culture");
+    await expect(page.locator("[data-despoilerze-hidden='true']")).toHaveCount(2);
+    await expect(page.locator("#cast-spoiler")).toHaveAttribute("data-despoilerze-hidden", "true");
+    await expect(page.locator("#safe")).not.toHaveAttribute("data-despoilerze-hidden", "true");
+    await expect(page.locator("#other-show")).not.toHaveAttribute("data-despoilerze-hidden", "true");
+    await page.getByRole("button", { name: "Reveal once", exact: true }).first().click();
+    await expect(page.locator("[data-despoilerze-hidden='true']")).toHaveCount(1);
+    await pack.uncheck();
+    await expect(options.locator("#autosave-status")).toHaveText("Saved.");
+    await expect(page.locator("[data-despoilerze-hidden='true']")).toHaveCount(0);
+  } finally {
+    await harness.context.close();
+  }
+});
+
 test("content script hides, reveals, and responds to settings changes", async ({ browserName, playwright }) => {
   test.skip(browserName !== "chromium", "Chrome extensions can only be loaded in Chromium.");
 

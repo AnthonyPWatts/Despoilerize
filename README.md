@@ -196,13 +196,15 @@ The options page now supports grouped protection packs, including:
 - Cricket: cricket, England cricket, The Ashes
 - Tennis: tennis, Wimbledon, Grand Slams
 - US sports: NFL, NBA
-- Entertainment: Reality TV
+- Entertainment: Reality TV, The Traitors
+
+**The Traitors** has a dedicated pack covering UK and Celebrity Traitors, including all 21 announced celebrities for 2026, the 2025 celebrity cast and the UK series-four contestants. It recognises cast names, banishments, murders, recruitment, role reveals and finale spoilers. Select **Entertainment → The Traitors** in settings; changes save automatically. See [coverage, sources and sensitivity guidance](./docs/traitors-pack.md).
 
 ## Custom protected terms
 
 Custom terms can protect topics that do not yet have a dedicated pack. Add one show, contestant, team, event, or phrase per line. Good examples are:
 
-- `The Traitors`
+- `Survivor`
 - `Love Island final`
 - `Strictly dance-off`
 - Current contestant names

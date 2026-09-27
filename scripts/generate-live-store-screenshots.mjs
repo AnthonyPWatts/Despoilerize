@@ -106,6 +106,11 @@ try {
   await capture(options, "04-protection-schedule.png");
   await options.locator("#topics-title").evaluate(element => element.closest("section").scrollIntoView({ block: "start" }));
   await capture(options, "05-protected-topics.png");
+  await options.getByRole("button", { name: /Entertainment/ }).click();
+  const traitorsPack = options.locator("input[data-pack-id='the-traitors']");
+  await traitorsPack.check();
+  await expect(options.locator("#autosave-status")).toHaveText("Saved.");
+  await options.locator(".topic-card").filter({ has: traitorsPack }).screenshot({ path: join(detailsDir, "traitors-pack.png"), animations: "disabled" });
 
   const provenance = {
     capturedAtUtc: new Date().toISOString(), extensionVersion: manifest.version,
@@ -114,10 +119,10 @@ try {
     profile: "New temporary profile; no personal cookies, history or extensions reused",
     protection: "Formula 1 pack, Lockdown sensitivity", visibleTitles,
     processing: "Direct browser page and toolbar-popup captures. No replacement thumbnails, text, blur, browser frame or compositing.",
-    verified: ["Thumbnails loaded", "Sign in visible", "Protection off", "Protection on", "Reveal once leaves the next card protected", "I'm caught up ends the session"]
+    verified: ["Thumbnails loaded", "Sign in visible", "Protection off", "Protection on", "Reveal once leaves the next card protected", "I'm caught up ends the session", "The Traitors pack can be selected and saved"]
   };
   await writeFile(join(outputDir, "capture.json"), `${JSON.stringify(provenance, null, 2)}\n`);
-  console.log(`Captured 5 store images and 2 actual popup details in ${outputDir}`);
+  console.log(`Captured 5 store images, 2 actual popup details and The Traitors settings in ${outputDir}`);
   console.log(JSON.stringify(provenance, null, 2));
 } finally {
   await context.close();

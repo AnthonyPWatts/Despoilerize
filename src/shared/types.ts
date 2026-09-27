@@ -36,6 +36,8 @@ export type RulePack = {
   group: string;
   description?: string;
   entities: string[];
+  // Optional topic patterns for names that need nearby programme context.
+  entityRegexes?: string[];
   spoilerTerms: string[];
   safeTerms: string[];
   regexes: string[];

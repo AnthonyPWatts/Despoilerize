@@ -38,11 +38,16 @@ The settings page is captured at normal page scale. Changes save automatically.
 
 ![Topic packs and custom protected terms](./05-protected-topics.png)
 
+**The Traitors** is available as its own Entertainment pack. This detail shows the actual saved selection, including the 2026 celebrity cast coverage.
+
+![The Traitors selected in Entertainment settings](./details/traitors-pack.png)
+
 ## Capture details
 
 - Browser: Chrome for Testing 148.0.7778.96, Windows.
 - Five store images: 1280 × 800 PNG page captures. Chrome's tab strip and address bar are outside these images; no imitation browser frame is added.
 - Two additional popup images: direct captures of Chrome's toolbar-popup target, retained at native size for the documentation.
+- One settings detail: the actual Entertainment card with The Traitors selected and saved.
 - Processing: no replacement text, photographs, thumbnails or blur, and no compositing. All hiding and revealing comes from the running extension.
 - Verification: loaded thumbnails; visible **Sign in** control; protection off/on; one card revealed while another stays hidden; **I'm caught up** switches protection off.
 - [Machine-readable capture record](./capture.json).

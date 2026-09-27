@@ -1,5 +1,5 @@
 {
-  "capturedAtUtc": "2026-09-27T15:43:56.562Z",
+  "capturedAtUtc": "2026-09-27T16:00:42.909Z",
   "extensionVersion": "1.0.0",
   "browser": "Chrome for Testing 148.0.7778.96",
   "viewport": {
@@ -13,7 +13,7 @@
   "visibleTitles": [
     "EVERY Grand Prix Highlight of the 2024 F1 Season",
     "Race Highlights | 2024 Sao Paulo Grand Prix",
-    "Extended Highlights | 2024 Sao Paulo Grand Prix"
+    "Race Highlights | 2026 Azerbaijan Grand Prix"
   ],
   "processing": "Direct browser page and toolbar-popup captures. No replacement thumbnails, text, blur, browser frame or compositing.",
   "verified": [
@@ -22,6 +22,7 @@
     "Protection off",
     "Protection on",
     "Reveal once leaves the next card protected",
-    "I'm caught up ends the session"
+    "I'm caught up ends the session",
+    "The Traitors pack can be selected and saved"
   ]
 }

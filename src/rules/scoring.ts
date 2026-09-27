@@ -32,8 +32,8 @@ function topicReason(pack: RulePack): string {
 }
 
 function spoilerReason(pack: RulePack): string {
-  if (pack.id === "reality-tv") {
-    return "Matched Reality TV spoiler wording";
+  if (pack.group === "Entertainment") {
+    return `Matched ${pack.label} spoiler wording`;
   }
 
   if (pack.id === "world-cup-2026") {
@@ -44,8 +44,8 @@ function spoilerReason(pack: RulePack): string {
 }
 
 function patternReason(pack: RulePack): string {
-  if (pack.id === "reality-tv") {
-    return "Matched Reality TV spoiler wording";
+  if (pack.group === "Entertainment") {
+    return `Matched ${pack.label} spoiler wording`;
   }
 
   if (pack.id === "world-cup-2026") {
@@ -76,14 +76,15 @@ export function scoreText(
 
   for (const pack of packs) {
     const entityMatches = pack.entities.filter(term => containsTerm(text, term));
+    const hasEntityPattern = pack.entityRegexes?.some(pattern => new RegExp(pattern, "i").test(text)) ?? false;
     const spoilerMatches = pack.spoilerTerms.filter(term => containsTerm(text, term));
     const safeMatches = pack.safeTerms.filter(term => containsTerm(text, term));
     const regexMatches = pack.regexes.filter(pattern => new RegExp(pattern, "i").test(text));
 
     // Avoid blocking general news just because it contains words such as "crash",
-    // "beats", "loss", or a result-looking number. A sport pack should only fire
+    // "beats", "loss", or a result-looking number. A pack should only fire
     // when the item also mentions a protected entity from that pack.
-    if (entityMatches.length === 0) {
+    if (entityMatches.length === 0 && !hasEntityPattern) {
       continue;
     }
 
