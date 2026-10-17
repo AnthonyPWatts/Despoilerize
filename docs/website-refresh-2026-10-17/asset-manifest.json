@@ -1,0 +1,613 @@
+{
+  "preparedOn": "2026-10-17",
+  "extensionVersion": "1.1.0",
+  "originalCaptureDate": "2026-09-27",
+  "sourceRef": "0a57c9e954bc2d83cd9582bdbfa843751f9506f7",
+  "note": "Historical v1.1 captures reused for the website. No fresh live-site or installed-extension checks were performed.",
+  "assets": [
+    {
+      "file": "assets/despoilerize-f1-reveal.png",
+      "width": 1280,
+      "height": 800,
+      "bytes": 450884,
+      "sha256": "653586d02c0ae8e3180d8dee331ab3fc6dbfd6a43818621ef47c7342e6ef0d3f",
+      "sources": [
+        {
+          "path": "Releases/v1.1/screenshots/live/03-youtube-reveal-once.png",
+          "sha256": "653586d02c0ae8e3180d8dee331ab3fc6dbfd6a43818621ef47c7342e6ef0d3f",
+          "url": "https://raw.githubusercontent.com/AnthonyPWatts/Despoilerize/0a57c9e954bc2d83cd9582bdbfa843751f9506f7/Releases/v1.1/screenshots/live/03-youtube-reveal-once.png"
+        }
+      ],
+      "processing": "Byte-for-byte copy; no processing."
+    },
+    {
+      "file": "assets/despoilerize-big-brother-reveal.png",
+      "width": 1280,
+      "height": 800,
+      "bytes": 459690,
+      "sha256": "7656f286a6527d60f6441df2894230ba8ed96a5d7fbe3b8299edb7f4e3e05445",
+      "sources": [
+        {
+          "path": "Releases/v1.1/screenshots/live/08-big-brother-reveal-once.png",
+          "sha256": "7656f286a6527d60f6441df2894230ba8ed96a5d7fbe3b8299edb7f4e3e05445",
+          "url": "https://raw.githubusercontent.com/AnthonyPWatts/Despoilerize/0a57c9e954bc2d83cd9582bdbfa843751f9506f7/Releases/v1.1/screenshots/live/08-big-brother-reveal-once.png"
+        }
+      ],
+      "processing": "Byte-for-byte copy; no processing."
+    },
+    {
+      "file": "assets/despoilerize-settings-schedule.png",
+      "width": 1280,
+      "height": 800,
+      "bytes": 147195,
+      "sha256": "7b3e1651290aa3720b17855fc798ced5e940cdec3bf5db81ce68ef8c79628382",
+      "sources": [
+        {
+          "path": "Releases/v1.1/screenshots/live/04-protection-schedule.png",
+          "sha256": "7b3e1651290aa3720b17855fc798ced5e940cdec3bf5db81ce68ef8c79628382",
+          "url": "https://raw.githubusercontent.com/AnthonyPWatts/Despoilerize/0a57c9e954bc2d83cd9582bdbfa843751f9506f7/Releases/v1.1/screenshots/live/04-protection-schedule.png"
+        }
+      ],
+      "processing": "Byte-for-byte copy; no processing."
+    },
+    {
+      "file": "assets/despoilerize-settings-topics.png",
+      "width": 1280,
+      "height": 800,
+      "bytes": 98483,
+      "sha256": "68487e2b8bcb365092124f0b911952d0e044534b2581460853355876f2dc9192",
+      "sources": [
+        {
+          "path": "Releases/v1.1/screenshots/live/05-protected-topics.png",
+          "sha256": "68487e2b8bcb365092124f0b911952d0e044534b2581460853355876f2dc9192",
+          "url": "https://raw.githubusercontent.com/AnthonyPWatts/Despoilerize/0a57c9e954bc2d83cd9582bdbfa843751f9506f7/Releases/v1.1/screenshots/live/05-protected-topics.png"
+        }
+      ],
+      "processing": "Byte-for-byte copy; no processing."
+    },
+    {
+      "file": "assets/despoilerize-popup-active.png",
+      "width": 450,
+      "height": 625,
+      "bytes": 52687,
+      "sha256": "ce64057c97e283d79db83ef8277329b37bd2ebbb44f776cc0c07250b32c429cd",
+      "sources": [
+        {
+          "path": "Releases/v1.1/screenshots/live/details/protection-popup.png",
+          "sha256": "ce64057c97e283d79db83ef8277329b37bd2ebbb44f776cc0c07250b32c429cd",
+          "url": "https://raw.githubusercontent.com/AnthonyPWatts/Despoilerize/0a57c9e954bc2d83cd9582bdbfa843751f9506f7/Releases/v1.1/screenshots/live/details/protection-popup.png"
+        }
+      ],
+      "processing": "Byte-for-byte copy; no processing."
+    },
+    {
+      "file": "assets/despoilerize-popup-caught-up.png",
+      "width": 450,
+      "height": 587,
+      "bytes": 50494,
+      "sha256": "6a0dbd4ec238d2d65aa732122321037ed827dbe3953f6c66e1fd8eb2af3f942a",
+      "sources": [
+        {
+          "path": "Releases/v1.1/screenshots/live/details/caught-up-popup.png",
+          "sha256": "6a0dbd4ec238d2d65aa732122321037ed827dbe3953f6c66e1fd8eb2af3f942a",
+          "url": "https://raw.githubusercontent.com/AnthonyPWatts/Despoilerize/0a57c9e954bc2d83cd9582bdbfa843751f9506f7/Releases/v1.1/screenshots/live/details/caught-up-popup.png"
+        }
+      ],
+      "processing": "Byte-for-byte copy; no processing."
+    },
+    {
+      "file": "assets/despoilerize-traitors-pack.png",
+      "width": 266,
+      "height": 341,
+      "bytes": 15775,
+      "sha256": "a56cb118da633443f1eb8ae448d1537a4cbad862b76236374da9da5a5802c483",
+      "sources": [
+        {
+          "path": "Releases/v1.1/screenshots/live/details/traitors-pack.png",
+          "sha256": "a56cb118da633443f1eb8ae448d1537a4cbad862b76236374da9da5a5802c483",
+          "url": "https://raw.githubusercontent.com/AnthonyPWatts/Despoilerize/0a57c9e954bc2d83cd9582bdbfa843751f9506f7/Releases/v1.1/screenshots/live/details/traitors-pack.png"
+        }
+      ],
+      "processing": "Byte-for-byte copy; no processing."
+    },
+    {
+      "file": "assets/despoilerize-big-brother-pack.png",
+      "width": 266,
+      "height": 341,
+      "bytes": 15805,
+      "sha256": "f177f33529e5d6f198177bef80e74e9d3832ac26a3606a1774831f669ec4eec5",
+      "sources": [
+        {
+          "path": "Releases/v1.1/screenshots/live/details/big-brother-pack.png",
+          "sha256": "f177f33529e5d6f198177bef80e74e9d3832ac26a3606a1774831f669ec4eec5",
+          "url": "https://raw.githubusercontent.com/AnthonyPWatts/Despoilerize/0a57c9e954bc2d83cd9582bdbfa843751f9506f7/Releases/v1.1/screenshots/live/details/big-brother-pack.png"
+        }
+      ],
+      "processing": "Byte-for-byte copy; no processing."
+    },
+    {
+      "file": "assets/despoilerize-protection-social.png",
+      "width": 1280,
+      "height": 800,
+      "bytes": 351390,
+      "sha256": "3ea5dcfc1624726559c226bb1a1dc1aeb7fbcab1d373c7b828d3ef085892453d",
+      "sources": [
+        {
+          "path": "Releases/v1.1/screenshots/live/02-youtube-protection-on.png",
+          "sha256": "3ea5dcfc1624726559c226bb1a1dc1aeb7fbcab1d373c7b828d3ef085892453d",
+          "url": "https://raw.githubusercontent.com/AnthonyPWatts/Despoilerize/0a57c9e954bc2d83cd9582bdbfa843751f9506f7/Releases/v1.1/screenshots/live/02-youtube-protection-on.png"
+        }
+      ],
+      "processing": "Byte-for-byte copy; no processing."
+    },
+    {
+      "file": "assets/despoilerize-protection-preview.png",
+      "width": 576,
+      "height": 248,
+      "bytes": 91310,
+      "sha256": "b2e1ce5d92d32dbabc6f467d6b36a76fa6664d988abccba9a8e61a710f73e6eb",
+      "sources": [
+        {
+          "path": "Releases/v1.1/screenshots/live/02-youtube-protection-on.png",
+          "sha256": "3ea5dcfc1624726559c226bb1a1dc1aeb7fbcab1d373c7b828d3ef085892453d",
+          "url": "https://raw.githubusercontent.com/AnthonyPWatts/Despoilerize/0a57c9e954bc2d83cd9582bdbfa843751f9506f7/Releases/v1.1/screenshots/live/02-youtube-protection-on.png"
+        }
+      ],
+      "processing": "Crop rectangle [88, 104, 664, 352], left/top inclusive, right/bottom exclusive. No resize or retouching."
+    },
+    {
+      "file": "assets/despoilerize-popup-states.png",
+      "width": 1280,
+      "height": 800,
+      "bytes": 109688,
+      "sha256": "7c04f568f0e71d3bbaacdb1ce002cf97689d95be64d4283950e084099e594ccd",
+      "sources": [
+        {
+          "path": "Releases/v1.1/screenshots/live/details/protection-popup.png",
+          "sha256": "ce64057c97e283d79db83ef8277329b37bd2ebbb44f776cc0c07250b32c429cd",
+          "url": "https://raw.githubusercontent.com/AnthonyPWatts/Despoilerize/0a57c9e954bc2d83cd9582bdbfa843751f9506f7/Releases/v1.1/screenshots/live/details/protection-popup.png"
+        },
+        {
+          "path": "Releases/v1.1/screenshots/live/details/caught-up-popup.png",
+          "sha256": "6a0dbd4ec238d2d65aa732122321037ed827dbe3953f6c66e1fd8eb2af3f942a",
+          "url": "https://raw.githubusercontent.com/AnthonyPWatts/Despoilerize/0a57c9e954bc2d83cd9582bdbfa843751f9506f7/Releases/v1.1/screenshots/live/details/caught-up-popup.png"
+        }
+      ],
+      "processing": "Labelled side-by-side comparison on a plain background. Both popup screenshots pasted at native size without retouching."
+    },
+    {
+      "file": "assets/responsive/despoilerize-f1-reveal-480.webp",
+      "width": 480,
+      "height": 300,
+      "bytes": 21550,
+      "sha256": "78e7e1d7d4de271b632ec6c336cda2eeb484a018d1274d1f9c80f116d035cb5b",
+      "sources": [
+        {
+          "path": "assets/despoilerize-f1-reveal.png",
+          "sha256": "653586d02c0ae8e3180d8dee331ab3fc6dbfd6a43818621ef47c7342e6ef0d3f"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-f1-reveal-640.webp",
+      "width": 640,
+      "height": 400,
+      "bytes": 33094,
+      "sha256": "da31b7de777d3fe4db10ee5676ca87f54d20109e12ef875229a330796c88ba84",
+      "sources": [
+        {
+          "path": "assets/despoilerize-f1-reveal.png",
+          "sha256": "653586d02c0ae8e3180d8dee331ab3fc6dbfd6a43818621ef47c7342e6ef0d3f"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-f1-reveal-960.webp",
+      "width": 960,
+      "height": 600,
+      "bytes": 58686,
+      "sha256": "e981538b8b4fb6494474e3e2dfe51a6a779c42c51f18c93796d8a7de285ffe84",
+      "sources": [
+        {
+          "path": "assets/despoilerize-f1-reveal.png",
+          "sha256": "653586d02c0ae8e3180d8dee331ab3fc6dbfd6a43818621ef47c7342e6ef0d3f"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-f1-reveal-1280.webp",
+      "width": 1280,
+      "height": 800,
+      "bytes": 82498,
+      "sha256": "5274935eb69f638ece4324c5acd782f77e95f59ce20c785a609ac2c099bd54f9",
+      "sources": [
+        {
+          "path": "assets/despoilerize-f1-reveal.png",
+          "sha256": "653586d02c0ae8e3180d8dee331ab3fc6dbfd6a43818621ef47c7342e6ef0d3f"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-big-brother-reveal-480.webp",
+      "width": 480,
+      "height": 300,
+      "bytes": 20310,
+      "sha256": "9669d1b979e76105e19402e2d308f669762acb969b2408fd39f8f9971849a0a2",
+      "sources": [
+        {
+          "path": "assets/despoilerize-big-brother-reveal.png",
+          "sha256": "7656f286a6527d60f6441df2894230ba8ed96a5d7fbe3b8299edb7f4e3e05445"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-big-brother-reveal-640.webp",
+      "width": 640,
+      "height": 400,
+      "bytes": 30334,
+      "sha256": "8f473391aad399f0baaae095c86ba25c5def8c44dcac488bbfa1046d0730aa96",
+      "sources": [
+        {
+          "path": "assets/despoilerize-big-brother-reveal.png",
+          "sha256": "7656f286a6527d60f6441df2894230ba8ed96a5d7fbe3b8299edb7f4e3e05445"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-big-brother-reveal-960.webp",
+      "width": 960,
+      "height": 600,
+      "bytes": 51198,
+      "sha256": "7869f5d9c5b6c3d6a1849fb1ef1c8f5032784c4da4e4ef8721f6ac8d7bf87533",
+      "sources": [
+        {
+          "path": "assets/despoilerize-big-brother-reveal.png",
+          "sha256": "7656f286a6527d60f6441df2894230ba8ed96a5d7fbe3b8299edb7f4e3e05445"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-big-brother-reveal-1280.webp",
+      "width": 1280,
+      "height": 800,
+      "bytes": 74198,
+      "sha256": "4b1f538c859aa9273a4acebdb467f3fd3dbc1026d7fd9841fd7953839c0fa146",
+      "sources": [
+        {
+          "path": "assets/despoilerize-big-brother-reveal.png",
+          "sha256": "7656f286a6527d60f6441df2894230ba8ed96a5d7fbe3b8299edb7f4e3e05445"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-settings-schedule-480.webp",
+      "width": 480,
+      "height": 300,
+      "bytes": 9320,
+      "sha256": "e95830ed64f2527159adb6013db5dafba02554feb1f3cb9665837389ff066b16",
+      "sources": [
+        {
+          "path": "assets/despoilerize-settings-schedule.png",
+          "sha256": "7b3e1651290aa3720b17855fc798ced5e940cdec3bf5db81ce68ef8c79628382"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-settings-schedule-640.webp",
+      "width": 640,
+      "height": 400,
+      "bytes": 16020,
+      "sha256": "85d48d82971987e1ecb6dc4de7436bda44ecb98f22975d7a2158e0560459e542",
+      "sources": [
+        {
+          "path": "assets/despoilerize-settings-schedule.png",
+          "sha256": "7b3e1651290aa3720b17855fc798ced5e940cdec3bf5db81ce68ef8c79628382"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-settings-schedule-960.webp",
+      "width": 960,
+      "height": 600,
+      "bytes": 29214,
+      "sha256": "20839d868f992313f3d5685e297b22e45c2eb574344222d7887fab76074c4113",
+      "sources": [
+        {
+          "path": "assets/despoilerize-settings-schedule.png",
+          "sha256": "7b3e1651290aa3720b17855fc798ced5e940cdec3bf5db81ce68ef8c79628382"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-settings-schedule-1280.webp",
+      "width": 1280,
+      "height": 800,
+      "bytes": 42076,
+      "sha256": "5b06dc5c1db1b8fc878910584c02e71cfd856b22d477a17536e594bf5b8b10ca",
+      "sources": [
+        {
+          "path": "assets/despoilerize-settings-schedule.png",
+          "sha256": "7b3e1651290aa3720b17855fc798ced5e940cdec3bf5db81ce68ef8c79628382"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-settings-topics-480.webp",
+      "width": 480,
+      "height": 300,
+      "bytes": 9582,
+      "sha256": "f86aa2c9430d06e290de5251a078bfcb0ab8ff05a9ffd16b16953992dec08615",
+      "sources": [
+        {
+          "path": "assets/despoilerize-settings-topics.png",
+          "sha256": "68487e2b8bcb365092124f0b911952d0e044534b2581460853355876f2dc9192"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-settings-topics-640.webp",
+      "width": 640,
+      "height": 400,
+      "bytes": 16396,
+      "sha256": "42e70253d1f359ff94d96f9cba444606a385d76a32c5396b971f9189303e228b",
+      "sources": [
+        {
+          "path": "assets/despoilerize-settings-topics.png",
+          "sha256": "68487e2b8bcb365092124f0b911952d0e044534b2581460853355876f2dc9192"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-settings-topics-960.webp",
+      "width": 960,
+      "height": 600,
+      "bytes": 32858,
+      "sha256": "654c0302ec8cb477959d7b49db1111760cf24df32d38ab20220ea04afbb64fb9",
+      "sources": [
+        {
+          "path": "assets/despoilerize-settings-topics.png",
+          "sha256": "68487e2b8bcb365092124f0b911952d0e044534b2581460853355876f2dc9192"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-settings-topics-1280.webp",
+      "width": 1280,
+      "height": 800,
+      "bytes": 34394,
+      "sha256": "8181d9712313063c76d4d4353a3fe8be75da8c20727ec6402fa7c981dad783e5",
+      "sources": [
+        {
+          "path": "assets/despoilerize-settings-topics.png",
+          "sha256": "68487e2b8bcb365092124f0b911952d0e044534b2581460853355876f2dc9192"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-popup-active-450.webp",
+      "width": 450,
+      "height": 625,
+      "bytes": 29090,
+      "sha256": "8b14e63e04e3a26dee24739101d56f653b775c033111fb581878e5dae69eea12",
+      "sources": [
+        {
+          "path": "assets/despoilerize-popup-active.png",
+          "sha256": "ce64057c97e283d79db83ef8277329b37bd2ebbb44f776cc0c07250b32c429cd"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-popup-caught-up-450.webp",
+      "width": 450,
+      "height": 587,
+      "bytes": 26694,
+      "sha256": "565db91286544583287a9ad5a8beb3467919d11a055ef616a7db3a93f21fbf64",
+      "sources": [
+        {
+          "path": "assets/despoilerize-popup-caught-up.png",
+          "sha256": "6a0dbd4ec238d2d65aa732122321037ed827dbe3953f6c66e1fd8eb2af3f942a"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-traitors-pack-266.webp",
+      "width": 266,
+      "height": 341,
+      "bytes": 6630,
+      "sha256": "9973e93afbc279d0bf9f8c1492b26f2fd3f67602fab72d8586f1235f5c69a775",
+      "sources": [
+        {
+          "path": "assets/despoilerize-traitors-pack.png",
+          "sha256": "a56cb118da633443f1eb8ae448d1537a4cbad862b76236374da9da5a5802c483"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-big-brother-pack-266.webp",
+      "width": 266,
+      "height": 341,
+      "bytes": 6554,
+      "sha256": "b68de98d26fa1a6d5504b9af39d49dfcac2c742600234428a743766508ed900b",
+      "sources": [
+        {
+          "path": "assets/despoilerize-big-brother-pack.png",
+          "sha256": "f177f33529e5d6f198177bef80e74e9d3832ac26a3606a1774831f669ec4eec5"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-protection-social-480.webp",
+      "width": 480,
+      "height": 300,
+      "bytes": 12548,
+      "sha256": "63a5711d5809ac1b02cb476c56ee5e3cc2b895c242ab4e6dd40a756a9015d811",
+      "sources": [
+        {
+          "path": "assets/despoilerize-protection-social.png",
+          "sha256": "3ea5dcfc1624726559c226bb1a1dc1aeb7fbcab1d373c7b828d3ef085892453d"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-protection-social-640.webp",
+      "width": 640,
+      "height": 400,
+      "bytes": 17564,
+      "sha256": "f615b89cc3a9adcb4078e2c088d1545f612acdf9996e44fd2a98cd2fa32e9088",
+      "sources": [
+        {
+          "path": "assets/despoilerize-protection-social.png",
+          "sha256": "3ea5dcfc1624726559c226bb1a1dc1aeb7fbcab1d373c7b828d3ef085892453d"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-protection-social-960.webp",
+      "width": 960,
+      "height": 600,
+      "bytes": 29366,
+      "sha256": "105dd3b86ea2b12c786ec0d7875281175ef6838082f8f0901ba1e36c22dffa47",
+      "sources": [
+        {
+          "path": "assets/despoilerize-protection-social.png",
+          "sha256": "3ea5dcfc1624726559c226bb1a1dc1aeb7fbcab1d373c7b828d3ef085892453d"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-protection-social-1280.webp",
+      "width": 1280,
+      "height": 800,
+      "bytes": 41624,
+      "sha256": "333bc16619730af92d1d47a7e51e5610ae22ebf33cd5c695e88321a3b9c1f250",
+      "sources": [
+        {
+          "path": "assets/despoilerize-protection-social.png",
+          "sha256": "3ea5dcfc1624726559c226bb1a1dc1aeb7fbcab1d373c7b828d3ef085892453d"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-protection-preview-240.webp",
+      "width": 240,
+      "height": 103,
+      "bytes": 3376,
+      "sha256": "e4c0f585f1aee50b431c0ae0d9797ffb1c1b6711070de028a0813cf49707e040",
+      "sources": [
+        {
+          "path": "assets/despoilerize-protection-preview.png",
+          "sha256": "b2e1ce5d92d32dbabc6f467d6b36a76fa6664d988abccba9a8e61a710f73e6eb"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-protection-preview-480.webp",
+      "width": 480,
+      "height": 207,
+      "bytes": 7750,
+      "sha256": "3d3caa3aff98b2533f0ca39345d1faf50e8ff9e0851d1d2d202597b50d87b994",
+      "sources": [
+        {
+          "path": "assets/despoilerize-protection-preview.png",
+          "sha256": "b2e1ce5d92d32dbabc6f467d6b36a76fa6664d988abccba9a8e61a710f73e6eb"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-protection-preview-576.webp",
+      "width": 576,
+      "height": 248,
+      "bytes": 9596,
+      "sha256": "90f464dc9a8515ef8358c2eb16499fbc36e1572a2918ac008e5d23a6a540dbce",
+      "sources": [
+        {
+          "path": "assets/despoilerize-protection-preview.png",
+          "sha256": "b2e1ce5d92d32dbabc6f467d6b36a76fa6664d988abccba9a8e61a710f73e6eb"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-popup-states-480.webp",
+      "width": 480,
+      "height": 300,
+      "bytes": 15138,
+      "sha256": "4e67f8e71fee7ae2eaa361821e63c8cc0a968c289ed3ce493d992bf99c418b2c",
+      "sources": [
+        {
+          "path": "assets/despoilerize-popup-states.png",
+          "sha256": "7c04f568f0e71d3bbaacdb1ce002cf97689d95be64d4283950e084099e594ccd"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-popup-states-640.webp",
+      "width": 640,
+      "height": 400,
+      "bytes": 22140,
+      "sha256": "dbd4f2b81eabc46e7845627a6ce9795d2059b173d96ccc423d6ea93a131fb0d3",
+      "sources": [
+        {
+          "path": "assets/despoilerize-popup-states.png",
+          "sha256": "7c04f568f0e71d3bbaacdb1ce002cf97689d95be64d4283950e084099e594ccd"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-popup-states-960.webp",
+      "width": 960,
+      "height": 600,
+      "bytes": 42302,
+      "sha256": "82183faa803ed711f35e781823c6a0baace89b6d8e28e10e41fcde4cdceebb23",
+      "sources": [
+        {
+          "path": "assets/despoilerize-popup-states.png",
+          "sha256": "7c04f568f0e71d3bbaacdb1ce002cf97689d95be64d4283950e084099e594ccd"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    },
+    {
+      "file": "assets/responsive/despoilerize-popup-states-1280.webp",
+      "width": 1280,
+      "height": 800,
+      "bytes": 59166,
+      "sha256": "2992e2fd3d8c36a8476b5536f5ffa8dc64873cc47f1e5f03b99692072fb2ec01",
+      "sources": [
+        {
+          "path": "assets/despoilerize-popup-states.png",
+          "sha256": "7c04f568f0e71d3bbaacdb1ce002cf97689d95be64d4283950e084099e594ccd"
+        }
+      ],
+      "processing": "Proportional Lanczos resize; smaller of quality-90 and lossless WebP. Never upscaled."
+    }
+  ]
+}
